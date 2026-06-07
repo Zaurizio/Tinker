@@ -1,0 +1,175 @@
+.pagina {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #1a3a5c 0%, #2f5d8a 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.topo {
+  position: relative; /*position: absolute se posiciona em relação a isso*/
+  padding: 36px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voltar {
+  position: absolute;
+  left: 48px; /*da borda esquerda*/
+  top: 50%; /*metade da altura do topo*/
+  transform: translateY(-50%); /*meio do botão no meio, e não o topo*/
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 2.8rem;
+  cursor: pointer;
+  display: flex;
+  /*dentro do botão*/
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.voltar:hover {
+  opacity: 0.7;
+}
+
+.icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  line-height: 1; /*linha do tamanho da fonte*/
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: row; /* Altera para linha para que fiquem lado a lado */
+  align-items: center; /* Alinha a imagem e o texto verticalmente no centro */
+  gap: 10px; /* Espaço entre a imagem e o texto */
+  margin-bottom: 15px;
+}
+
+.logoImage {
+  width: 80px; /* Ajuste o tamanho da imagem conforme necessário */
+  height: 80px;
+  border-radius: 50%; /* Se a imagem for circular */
+  object-fit: cover; /* Para garantir que a imagem preencha o círculo */
+}
+
+.logotipo {
+  font-family: "Playfair Display SC", serif;
+  font-size: 3rem;
+  font-weight: 500;
+  color: #142033;
+  line-height: 1;
+}
+
+.centro {
+  flex: 1; /*ocupa todo espaço da página*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  padding-bottom: 150px; /*mais espaço embaixo*/
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.titulo {
+  margin: 0 0 6px 0; /*margem embaixo*/
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #142033;
+}
+
+.subtitulo {
+  margin: 0 0 28px 0; /*margem embaixo*/
+  font-size: 0.95rem;
+  color: #5e6b7a;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /*espaço entre itens*/
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #142033;
+}
+
+.input {
+  height: 46px;
+  padding: 0 14px; /*espaço nas laterais*/
+  border: 1px solid #d0dce8;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #142033;
+  background: #f8fafc;
+  outline: none; /*remove contorono padrão no foco do input*/
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #2f5d8a;
+  background: #ffffff;
+}
+
+.botao {
+  height: 50px;
+  border: none;
+  border-radius: 12px;
+  background: #2f5d8a;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.2s ease;
+}
+
+.botao:hover {
+  background: #244a70;
+}
+
+.rodape {
+  margin: 20px 0 0 0; /*espaço em cima*/
+  text-align: center;
+  font-size: 0.9rem;
+  color: #5e6b7a;
+}
+
+.link {
+  color: #2f5d8a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .topo {
+    padding: 24px 20px;
+  }
+
+  .centro {
+    align-items: flex-start;
+    padding-top: 16px;
+  }
+}
+

@@ -1,0 +1,132 @@
+/* src/pages/HomePage.module.css */
+.paginaHome {
+  width: 100%;
+  min-height: 100vh; /*tamanho da tela*/
+  background: linear-gradient(to bottom right, #f4f6f9 50%, #c7d8ea 100%); /* Copiado de inicial.module.css */
+  display: flex;
+  flex-direction: column; /*elementos em coluna*/
+}
+
+.homeContainer {
+  flex: 1;
+  display: flex; /* Adicionado para centralizar o conteúdo verticalmente se necessário */
+  flex-direction: column; /* Adicionado para centralizar o conteúdo verticalmente se necessário */
+  padding: 36px 40px; 
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 1200px; /* Largura máxima para o conteúdo */
+}
+
+.cardsRow {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os cards quebrem a linha se não houver espaço */
+  justify-content: center; /* Centraliza os cards horizontalmente */
+  gap: 20px; /* Espaçamento entre os cards */
+  margin-top: 24px;
+  margin-bottom: 32px;
+  width: 100%; /* Ocupa a largura total do homeContainer */
+}
+
+
+/* Linha de baixo: "Hoje" (maior) + "Resumo rápido" (menor) */
+.bottomRow {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+  padding: 40px 78px; 
+  width: 100%;
+}
+
+/* Bloco Hoje */
+.cardHoje {
+  flex: 1.8; /* maior que o resumo */
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  padding: 20px 22px;
+  box-sizing: border-box;
+  min-height: 150px; /* altura fixa mínima */
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHojeTitulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #142033;
+  margin: 0 0 12px 0;
+}
+
+.cardHojeEmpty {
+  font-size: 0.95rem;
+  color: #7a8899;
+}
+
+/* Bloco Resumo rápido */
+.cardResumo {
+  flex: 1.2; /* menor */
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  padding: 16px 18px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  /*min-height: 150px;*/
+}
+
+.cardResumoTitulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #142033;
+  margin: 0 0 10px 0;
+}
+
+/* Área clicável dentro do resumo */
+.cardResumoInner {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px dashed #d3dbe7;
+  background: #f7f9fc;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background 0.15s ease, border-color 0.15s ease,
+              transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cardResumoInner:hover {
+  background: #eef2f8;
+  border-color: #c1cbe0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.cardResumoTaxa {
+  font-size: 0.95rem;
+  color: #142033;
+}
+
+.cardResumoTaxa span {
+  font-weight: 600;
+  color: #244a70;
+}
+
+.cardResumoTexto {
+  font-size: 0.9rem;
+  color: #5e6b7a;
+}
+
+/* Responsivo: empilhar em telas menores */
+@media (max-width: 900px) {
+  .bottomRow {
+    flex-direction: column;
+  }
+  .cardHoje,
+  .cardResumo {
+    width: 100%;
+  }
+}

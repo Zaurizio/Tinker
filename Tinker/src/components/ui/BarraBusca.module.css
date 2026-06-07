@@ -1,0 +1,36 @@
+.campoBusca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #d9e1ea;
+  border-radius: 14px;
+  padding: 0 16px;
+  height: 52px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campoBusca:focus-within {
+  border-color: #2f5d8a;
+  box-shadow: 0 0 0 3px rgba(47, 93, 138, 0.12);
+}
+
+.icone {
+  font-size: 18px;
+  color: #8a97a6;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #142033;
+}
+
+.input::placeholder {
+  color: #8a97a6;
+}

@@ -1,0 +1,97 @@
+.sidebar {
+  width: 240px; /*largura da barra*/
+  min-height: 100vh; /*altura inteira da tela*/
+  background: whitesmoke;
+  border-right: 1px solid #D9E1EA; /*linha fina na direita*/
+  padding: 18px 16px; /*espaço interno (18 em cima e embaixo, 16 dos lados)*/
+  box-sizing: border-box;/*padding dentro da largura total*/
+  display: flex;
+  flex-direction: column; /*empilha os elementos*/
+}
+
+/*botão do menu + logo*/
+.topo {
+  display: flex; /*itens lado a lado*/
+  align-items: center; /*alinha verticalmente ao centro*/
+  margin-bottom: 28px; /*empurra conteúdo de baixo*/
+  justify-content: center;
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: column; /* Empilha a imagem e o texto */
+  align-items: center; /* Centraliza a imagem e o texto horizontalmente */
+  gap: 0px; /* Espaço entre a imagem e o texto */
+}
+
+.logoImage {
+  width: 80px; /* Ajuste o tamanho da imagem conforme necessário */
+  height: 80px;
+  border-radius: 50%; /* Se a imagem for circular */
+  object-fit: cover; /* Para garantir que a imagem preencha o círculo */
+}
+
+.logoText {
+  margin: 0; /*tira margem do h1*/
+  font-family: 'Playfair Display SC', serif; /* Use aspas para nomes de fontes com espaços */
+  font-size: 2rem;
+  font-weight: 500; /*negrito*/
+  color: #142033;
+  text-align: center; /* Centraliza o texto */
+}
+
+/*lista de links*/
+.nav {
+  display: flex;
+  flex-direction: column; /*empilha links*/
+  gap: 6px; /*espaço entre itens*/
+}
+
+.link,
+.linkButton {
+  width: 100%; /*item ocupa toda largura da sidebar*/
+  border: none;
+  background: transparent;
+  text-decoration: none; /*tira sublinhado*/
+  color: #5E6B7A;
+  display: flex;
+  align-items: center; /*alinha icone e texto na mesma linha*/
+  gap: 12px; /*espaço entre ícone e texto*/
+  padding: 12px 10px; /*da corpo ao item clicável*/
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease; /*hover suave*/
+  box-sizing: border-box; /*controla tamanho pra não estourar*/
+}
+
+.link:hover,
+.linkButton:hover {
+  background: #EEF2F6;
+}
+ 
+.ativo { /*página atual*/
+  color: #244a70; /*577cf5*/
+  font-weight: 700;
+}
+
+/*define tamanho da area do icone, centraliza*/
+.icone {
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+#1E2630
+#011526 y
+#1F2836
+#20324D
+#010C1D
+#02253D
+#02152B
+#042B3D
+#020f2c*/

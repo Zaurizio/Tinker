@@ -1,0 +1,54 @@
+/* src/components/WelcomeMessage.module.css */
+.welcomeContainer {
+  text-align: left;
+  margin-top: 58px;
+  margin-left: 40px;
+  margin-bottom: 40px;
+  padding: 0;
+  width: 100%;
+}
+
+.welcomeTitle {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #142033;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+}
+
+.welcomeSubtitle {
+  font-size: 1.2rem;
+  color: #5e6b7a;
+  margin: 0 0 10px 0;
+}
+
+.statusLine {
+  font-size: 1.05rem;
+  color: #142033;
+  margin: 0;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .welcomeTitle {
+    font-size: 2rem;
+  }
+  .welcomeSubtitle {
+    font-size: 0.9rem;
+  }
+  .statusLine {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcomeTitle {
+    font-size: 1.7rem;
+  }
+  .welcomeSubtitle {
+    font-size: 0.85rem;
+  }
+  .statusLine {
+    font-size: 0.8rem;
+  }
+}

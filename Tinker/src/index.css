@@ -1,0 +1,24 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif; /*sans-serif se n achar*/
+}
+
+html, body, #root {
+  background-color: #F6F8FB;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden; /*sem rolagem horizontal*/
+} 
+/*
+#1E2630
+#011526
+#1F2836
+#20324D
+#010C1D
+#02253D
+#02152B
+#042B3D
+#020f2c

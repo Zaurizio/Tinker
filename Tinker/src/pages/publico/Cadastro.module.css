@@ -1,0 +1,16 @@
+.card {
+  width: 100%;
+  max-width: 620px;
+}
+
+.camposDuplos {
+  display: flex;
+  gap: 12px;
+}
+
+.campoDuplo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

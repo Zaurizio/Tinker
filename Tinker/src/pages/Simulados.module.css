@@ -1,0 +1,102 @@
+/* src/pages/Simulados.module.css */
+
+.pagina {
+  flex: 1;
+  min-height: 100vh;
+  background: #f4f6f9;
+  padding: 36px 32px;
+  box-sizing: border-box;
+  display: flex; /* Adicionado para centralizar o conteúdo */
+  justify-content: center; /* Centraliza o conteúdo horizontalmente */
+}
+
+.conteudo {
+  max-width: 850px;
+  width: 100%; /* Garante que o conteúdo ocupe a largura máxima definida */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.titulo { /* Novo estilo para o título "Meus Simulados" */
+  font-size: 2.2em;
+  font-weight: 450;
+  color: #142033; /* Cor do texto */
+  margin-bottom: 10px; /* Espaçamento abaixo do título */
+  text-align: left; /* Centraliza o texto */
+}
+
+.acoes {
+  display: flex;
+  gap: 14px;
+  /* justify-content: flex-start; */ /* Remova ou ajuste se quiser centralizar os botões */
+}
+
+/* Estilos para os botões de ação */
+.botaoCriarSimulado,
+.botaoFiltrarSimulados {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaçamento entre ícone e texto */
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoCriarSimulado { /* Botão branco */
+  border: 1px solid #c7d2df;
+  background: #ffffff;
+  color: #142033;
+}
+
+.botaoCriarSimulado:hover {
+  background: #eef2f6;
+}
+
+.botaoFiltrarSimulados { /* Botão azul */
+  border: none; /* Remova a borda se quiser que seja sólido */
+  background: #2f5d8a;
+  color: #ffffff;
+}
+
+.botaoFiltrarSimulados:hover {
+  background: #244a70;
+}
+
+.listaSimulados {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.estadoVazio {
+  font-size: 0.95rem;
+  color: #8a97a6;
+  padding: 12px 4px;
+  text-align: center; /* Centraliza a mensagem de estado vazio */
+}
+
+@media (max-width: 600px) {
+  .pagina {
+    padding: 24px 16px;
+  }
+
+  /*
+  .titulo {
+    text-align: left;
+  }
+*/
+
+  .acoes {
+    flex-direction: column;
+  }
+
+  .botaoCriarSimulado,
+  .botaoFiltrarSimulados { /* Ajuste para os novos nomes de classe */
+    width: 100%;
+  }
+}

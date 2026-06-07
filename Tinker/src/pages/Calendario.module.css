@@ -1,0 +1,197 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #F6F8FB;
+}
+
+.topo {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: none;
+}
+
+.botaoCriar {
+  background-color: #2f5d8a;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.botaoCriar:hover {
+  background-color: #244a70;
+}
+
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto;
+}
+
+.menuVisualizacao {
+  position: relative;
+}
+
+.botaoMenu {
+  background-color: white;
+  border: 1px solid #EAE2D9;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #142033;
+}
+
+.botaoMenu:hover {
+  background-color: #EFF2F6;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #EAE2D9;
+  border-radius: 8px;
+  margin-top: 5px;
+  z-index: 10;
+  min-width: 120px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.opcao {
+  display: block;
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #142033;
+}
+
+.opcao:hover {
+  background-color: #EFF2F6; 
+}
+
+.opcao.ativo {
+  background-color: #eff2f6;
+  
+}
+
+.botaoHoje {
+  background-color: white;
+  border: 1px solid #EAE2D9;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #142033;
+}
+
+.botaoHoje:hover {
+  background-color: #EFF2F6;
+}
+
+.topoEsquerda {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dataGrande {
+  font-size: 22px;
+  font-weight: 500;
+  color: #142033;
+}
+
+.seta {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #142033;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.seta:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.dataAtual {
+  font-size: 14px;
+  color: #5E6B7A;
+  min-width: 150px;
+}
+
+.calendarioContainer {
+  flex: 1;
+  overflow: hidden;
+  padding: 0px 20px 20px 20px;
+  background-color: #f6f8fb;
+}
+
+.calendarioContainer :global(.fc) {
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+  border: 1px solid #d9e1ea;
+  font-family: 'Poppins', sans-serif;
+}
+
+.calendarioContainer :global(.fc-col-header-cell) {
+  background-color: #f6f8fb;
+  border-color: #d9e1ea;
+  color: #142033;
+  font-weight: 600;
+}
+
+.calendarioContainer :global(.fc-daygrid-day) {
+  border-color: #d9e1ea;
+}
+
+
+
+/*
+.calendarioContainer :global(.fc-event) {
+  background-color: #EEF2F6;
+  border-color: #EEF2F6;
+}
+*/
+
+.calendarioContainer :global(.fc-day-today) {
+  background-color: #E7F0F8 !important;
+}
+
+/*tamanho linha allday*/
+.allDayPequeno :global(.fc-timegrid-axis-chunk),
+.allDayPequeno :global(.fc-daygrid-body) {
+  height: auto !important;
+}
+
+.allDayPequeno :global(.fc .fc-timegrid-axis-frame-liquid) {
+  min-height: 0 !important;
+}
+
+.allDayPequeno :global(.fc-daygrid-day-events) {
+  min-height: 0 !important;
+}

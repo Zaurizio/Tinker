@@ -1,0 +1,79 @@
+/* Desempenho.module.css */
+.container {
+  padding: 36px;
+  max-width: 1200px; /* Mantém a largura máxima */
+  margin: 0 auto;
+}
+
+.tituloPagina {
+  font-size: 2.2em;
+  font-weight: 450;
+  color: #142033;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.gridCards {
+  display: grid;
+  /* Ajustamos as colunas: a primeira para o card grande, a segunda para os cards menores */
+  /* A proporção 1fr 1.5fr significa que a segunda coluna será 1.5 vezes mais larga que a primeira */
+  grid-template-columns: 1fr 1.5fr; 
+  gap: 20px; /* Espaçamento entre as colunas */
+  margin-bottom: 20px;
+  align-items: center; /* Centraliza verticalmente os itens no grid */
+}
+
+.cardGeral {
+  /* Não precisamos mais de grid-row: span 2 aqui, pois o alinhamento vertical do gridCards já cuida disso */
+  display: flex;
+  height: 100%; /* Garante que o CardDesempenhoGeral ocupe a altura disponível */
+}
+
+.cardsMenores {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Duas colunas para os cards menores */
+  gap: 15px; /* Reduzimos o gap entre os cards menores para ficarem mais próximos */
+  height: 100%; /* Garante que o container dos cards menores ocupe a altura disponível */
+  align-content: center; /* Centraliza o conteúdo (os cards menores) verticalmente dentro do seu container */
+}
+
+/* Estilo para os cards de métrica simples (questões e simulados) */
+/* Mantemos este estilo, mas ele será aplicado via CardMetrica.jsx agora */
+/* .cardMetrica {
+  background-color: var(--cor-fundo-card);
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.metricaTitulo {
+  font-size: 0.9em;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 5px;
+}
+
+.metricaValor {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: var(--cor-primaria);
+} */
+
+.cardDisciplina {
+  grid-column: 1 / -1; /* Faz o card de disciplina ocupar todas as colunas */
+}
+
+/* Responsividade básica */
+@media (max-width: 768px) {
+  .gridCards {
+    grid-template-columns: 1fr; /* Em telas menores, os cards ficam em uma única coluna */
+  }
+
+  .cardGeral {
+    grid-row: auto; /* Remove o span de linha em telas menores */
+  }
+}

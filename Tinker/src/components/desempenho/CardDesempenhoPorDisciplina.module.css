@@ -1,0 +1,49 @@
+/* CardDesempenhoPorDisciplina.module.css */
+.card {
+  background-color: whitesmoke;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%; /*ocupa a largura total*/
+}
+
+.titulo {
+  text-align: center;
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.mensagemVazia {
+  color:#777; /* Cinza claro */
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.tabelaContainer {
+  overflow-x: auto; /*para tabelas que podem ser muito largas*/
+}
+
+.tabelaContainer table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.tabelaContainer th,
+.tabelaContainer td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--cor-borda-tabela);
+}
+
+.tabelaContainer th {
+  background-color: var(--cor-cabecalho-tabela);
+  font-weight: bold;
+  color: var(--cor-texto-cabecalho-tabela);
+}
+
+.tabelaContainer tr:last-child td {
+  border-bottom: none;
+}

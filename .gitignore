@@ -1,0 +1,27 @@
+# React / Node
+Tinker/node_modules/
+Tinker/dist/
+Tinker/build/
+
+# Flutter
+thinker_prototipo/.dart_tool/
+thinker_prototipo/build/
+thinker_prototipo/.pub-cache/
+thinker_prototipo/.flutter-plugins
+thinker_prototipo/.flutter-plugins-dependencies
+thinker_prototipo/.packages
+
+# Visual Studio / C#
+Desktop PI (1)/.vs/
+Desktop PI (1)/**/bin/
+Desktop PI (1)/**/obj/
+
+# Geral
+*.log
+Thumbs.db
+.DS_Store
+.vs/
+**/.vs/
+
+packages/
+**/packages/

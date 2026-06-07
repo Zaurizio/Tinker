@@ -1,0 +1,166 @@
+.cardBusca {
+  width: 100%; /*ocupa toda largura*/
+  max-width: 1100px; /*ninca passa de 980px*/
+}
+
+.formulario { /*em coluna*/
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.linhaDuasColunas { /*linha com dois itens*/
+  display: grid;
+  grid-template-columns: 1fr 1fr; /*metade pra cada lado*/
+  gap: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label { /*rótulos dos campos*/
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #142033;
+}
+
+.campo select,
+.campo input {
+  width: 100%;
+  height: 50px;
+  padding: 0 16px;
+  border: 1px solid #d9e1ea;
+  border-radius: 14px;
+  background: #ffffff; /*ver fundo dos campos*/
+  color: #142033;
+  font-size: 1rem;
+  box-sizing: border-box;
+  outline: none; /*remove o contorno padrão do navegador*/
+  transition: border-color 0.2s ease, box-shadow 0.2s ease; /*mudança de foco suave*/
+}
+
+.campo select:focus,
+.campo input:focus { /*campo selecionado*/
+  border-color: #2f5d8a;
+  box-shadow: 0 0 0 3px rgba(47, 93, 138, 0.12);
+}
+
+.campo select {
+  cursor: pointer;
+}
+
+.campo input::placeholder {
+  color: #8a97a6;
+}
+
+.linhaStatus { /*linha botões*/
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rotuloStatus { /*texto botões*/
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #142033;
+}
+
+.grupoBotoesStatus { /*onde ficam*/
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap; /*se faltar espaço quebra linha*/
+}
+
+.botaoStatus { /*como são*/
+  height: 42px;
+  padding: 0 18px; /*dos lados*/
+  border: 1px solid #c7d2df;
+  border-radius: 999px;
+  background: #ffffff; /*ver cor fundo dos botões*/
+  color: #142033;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.botaoStatus:hover {
+  background: #eef2f6;
+  border-color: #b8c6d6;
+}
+
+.botaoStatusAtivo {
+  background: #e7f0f8;
+  border-color: #2f5d8a;
+  color: #2f5d8a;
+}
+
+.linhaAcoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.botaoPrimario,
+.botaoSecundario {
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 14px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoPrimario { /*botão buscar*/
+  border: none;
+  background: #2f5d8a;
+  color: #ffffff;
+}
+
+.botaoPrimario:hover {
+  background: #244a70;
+}
+
+.botaoSecundario { /*botão limpar filtros*/
+  border: 1px solid #c7d2df;
+  background: #ffffff;
+  color: #142033;
+}
+
+.botaoSecundario:hover {
+  background: #eef2f6;
+}
+
+/*anos e qtd de questoes*/
+.grupoAnosQuantidade {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Divide o espaço igualmente */
+  gap: 20px; /* Espaçamento entre os campos */
+}
+
+/* --- Media Queries --- */
+@media (max-width: 860px) {
+  .linhaDuasColunas {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .grupoAnosQuantidade { /* Também empilha em telas pequenas */
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .linhaAcoes {
+    justify-content: stretch;
+  }
+
+  .botaoPrimario,
+  .botaoSecundario {
+    width: 100%;
+  }
+}

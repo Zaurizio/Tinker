@@ -1,0 +1,61 @@
+/* src/components/desempenho/CardMateriaDestaque.module.css */
+.card {
+  background-color: #f5f5f5; /* whitesmoke */
+  border-radius: 18px; /* Cantos mais arredondados */
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(15, 35, 52, 0.06); /* Sombra consistente */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  box-sizing: border-box; /* Garante que padding não aumente o tamanho */
+}
+
+.titulo {
+  font-size: 1.5rem; /* Um pouco menor para ser um subtítulo */
+  font-weight: 550;
+  color: #142033; /* Cor de texto mais suave */
+  margin-bottom: 10px;
+}
+
+.materiaContainer {
+  border-radius: 12px; /* Cantos arredondados para o bloco interno */
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px; /* Espaçamento entre matéria e taxa */
+  border: 1px solid; /* A cor da borda virá do JS */
+  width: fit-content; /* Ajusta a largura ao conteúdo */
+}
+
+.materia {
+  font-size: 1.3em; /* Tamanho maior para o nome da matéria */
+  font-weight: bold;
+  margin: 0; /* Remove margens padrão */
+}
+
+.taxa {
+  font-size: 1.1em; /* Tamanho para a porcentagem */
+  font-weight: 600;
+  margin: 0; /* Remove margens padrão */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .card {
+    padding: 15px;
+  }
+  .titulo {
+    font-size: 0.85rem;
+  }
+  .materia {
+    font-size: 1.2em;
+  }
+  .taxa {
+    font-size: 1em;
+  }
+}
+

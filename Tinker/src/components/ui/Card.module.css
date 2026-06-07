@@ -1,0 +1,8 @@
+.card {
+  background: whitesmoke;
+  border: 1px solid #D9E1EA;
+  border-radius: 20px;
+  padding: 28px;
+  box-sizing: border-box; /*largura inclui conteúdo, não é soma*/
+  box-shadow: 0 8px 24px rgba(20, 32, 51, 0.04);
+}

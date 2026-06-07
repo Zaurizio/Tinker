@@ -1,0 +1,58 @@
+.cardSimulado {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    position: relative; /* Essencial para posicionar o menu de opções */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px; /* Garante que todos os cards tenham uma altura mínima consistente */
+    cursor: pointer; /* Indica que o card é interativo */
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.cardSimulado:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Alinha o título e o botão no topo */
+    margin-bottom: 10px;
+}
+
+.simuladoTitle {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    flex-grow: 1; /* Permite que o título ocupe o espaço restante */
+    word-break: break-word; /* Quebra palavras longas */
+}
+
+.menuButton {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1; /* Garante que os três pontinhos fiquem bem alinhados */
+    align-self: flex-start; /* Alinha o botão no topo do header */
+    z-index: 2; /* Garante que o botão esteja acima de outros elementos se houver sobreposição */
+}
+
+.menuButton:hover {
+    color: #007bff; /* Exemplo de cor ao passar o mouse */
+}
+
+.simuladoDescription {
+    font-size: 0.9em;
+    color: #777;
+    margin: 0;
+    flex-grow: 1; /* Permite que a descrição ocupe o espaço restante */
+}

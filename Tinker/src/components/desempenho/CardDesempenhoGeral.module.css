@@ -1,0 +1,51 @@
+/* src/components/desempenho/CardDesempenhoGeral.module.css */
+.card {
+  background: whitesmoke;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(15, 35, 52, 0.06);
+  padding: 20px 22px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza tudo horizontalmente */
+  justify-content: space-between; /* Distribui espaço entre os itens */
+  width: 100%; /* Deixa o grid/pai controlar a largura */
+  min-height: 200px; /* Altura mínima para o card */
+  text-align: center; /* Centraliza o texto */
+}
+
+.titulo {
+  font-size: 1.5rem; /* Um pouco maior para ser o único título */
+  font-weight: 550;
+  color: #142033;
+  margin: 0 0 7px 0; /* Margem inferior para separar do gráfico */
+}
+
+.graficoContainer {
+  flex-grow: 1; /* Permite que o gráfico ocupe o espaço disponível */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 7px; /* Margem inferior para separar da mensagem */
+}
+
+.mensagem {
+  margin: 0; /* Remove margens padrão */
+  font-size: 1.2rem;
+  color: #5e6b7a;
+}
+
+/* Responsividade (se necessário, pode ajustar o tamanho do gráfico) */
+@media (max-width: 768px) {
+  .card {
+    min-height: 180px;
+    padding: 18px 20px;
+  }
+  .titulo {
+    font-size: 1rem;
+  }
+  .mensagem {
+    font-size: 0.85rem;
+  }
+  /* O AcertosRing já é responsivo pelo width/height do seu div pai */
+}

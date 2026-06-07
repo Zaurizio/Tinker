@@ -1,0 +1,285 @@
+.fc-timegrid-axis-cushion {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+}
+
+.fc-timegrid-event .fc-event-main {
+  padding: 4px 6px;
+}
+
+.fc-timegrid-event .fc-event-time {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.fc-timegrid-event .fc-event-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.fc-event-title {
+  font-size: 0.85rem;
+  padding: 2px 4px;
+}
+
+.fc-event-time {
+  font-size: 0.75rem;
+  padding: 2px 4px;
+}
+
+/* dia inteiro */
+.fc-timegrid-axis-cushion {
+  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/*scroll */
+.fc .fc-scroller::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fc .fc-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fc .fc-scroller::-webkit-scrollbar-thumb {
+  background-color: #c1c9d4;
+  border-radius: 10px;
+}
+
+.fc .fc-scroller::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aab4;
+}
+
+.fc .fc-scroller::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/*fundo do scroll*/
+.fc .fc-scroller::-webkit-scrollbar-track {
+  background: #F6F8FB !important;
+}
+
+*::-webkit-scrollbar-track {
+  background: #F6F8FB !important;
+}
+
+/*remove borda do cabeçalho*/
+.fc .fc-col-header {
+  background: transparent;
+}
+
+.fc .fc-col-header-cell {
+  border: none !important;
+  background: transparent !important;
+  padding: 8px 0 4px 0;
+}
+
+.fc .fc-col-header-cell-cushion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: inherit;
+}
+
+/*remove bordas da área all-day*/
+.fc .fc-timegrid-divider {
+  display: none !important;
+}
+
+.fc .fc-daygrid-body {
+  border-bottom: none !important;
+}
+
+
+.fc .fc-timegrid-axis {
+  border: none !important;
+}
+
+.fc .fc-scrollgrid-section-header td,
+.fc .fc-scrollgrid-section-sticky td {
+  border-bottom: none !important;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: transparent;
+}
+
+/*mantém apenas as linhas horizontais internas do grid*/
+.fc .fc-timegrid-slot {
+  border-color: #e0e0e0 !important;
+}
+
+/*número do dia de hoje em azul no mensal*/
+.fc-dayGridMonth-view .fc-day-today .fc-daygrid-day-number {
+  background-color: #1a73e8;
+  color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+}
+
+/*garante que nas outras views o hoje não tenha fundo azul*/
+.fc-timeGridDay-view .fc-day-today,
+.fc-timeGridWeek-view .fc-day-today {
+  background-color: transparent !important;
+}
+
+/*largura barra horário*/
+.fc .fc-timegrid-axis {
+  width: 70px !important;
+  min-width: 70px !important;
+}
+
+.fc-direction-ltr .fc-timegrid-slot-label {
+  width: 70px !important;
+  min-width: 70px !important;
+}
+
+/*altura linha allday*/
+.fc .fc-timegrid-axis-chunk {
+  height: 28px !important;
+  min-height: 28px !important;
+}
+
+.fc-timeGridWeek-view .fc-daygrid-day-frame,
+.fc-timeGridDay-view .fc-daygrid-day-frame {
+  min-height: 28px !important;
+  height: 28px !important;
+}
+
+/*transição*/
+.fc-slide-enter {
+  animation: slideEntrar 0.25s ease forwards;
+}
+
+.fc-slide-enter-back {
+  animation: slideEntrarBack 0.25s ease forwards;
+}
+
+.fc-fade-enter {
+  animation: fadeEntrar 0.2s ease forwards;
+}
+
+@keyframes slideEntrar {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideEntrarBack {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeEntrar {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/*tira primeiro horario*/
+.fc .fc-timegrid-slot-label[data-time="00:00:00"] .fc-timegrid-slot-label-cushion {
+  visibility: hidden;
+}
+
+.fc .fc-timegrid-slot-minor {
+  border-top-style: none !important;
+}
+
+/*dia de hoje sem fundo*/
+.fc .fc-day-today {
+  background-color: transparent !important;
+}
+
+/* todos os números ficam com o mesmo tamanho para alinhar */
+.fc-dayGridMonth-view .fc-daygrid-day-number {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 4px auto 0 auto;
+  text-decoration: none;
+  color: #3c4043;
+  font-size: 0.75rem;
+}
+
+/* círculo colorido só no hoje */
+.fc-dayGridMonth-view .fc-day-today .fc-daygrid-day-number {
+  background-color: #2f5d8a !important;
+  color: #fff !important;
+  font-weight: 500;
+}
+
+/* ── SEMANAL e DIÁRIO ── */
+
+/* layout do cushion de todos os dias */
+.fc-timeGridWeek-view .fc-col-header-cell-cushion,
+.fc-timeGridDay-view .fc-col-header-cell-cushion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+}
+
+/* nome do dia (DOM, SEG...) — cor padrão */
+.fc-timeGridWeek-view .fc-col-header-cell-cushion span:first-child,
+.fc-timeGridDay-view .fc-col-header-cell-cushion span:first-child {
+  font-size: 0.7rem;
+  color: #70757a;
+  letter-spacing: 0.5px;
+}
+
+/* número do dia — tamanho fixo pra todos ficarem alinhados */
+.fc-timeGridWeek-view .fc-col-header-cell-cushion span:last-child,
+.fc-timeGridDay-view .fc-col-header-cell-cushion span:last-child {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.1rem !important;
+  font-weight: 400;
+  color: #3c4043;
+  line-height: 1;
+}
+
+/* hoje — nome do dia em azul */
+.fc-timeGridWeek-view .fc-day-today .fc-col-header-cell-cushion span:first-child,
+.fc-timeGridDay-view .fc-day-today .fc-col-header-cell-cushion span:first-child {
+  color: #2f5d8a !important;
+  font-weight: 600;
+}
+
+/* hoje — número com círculo azul e texto branco */
+.fc-timeGridWeek-view .fc-day-today .fc-col-header-cell-cushion span:last-child,
+.fc-timeGridDay-view .fc-day-today .fc-col-header-cell-cushion span:last-child {
+  background-color: #2f5d8a !important;
+  color: #fff !important;
+}
+
+/*altura máxima nem funciona*/
+.fc-dayGridMonth-view .fc-daygrid-row {
+  max-height: 120px !important;
+}
+
+.fc-dayGridMonth-view .fc-daygrid-day-frame {
+  overflow: hidden;
+} 
+
+/*linha semanal*/
+.fc-timeGridWeek-view td {
+  border-color: #e0e0e0 !important;
+}
+

@@ -1,0 +1,57 @@
+.dropdownMenu {
+    position: absolute;
+    top: 35px;
+    right: 5px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    min-width: 180px; /* Aumentei um pouco a largura para acomodar os ícones e o texto */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdownMenu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdownMenu li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.95em;
+    color: #333;
+    transition: background-color 0.2s ease-in-out;
+    display: flex; /* Usa flexbox para alinhar ícone e texto */
+    align-items: center; /* Centraliza verticalmente */
+}
+
+.dropdownMenu li:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdownMenu li:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.dropdownMenu li:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.deleteOption {
+    color: #dc3545;
+}
+
+.deleteOption:hover {
+    background-color: #ffebeb;
+}
+
+.icon {
+    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
+    font-size: 1.1em; /* Ajusta o tamanho do ícone */
+}

@@ -1,0 +1,29 @@
+.paginaQuestoes {
+  width: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+  display: flex; /* Adicionado para usar flexbox */
+  flex-direction: column; /* Organiza os itens em coluna */
+  align-items: center; /* Centraliza os itens horizontalmente */
+  min-height: 100vh; /* Garante que a página ocupe a altura total da viewport */
+  background: #f4f6f9; /* Para ter o mesmo fundo da página de simulados */
+}
+
+.topo {
+  margin-bottom: 24px;
+  width: 100%; /* Garante que o cabeçalho ocupe a largura total para centralizar o título */
+  text-align: center; /* Centraliza o título */
+}
+
+.titulo {
+  margin: 0;
+  font-size: 2.2em;
+  font-weight: 450;
+  color: #142033;
+}
+
+@media (max-width: 860px) {
+  .paginaQuestoes {
+    padding: 20px;
+  }
+}

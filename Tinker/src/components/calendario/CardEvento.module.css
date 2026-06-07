@@ -1,0 +1,248 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: transparent;
+  pointer-events: none;
+}
+
+.card {
+  position: fixed;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+  min-width: 400px;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  pointer-events: all;
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inputEvento {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d9e1ea;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #142033;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputEvento:focus {
+  border-color: #2f5d8a;
+}
+
+.botaoData {
+  background-color: white;
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  min-width: 160px;
+}
+
+.inputHora {
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  outline: none;
+}
+
+.selectFrequencia {
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+}
+
+.cores {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.bolinha {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.menuOpcao {
+  position: relative;
+}
+
+.botaoOpcao {
+  background-color: white;
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #142033;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.botaoOpcao:hover {
+  background-color: #eff2f6;
+}
+
+.dropdownOpcao {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background-color: white;
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 300;
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.itemOpcao {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  color: #142033;
+}
+
+.itemOpcao:hover {
+  background-color: #eff2f6;
+}
+
+.itemAtivo {
+  background-color: #eff2f6;
+  font-weight: 500;
+}
+
+.rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.botaoPrimario,
+.botaoSecundario {
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.botaoPrimario {
+  border: none;
+  background: #2f5d8a;
+  color: #ffffff;
+}
+
+.botaoPrimario:hover {
+  background: #244a70;
+}
+
+.botaoSecundario {
+  border: 1px solid #c7d2df;
+  background: #ffffff;
+  color: #142033;
+}
+
+.botaoSecundario:hover {
+  background: #eef2f6;
+}
+
+/*linha 3*/
+.labelCheck {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #142033;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: #2f5d8a;
+}
+
+.botaoCor {
+  background-color: white;
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  padding: 9.5px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.botaoCor:hover {
+  background-color: #eff2f6;
+}
+
+.circuloCor {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: block;
+  flex-shrink: 0;
+}
+
+.dropdownCor {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background-color: white;
+  border: 1px solid #d9e1ea;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 300;
+  padding: 8px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  width: 110px;
+}
+
+.bolinhaOpcao {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
