@@ -5,13 +5,118 @@
   font-family: 'Poppins', sans-serif; /*sans-serif se n achar*/
 }
 
+:root {
+  --cor-fundo-base: #F6F8FB;
+  --cor-fundo-pagina: #f4f6f9;
+  --cor-fundo-pagina-suave: #f4f8fc;
+  --cor-fundo-card: #ffffff;
+  --cor-fundo-card-suave: whitesmoke;
+  --cor-fundo-card-cinza: #f5f5f5;
+  --cor-fundo-input: #ffffff;
+  --cor-fundo-input-suave: #fbfcfe;
+  --cor-fundo-input-login: #f8fafc;
+  --cor-fundo-hover: #eef2f6;
+  --cor-fundo-hover-calendario: #eff2f6;
+  --cor-fundo-hover-home: #eef2f8;
+  --cor-fundo-selecao: #e7f0f8;
+  --cor-fundo-resumo: #f7f9fc;
+  --cor-fundo-opcao-antiga: #f0f0f0;
+  --cor-fundo-erro-suave: #ffebeb;
+
+  --cor-texto-principal: #142033;
+  --cor-texto-principal-alternativo: #0f1f35;
+  --cor-texto-secundario: #5e6b7a;
+  --cor-texto-secundario-alternativo: #5f6b7a;
+  --cor-texto-placeholder: #8a97a6;
+  --cor-texto-desabilitado: #b0bac4;
+  --cor-texto-calendario: #70757a;
+  --cor-texto-calendario-escuro: #3c4043;
+  --cor-texto-antigo: #333;
+  --cor-texto-antigo-secundario: #666;
+  --cor-texto-antigo-muted: #777;
+  --cor-texto-claro: #ffffff;
+
+  --cor-primaria: #2f5d8a;
+  --cor-primaria-alternativa: #2f5f91;
+  --cor-primaria-hover: #244a70;
+  --cor-primaria-destaque: #4976a7;
+  --cor-primaria-login: #1a3a5c;
+  --cor-primaria-calendario: #1a73e8;
+  --cor-link: #007bff;
+
+  --cor-borda-padrao: #d9e1ea;
+  --cor-borda-padrao-alternativa: #D9E1EA;
+  --cor-borda-variavel: #d9e3ee;
+  --cor-borda-controle: #c7d2df;
+  --cor-borda-hover: #b8c6d6;
+  --cor-borda-resumo: #d3dbe7;
+  --cor-borda-resumo-hover: #c1cbe0;
+  --cor-borda-calendario: #EAE2D9;
+  --cor-borda-antiga: #e0e0e0;
+  --cor-borda-login: #d0dce8;
+
+  --cor-sombra-card: rgba(15, 35, 52, 0.06);
+  --cor-sombra-card-suave: rgba(20, 32, 51, 0.04);
+  --cor-sombra-card-media: rgba(20, 32, 51, 0.08);
+  --cor-sombra-card-forte: rgba(20, 32, 51, 0.12);
+  --cor-sombra-modal: rgba(20, 32, 51, 0.16);
+  --cor-sombra-overlay: rgba(20, 32, 51, 0.4);
+  --cor-sombra-preta-suave: rgba(0, 0, 0, 0.05);
+  --cor-sombra-preta-media: rgba(0, 0, 0, 0.1);
+  --cor-sombra-preta-hover: rgba(0, 0, 0, 0.12);
+  --cor-sombra-preta-forte: rgba(0, 0, 0, 0.15);
+  --cor-foco-primario: rgba(47, 93, 138, 0.12);
+  --cor-foco-suporte: rgba(73, 118, 167, 0.12);
+
+  --cor-evento-roxo: #8e44ad;
+  --cor-evento-laranja: #d35400;
+  --cor-evento-azul-escuro: #2c3e50;
+  --cor-evento-azul-claro: #2894F6;
+  --cor-evento-vermelho: #e74c3c;
+  --cor-evento-amarelo: #f39c12;
+  --cor-evento-verde: #16a085;
+
+  --cor-simulado-coral: #ff7f50;
+  --cor-simulado-roxo: #6a5acd;
+  --cor-simulado-violeta: #8a2be2;
+  --cor-simulado-petroleo: #008b8b;
+  --cor-simulado-verde-agua: #20b2aa;
+  --cor-simulado-tomate: #ff6347;
+  --cor-simulado-azul-aco: #4682b4;
+
+  --cor-turma-verde: #4a7c6f;
+  --cor-turma-roxo: #7a5c8a;
+  --cor-desempenho-alerta: #df4d5c;
+  --cor-acao-destrutiva: #dc3545;
+}
+
 html, body, #root {
-  background-color: #F6F8FB;
+  background-color: var(--cor-fundo-base);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden; /*sem rolagem horizontal*/
 } 
+
+body.dark-mode {
+  --cor-fundo-base: #0f1724;
+  --cor-fundo-pagina: #101826;
+  --cor-fundo-pagina-suave: #0f1724;
+  --cor-fundo-card: #142033;
+  --cor-fundo-card-suave: #1b2433;
+  --cor-fundo-card-cinza: #1b2433;
+  --cor-fundo-input: #142033;
+  --cor-fundo-hover: #20324d;
+  --cor-texto-principal: #f6f8fb;
+  --cor-texto-principal-alternativo: #f3f6fb;
+  --cor-texto-secundario: #b8c6d6;
+  --cor-texto-secundario-alternativo: #aab4c3;
+  --cor-primaria: #4f8cc9;
+  --cor-borda-padrao: #2b3c52;
+  --cor-borda-variavel: #2d3a4d;
+  --cor-borda-controle: #2b3c52;
+}
+
 /*
 #1E2630
 #011526
@@ -22,3 +127,4 @@ html, body, #root {
 #02152B
 #042B3D
 #020f2c
+*/

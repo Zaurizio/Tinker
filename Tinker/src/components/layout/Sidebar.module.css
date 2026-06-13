@@ -1,12 +1,18 @@
 .sidebar {
   width: 240px; /*largura da barra*/
-  min-height: 100vh; /*altura inteira da tela*/
+  height: 100vh; /*altura inteira da tela*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
   background: whitesmoke;
   border-right: 1px solid #D9E1EA; /*linha fina na direita*/
   padding: 18px 16px; /*espaço interno (18 em cima e embaixo, 16 dos lados)*/
   box-sizing: border-box;/*padding dentro da largura total*/
   display: flex;
   flex-direction: column; /*empilha os elementos*/
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /*botão do menu + logo*/
