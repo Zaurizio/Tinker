@@ -1,9 +1,9 @@
 /* src/components/desempenho/CardMateriaDestaque.module.css */
 .card {
-  background-color: #f5f5f5; /* whitesmoke */
+  background-color: var(--cor-fundo-card-cinza); /* var(--cor-fundo-card-suave) */
   border-radius: 18px; /* Cantos mais arredondados */
   padding: 20px;
-  box-shadow: 0 8px 25px rgba(15, 35, 52, 0.06); /* Sombra consistente */
+  box-shadow: 0 8px 25px var(--cor-sombra-card); /* Sombra consistente */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,7 +16,7 @@
 .titulo {
   font-size: 1.5rem; /* Um pouco menor para ser um subtítulo */
   font-weight: 550;
-  color: #142033; /* Cor de texto mais suave */
+  color: var(--cor-texto-principal); /* Cor de texto mais suave */
   margin-bottom: 10px;
 }
 

@@ -6,7 +6,7 @@
   flex-direction: column; /* Organiza os itens em coluna */
   align-items: center; /* Centraliza os itens horizontalmente */
   min-height: 100vh; /* Garante que a página ocupe a altura total da viewport */
-  background: #f4f6f9; /* Para ter o mesmo fundo da página de simulados */
+  background: var(--cor-fundo-pagina); /* Para ter o mesmo fundo da página de simulados */
 }
 
 .topo {
@@ -19,7 +19,7 @@
   margin: 0;
   font-size: 2.2em;
   font-weight: 450;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 @media (max-width: 860px) {

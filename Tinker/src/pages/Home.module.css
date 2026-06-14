@@ -2,7 +2,7 @@
 .paginaHome {
   width: 100%;
   min-height: 100vh; /*tamanho da tela*/
-  background: linear-gradient(to bottom right, #f4f6f9 50%, #c7d8ea 100%); /* Copiado de inicial.module.css */
+  background: linear-gradient(to bottom right, var(--cor-fundo-pagina) 50%, var(--cor-fundo-gradiente) 100%); /* Copiado de inicial.module.css */
   display: flex;
   flex-direction: column; /*elementos em coluna*/
 }
@@ -40,9 +40,9 @@
 /* Bloco Hoje */
 .cardHoje {
   flex: 1.8; /* maior que o resumo */
-  background: #ffffff;
+  background: var(--cor-fundo-card);
   border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 15px var(--cor-sombra-preta-suave);
   padding: 20px 22px;
   box-sizing: border-box;
   min-height: 150px; /* altura fixa mínima */
@@ -53,21 +53,21 @@
 .cardHojeTitulo {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #142033;
+  color: var(--cor-texto-principal);
   margin: 0 0 12px 0;
 }
 
 .cardHojeEmpty {
   font-size: 0.95rem;
-  color: #7a8899;
+  color: var(--cor-texto-placeholder);
 }
 
 /* Bloco Resumo rápido */
 .cardResumo {
   flex: 1.2; /* menor */
-  background: #ffffff;
+  background: var(--cor-fundo-card);
   border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 15px var(--cor-sombra-preta-suave);
   padding: 16px 18px;
   box-sizing: border-box;
   display: flex;
@@ -78,7 +78,7 @@
 .cardResumoTitulo {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #142033;
+  color: var(--cor-texto-principal);
   margin: 0 0 10px 0;
 }
 
@@ -87,8 +87,8 @@
   margin: 0;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px dashed #d3dbe7;
-  background: #f7f9fc;
+  border: 1px dashed var(--cor-borda-resumo);
+  background: var(--cor-fundo-resumo);
   cursor: pointer;
   text-align: left;
   display: flex;
@@ -99,25 +99,25 @@
 }
 
 .cardResumoInner:hover {
-  background: #eef2f8;
-  border-color: #c1cbe0;
+  background: var(--cor-fundo-hover-home);
+  border-color: var(--cor-borda-resumo-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 10px var(--cor-sombra-preta-suave);
 }
 
 .cardResumoTaxa {
   font-size: 0.95rem;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .cardResumoTaxa span {
   font-weight: 600;
-  color: #244a70;
+  color: var(--cor-primaria-hover);
 }
 
 .cardResumoTexto {
   font-size: 0.9rem;
-  color: #5e6b7a;
+  color: var(--cor-texto-secundario);
 }
 
 /* Responsivo: empilhar em telas menores */

@@ -1,7 +1,7 @@
 .pagina {
   flex: 1;
   min-height: 100vh;
-  background: #f4f6f9;
+  background: var(--cor-fundo-pagina);
   padding: 36px 32px;
   box-sizing: border-box;
   display: flex;
@@ -25,23 +25,23 @@
 .titulo {
   font-size: 2.2em;
   font-weight: 450;
-  color: #142033;
+  color: var(--cor-texto-principal);
   margin: 0;
 }
 
 .subtitulo,
 .textoCard {
-  color: #5e6b7a;
+  color: var(--cor-texto-secundario);
   font-size: 1rem;
   line-height: 1.5;
   margin: 0;
 }
 
 .card {
-  background: #ffffff;
-  border: 1px solid #d9e1ea;
+  background: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 18px;
-  box-shadow: 0 8px 25px rgba(15, 35, 52, 0.06);
+  box-shadow: 0 8px 25px var(--cor-sombra-card);
   padding: 28px;
   box-sizing: border-box;
 }
@@ -56,7 +56,7 @@
 .tituloCard {
   font-size: 1.35rem;
   font-weight: 600;
-  color: #142033;
+  color: var(--cor-texto-principal);
   margin: 0;
 }
 
@@ -79,14 +79,14 @@
   width: 138px;
   height: 138px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #244a70, #142033);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--cor-primaria-hover), var(--cor-texto-principal));
+  color: var(--cor-texto-claro);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.8rem;
   font-weight: 700;
-  box-shadow: 0 8px 20px rgba(20, 32, 51, 0.12);
+  box-shadow: 0 8px 20px var(--cor-sombra-card-forte);
 }
 
 .formularioConta {
@@ -99,17 +99,17 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #142033;
+  color: var(--cor-texto-principal);
   font-size: 0.95rem;
   font-weight: 600;
 }
 
 .campo input {
   height: 48px;
-  border: 1px solid #c7d2df;
+  border: 1px solid var(--cor-borda-controle);
   border-radius: 12px;
-  background: #ffffff;
-  color: #142033;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
   padding: 0 16px;
   font-size: 1rem;
   outline: none;
@@ -117,8 +117,8 @@
 }
 
 .campo input:focus {
-  border-color: #4976a7;
-  box-shadow: 0 0 0 3px rgba(73, 118, 167, 0.12);
+  border-color: var(--cor-primaria-destaque);
+  box-shadow: 0 0 0 3px var(--cor-foco-suporte);
 }
 
 .acoesConta {
@@ -144,24 +144,24 @@
 
 .botaoPrimario {
   border: none;
-  background: #2f5d8a;
-  color: #ffffff;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
   padding: 0 24px;
 }
 
 .botaoPrimario:hover {
-  background: #244a70;
+  background: var(--cor-botao-primario-hover);
 }
 
 .botaoSecundario {
-  border: 1px solid #c7d2df;
-  background: #ffffff;
-  color: #142033;
+  border: 1px solid var(--cor-borda-controle);
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
   padding: 0 18px;
 }
 
 .botaoSecundario:hover {
-  background: #eef2f6;
+  background: var(--cor-fundo-hover);
 }
 
 .opcoesTema {
@@ -172,10 +172,10 @@
 
 .opcaoTema {
   min-height: 92px;
-  border: 1px solid #d9e1ea;
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 12px;
-  background: #ffffff;
-  color: #142033;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
   padding: 0 24px;
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -191,18 +191,18 @@
 
 .opcaoTema:hover,
 .opcaoTemaAtiva {
-  border-color: #4976a7;
-  box-shadow: 0 4px 16px rgba(20, 32, 51, 0.08);
+  border-color: var(--cor-primaria-destaque);
+  box-shadow: 0 4px 16px var(--cor-sombra-card-media);
 }
 
 .iconeTema {
   font-size: 1.8rem;
-  color: #142033;
+  color: var(--cor-texto-principal);
   display: flex;
 }
 
 .radioTema {
-  color: #7a8899;
+  color: var(--cor-texto-placeholder);
   display: flex;
   font-size: 1.2rem;
 }
@@ -214,25 +214,25 @@
 }
 
 .itemContato {
-  border: 1px solid #d9e1ea;
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 12px;
   padding: 22px;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 14px;
   align-items: center;
-  background: #ffffff;
+  background: var(--cor-fundo-card);
 }
 
 .itemContato h3 {
-  color: #142033;
+  color: var(--cor-texto-principal);
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 6px;
 }
 
 .itemContato p {
-  color: #5e6b7a;
+  color: var(--cor-texto-secundario);
   font-size: 0.9rem;
   line-height: 1.4;
   margin: 0;
@@ -242,8 +242,8 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #e7f0f8;
-  color: #244a70;
+  background: var(--cor-fundo-selecao);
+  color: var(--cor-primaria-hover);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -253,14 +253,14 @@
 .botaoContorno {
   grid-column: 2;
   justify-self: start;
-  border: 1px solid #4976a7;
-  background: #ffffff;
-  color: #2f5d8a;
+  border: 1px solid var(--cor-primaria-destaque);
+  background: var(--cor-fundo-card);
+  color: var(--cor-primaria);
   padding: 0 18px;
 }
 
 .botaoContorno:hover {
-  background: #eef2f6;
+  background: var(--cor-fundo-hover);
 }
 
 .integrantesGrid {
@@ -276,15 +276,15 @@
   align-items: center;
   gap: 12px;
   text-align: center;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .iconeIntegrante {
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #244a70, #142033);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--cor-primaria-hover), var(--cor-texto-principal));
+  color: var(--cor-texto-claro);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,7 +298,7 @@
 }
 
 :global(.dark-mode) .pagina {
-  background: #101826;
+  background: var(--cor-fundo-pagina);
 }
 
 :global(.dark-mode) .titulo,
@@ -308,13 +308,13 @@
 :global(.dark-mode) .integrante,
 :global(.dark-mode) .opcaoTema,
 :global(.dark-mode) .iconeTema {
-  color: #f6f8fb;
+  color: var(--cor-texto-principal);
 }
 
 :global(.dark-mode) .subtitulo,
 :global(.dark-mode) .textoCard,
 :global(.dark-mode) .itemContato p {
-  color: #b8c6d6;
+  color: var(--cor-texto-secundario);
 }
 
 :global(.dark-mode) .card,
@@ -323,21 +323,21 @@
 :global(.dark-mode) .campo input,
 :global(.dark-mode) .botaoSecundario,
 :global(.dark-mode) .botaoContorno {
-  background: #142033;
-  border-color: #2b3c52;
+  background: var(--cor-fundo-card);
+  border-color: var(--cor-borda-padrao);
 }
 
 :global(.dark-mode) .campo input {
-  color: #f6f8fb;
+  color: var(--cor-texto-principal);
 }
 
 :global(.dark-mode) .botaoSecundario {
-  color: #f6f8fb;
+  color: var(--cor-texto-principal);
 }
 
 :global(.dark-mode) .botaoSecundario:hover,
 :global(.dark-mode) .botaoContorno:hover {
-  background: #20324d;
+  background: var(--cor-fundo-hover);
 }
 
 @media (max-width: 860px) {

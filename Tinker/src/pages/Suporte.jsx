@@ -5,15 +5,17 @@ import SecaoContato from "../components/suporte/SecaoContato";
 import SecaoSobre from "../components/suporte/SecaoSobre";
 import estiloSuporte from "./Suporte.module.css";
 
+function obterTemaInicial() {
+  return localStorage.getItem("tema") === "escuro" ? "escuro" : "claro";
+}
+
 function Suporte() {
-  const [tema, setTema] = useState("claro");
+  const [tema, setTema] = useState(obterTemaInicial);
 
   useEffect(() => {
-    document.body.classList.toggle("dark-mode", tema === "escuro");
-
-    return () => {
-      document.body.classList.remove("dark-mode");
-    };
+    const modoEscuroAtivo = tema === "escuro";
+    document.body.classList.toggle("dark-mode", modoEscuroAtivo);
+    localStorage.setItem("tema", tema);
   }, [tema]);
 
   return (

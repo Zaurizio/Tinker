@@ -228,7 +228,7 @@ function aplicarAnimacao(tipo, callback) {
                   textAlign: 'right',
                   paddingRight: '8px',
                   fontSize: '0.75rem',
-                  color: '#70757a',
+                  color: 'var(--cor-texto-calendario)',
                   fontFamily: 'Poppins, sans-serif'
                 }}>
                   {hora12} {periodo}
@@ -245,7 +245,7 @@ function aplicarAnimacao(tipo, callback) {
 
               if (visualizacao === 'dayGridMonth') {
                 return (
-                  <span style={{ fontSize: '0.7rem', color: '#70757a', letterSpacing: '0.5px' }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--cor-texto-calendario)', letterSpacing: '0.5px' }}>
                     {diaSemana}
                   </span>
                 )
@@ -253,10 +253,10 @@ function aplicarAnimacao(tipo, callback) {
 
               return (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#70757a', letterSpacing: '0.5px' }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--cor-texto-calendario)', letterSpacing: '0.5px' }}>
                     {diaSemana}
                   </span>
-                  <span style={{ fontSize: '1.8rem', fontWeight: '400', color: '#3c4043', lineHeight: 1 }}>
+                  <span style={{ fontSize: '1.8rem', fontWeight: '400', color: 'var(--cor-texto-calendario-escuro)', lineHeight: 1 }}>
                     {diaMes}
                   </span>
                 </div>

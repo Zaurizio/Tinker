@@ -35,13 +35,17 @@ const Desempenho = () => {
             titulo="Matéria com maior taxa de acerto"
             materia={dadosDesempenho.materiaMaiorAcerto.nome}
             taxa={dadosDesempenho.materiaMaiorAcerto.taxa}
-            corDestaque="#4976a7"
+            corDestaque="var(--cor-primaria-destaque)"
+            corFundoDestaque="var(--cor-primaria-destaque-fundo)"
+            corBordaDestaque="var(--cor-primaria-destaque-borda)"
           />
           <CardMateriaDestaque
             titulo="Matéria com menor taxa de acerto"
             materia={dadosDesempenho.materiaMenorAcerto.nome}
             taxa={dadosDesempenho.materiaMenorAcerto.taxa}
-            corDestaque="#df4d5c"
+            corDestaque="var(--cor-desempenho-alerta)"
+            corFundoDestaque="var(--cor-desempenho-alerta-fundo)"
+            corBordaDestaque="var(--cor-desempenho-alerta-borda)"
           />
           {/* Card para Número de questões respondidas */}
           <CardMetrica

@@ -1,7 +1,7 @@
 .pagina {
   flex: 1;
   min-height: 100vh;
-  background: #f4f6f9;
+  background: var(--cor-fundo-pagina);
   padding: 36px 32px;
   box-sizing: border-box;
   display: flex; /* Adicionado para centralizar o conteúdo */
@@ -19,7 +19,7 @@
 .titulo { /* Novo estilo para o título "Minhas Turmas" */
   font-size: 2.2em;
   font-weight: 450;
-  color: #142033; /* Cor do texto */
+  color: var(--cor-texto-principal); /* Cor do texto */
   margin-bottom: 10px; /* Espaçamento abaixo do título */
   text-align: left; /* Centraliza o texto */
 }
@@ -42,22 +42,22 @@
 
 .botaoPrimario {
   border: none;
-  background: #2f5d8a;
-  color: #ffffff;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
 }
 
 .botaoPrimario:hover {
-  background: #244a70;
+  background: var(--cor-botao-primario-hover);
 }
 
 .botaoSecundario {
-  border: 1px solid #c7d2df;
-  background: #ffffff;
-  color: #142033;
+  border: 1px solid var(--cor-borda-controle);
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
 }
 
 .botaoSecundario:hover {
-  background: #eef2f6;
+  background: var(--cor-fundo-hover);
 }
 
 .listaTurmas {
@@ -68,7 +68,7 @@
 
 .estadoVazio {
   font-size: 0.95rem;
-  color: #8a97a6;
+  color: var(--cor-texto-placeholder);
   padding: 12px 4px;
 }
 

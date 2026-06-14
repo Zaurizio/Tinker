@@ -43,12 +43,12 @@
 }
 
 .fc .fc-scroller::-webkit-scrollbar-thumb {
-  background-color: #c1c9d4;
+  background-color: var(--cor-scrollbar);
   border-radius: 10px;
 }
 
 .fc .fc-scroller::-webkit-scrollbar-thumb:hover {
-  background-color: #a0aab4;
+  background-color: var(--cor-scrollbar-hover);
 }
 
 .fc .fc-scroller::-webkit-scrollbar-button {
@@ -59,11 +59,11 @@
 
 /*fundo do scroll*/
 .fc .fc-scroller::-webkit-scrollbar-track {
-  background: #F6F8FB !important;
+  background: var(--cor-fundo-base) !important;
 }
 
 *::-webkit-scrollbar-track {
-  background: #F6F8FB !important;
+  background: var(--cor-fundo-base) !important;
 }
 
 /*remove borda do cabeçalho*/
@@ -112,13 +112,13 @@
 
 /*mantém apenas as linhas horizontais internas do grid*/
 .fc .fc-timegrid-slot {
-  border-color: #e0e0e0 !important;
+  border-color: var(--cor-borda-antiga) !important;
 }
 
 /*número do dia de hoje em azul no mensal*/
 .fc-dayGridMonth-view .fc-day-today .fc-daygrid-day-number {
-  background-color: #1a73e8;
-  color: #fff;
+  background-color: var(--cor-primaria-calendario);
+  color: var(--cor-texto-claro);
   border-radius: 50%;
   width: 28px;
   height: 28px;
@@ -209,14 +209,14 @@
   border-radius: 50%;
   margin: 4px auto 0 auto;
   text-decoration: none;
-  color: #3c4043;
+  color: var(--cor-texto-calendario-escuro);
   font-size: 0.75rem;
 }
 
 /* círculo colorido só no hoje */
 .fc-dayGridMonth-view .fc-day-today .fc-daygrid-day-number {
-  background-color: #2f5d8a !important;
-  color: #fff !important;
+  background-color: var(--cor-primaria) !important;
+  color: var(--cor-texto-claro) !important;
   font-weight: 500;
 }
 
@@ -236,7 +236,7 @@
 .fc-timeGridWeek-view .fc-col-header-cell-cushion span:first-child,
 .fc-timeGridDay-view .fc-col-header-cell-cushion span:first-child {
   font-size: 0.7rem;
-  color: #70757a;
+  color: var(--cor-texto-calendario);
   letter-spacing: 0.5px;
 }
 
@@ -251,22 +251,22 @@
   border-radius: 50%;
   font-size: 1.1rem !important;
   font-weight: 400;
-  color: #3c4043;
+  color: var(--cor-texto-calendario-escuro);
   line-height: 1;
 }
 
 /* hoje — nome do dia em azul */
 .fc-timeGridWeek-view .fc-day-today .fc-col-header-cell-cushion span:first-child,
 .fc-timeGridDay-view .fc-day-today .fc-col-header-cell-cushion span:first-child {
-  color: #2f5d8a !important;
+  color: var(--cor-primaria) !important;
   font-weight: 600;
 }
 
 /* hoje — número com círculo azul e texto branco */
 .fc-timeGridWeek-view .fc-day-today .fc-col-header-cell-cushion span:last-child,
 .fc-timeGridDay-view .fc-day-today .fc-col-header-cell-cushion span:last-child {
-  background-color: #2f5d8a !important;
-  color: #fff !important;
+  background-color: var(--cor-primaria) !important;
+  color: var(--cor-texto-claro) !important;
 }
 
 /*altura máxima nem funciona*/
@@ -280,6 +280,6 @@
 
 /*linha semanal*/
 .fc-timeGridWeek-view td {
-  border-color: #e0e0e0 !important;
+  border-color: var(--cor-borda-antiga) !important;
 }
 

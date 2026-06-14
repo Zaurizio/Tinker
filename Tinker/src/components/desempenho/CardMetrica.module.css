@@ -1,9 +1,9 @@
 /* CardMetrica.module.css */
 .card {
-  background-color: #f5f5f5; /* whitesmoke */
+  background-color: var(--cor-fundo-card-cinza); /* var(--cor-fundo-card-suave) */
   border-radius: 18px; /* Cantos arredondados, consistente com outros cards */
   padding: 20px;
-  box-shadow: 0 8px 25px rgba(15, 35, 52, 0.06); /* Sombra suave e consistente */
+  box-shadow: 0 8px 25px var(--cor-sombra-card); /* Sombra suave e consistente */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,14 +16,14 @@
 .titulo {
   font-size: 1.1rem; /* Tamanho menor para o título, como um rótulo */
   font-weight: 500; /* Peso da fonte mais leve */
-  color: #5e6b7a; /* Cor de texto mais suave, para contraste com o valor */
+  color: var(--cor-texto-secundario); /* Cor de texto mais suave, para contraste com o valor */
   margin-bottom: 8px; /* Espaçamento entre título e valor */
 }
 
 .valor {
   font-size: 1.8em; /* Tamanho maior para o valor, para destaque */
   font-weight: 700; /* Negrito para o valor */
-  color: #142033; /* Cor principal para o valor, forte e legível */
+  color: var(--cor-texto-principal); /* Cor principal para o valor, forte e legível */
   margin: 0; /* Remove margens padrão */
 }
 

@@ -22,6 +22,9 @@
   --cor-fundo-resumo: #f7f9fc;
   --cor-fundo-opcao-antiga: #f0f0f0;
   --cor-fundo-erro-suave: #ffebeb;
+  --cor-fundo-gradiente: #c7d8ea;
+  --cor-fundo-tooltip: #333;
+  --cor-fundo-gradiente: #c7d8ea;
 
   --cor-texto-principal: #142033;
   --cor-texto-principal-alternativo: #0f1f35;
@@ -39,10 +42,19 @@
   --cor-primaria: #2f5d8a;
   --cor-primaria-alternativa: #2f5f91;
   --cor-primaria-hover: #244a70;
+  --cor-botao-primario-hover: #224066;
   --cor-primaria-destaque: #4976a7;
   --cor-primaria-login: #1a3a5c;
   --cor-primaria-calendario: #1a73e8;
   --cor-link: #007bff;
+  --cor-alerta: #e74c3c;
+  --cor-acao-destrutiva: #dc3545;
+  --cor-trilha-progresso: #e6edf7;
+  --cor-primaria-destaque-fundo: rgba(73, 118, 167, 0.1);
+  --cor-primaria-destaque-borda: rgba(73, 118, 167, 0.3);
+  --cor-desempenho-alerta: #df4d5c;
+  --cor-desempenho-alerta-fundo: rgba(223, 77, 92, 0.1);
+  --cor-desempenho-alerta-borda: rgba(223, 77, 92, 0.3);
 
   --cor-borda-padrao: #d9e1ea;
   --cor-borda-padrao-alternativa: #D9E1EA;
@@ -54,6 +66,10 @@
   --cor-borda-calendario: #EAE2D9;
   --cor-borda-antiga: #e0e0e0;
   --cor-borda-login: #d0dce8;
+  --cor-scrollbar: #c1c9d4;
+  --cor-scrollbar-hover: #a0aab4;
+  --cor-scrollbar: #c1c9d4;
+  --cor-scrollbar-hover: #a0aab4;
 
   --cor-sombra-card: rgba(15, 35, 52, 0.06);
   --cor-sombra-card-suave: rgba(20, 32, 51, 0.04);
@@ -67,27 +83,6 @@
   --cor-sombra-preta-forte: rgba(0, 0, 0, 0.15);
   --cor-foco-primario: rgba(47, 93, 138, 0.12);
   --cor-foco-suporte: rgba(73, 118, 167, 0.12);
-
-  --cor-evento-roxo: #8e44ad;
-  --cor-evento-laranja: #d35400;
-  --cor-evento-azul-escuro: #2c3e50;
-  --cor-evento-azul-claro: #2894F6;
-  --cor-evento-vermelho: #e74c3c;
-  --cor-evento-amarelo: #f39c12;
-  --cor-evento-verde: #16a085;
-
-  --cor-simulado-coral: #ff7f50;
-  --cor-simulado-roxo: #6a5acd;
-  --cor-simulado-violeta: #8a2be2;
-  --cor-simulado-petroleo: #008b8b;
-  --cor-simulado-verde-agua: #20b2aa;
-  --cor-simulado-tomate: #ff6347;
-  --cor-simulado-azul-aco: #4682b4;
-
-  --cor-turma-verde: #4a7c6f;
-  --cor-turma-roxo: #7a5c8a;
-  --cor-desempenho-alerta: #df4d5c;
-  --cor-acao-destrutiva: #dc3545;
 }
 
 html, body, #root {
@@ -106,25 +101,74 @@ body.dark-mode {
   --cor-fundo-card-suave: #1b2433;
   --cor-fundo-card-cinza: #1b2433;
   --cor-fundo-input: #142033;
+  --cor-fundo-input-suave: #182437;
+  --cor-fundo-input-login: #111827;
   --cor-fundo-hover: #20324d;
+  --cor-fundo-hover-calendario: #20324d;
+  --cor-fundo-hover-home: #20324d;
+  --cor-fundo-selecao: #2b3c52; /**/
+  --cor-fundo-resumo: #182437;
+  --cor-fundo-opcao-antiga: #1b2433;
+  --cor-fundo-erro-suave: #3a1d27;
+  --cor-fundo-gradiente: #20324d;
+  --cor-fundo-tooltip: #111827;
+  --cor-fundo-gradiente: #20324d;
+
   --cor-texto-principal: #f6f8fb;
   --cor-texto-principal-alternativo: #f3f6fb;
   --cor-texto-secundario: #b8c6d6;
   --cor-texto-secundario-alternativo: #aab4c3;
-  --cor-primaria: #4f8cc9;
+  --cor-texto-placeholder: #8fa0b5;
+  --cor-texto-desabilitado: #66758a;
+  --cor-texto-calendario: #aab4c3;
+  --cor-texto-calendario-escuro: #f3f6fb;
+  --cor-texto-antigo: #f6f8fb;
+  --cor-texto-antigo-secundario: #b8c6d6;
+  --cor-texto-antigo-muted: #8fa0b5;
+  --cor-texto-claro: #ffffff;
+
+  --cor-primaria: #27486c;
+  --cor-primaria-alternativa: #4f8cc9;
+  --cor-primaria-hover: #66758a;
+  --cor-botao-primario-hover: #224066;
+  --cor-primaria-destaque: #78a9dc;
+  --cor-primaria-login: #20324d;
+  --cor-primaria-calendario: #4f8cc9;
+  --cor-link: #78a9dc;
+  --cor-alerta: #f06b5f;
+  --cor-acao-destrutiva: #f06b6b;
+  --cor-trilha-progresso: #2b3c52;
+  --cor-primaria-destaque-fundo: rgba(120, 169, 220, 0.16);
+  --cor-primaria-destaque-borda: rgba(120, 169, 220, 0.38);
+  --cor-desempenho-alerta: #f06b7a;
+  --cor-desempenho-alerta-fundo: rgba(240, 107, 122, 0.16);
+  --cor-desempenho-alerta-borda: rgba(240, 107, 122, 0.38);
+
   --cor-borda-padrao: #2b3c52;
+  --cor-borda-padrao-alternativa: #2b3c52;
   --cor-borda-variavel: #2d3a4d;
   --cor-borda-controle: #2b3c52;
-}
+  --cor-borda-hover: #3d526d;
+  --cor-borda-resumo: #2d3a4d;
+  --cor-borda-resumo-hover: #3d526d;
+  --cor-borda-calendario: #2d3a4d;
+  --cor-borda-antiga: #2d3a4d;
+  --cor-borda-login: #2b3c52;
+  --cor-scrollbar: #2b3c52;
+  --cor-scrollbar-hover: #3d526d;
+  --cor-scrollbar: #2b3c52;
+  --cor-scrollbar-hover: #3d526d;
 
-/*
-#1E2630
-#011526
-#1F2836
-#20324D
-#010C1D
-#02253D
-#02152B
-#042B3D
-#020f2c
-*/
+  --cor-sombra-card: rgba(0, 0, 0, 0.28);
+  --cor-sombra-card-suave: rgba(0, 0, 0, 0.18);
+  --cor-sombra-card-media: rgba(0, 0, 0, 0.24);
+  --cor-sombra-card-forte: rgba(0, 0, 0, 0.34);
+  --cor-sombra-modal: rgba(0, 0, 0, 0.42);
+  --cor-sombra-overlay: rgba(0, 0, 0, 0.62);
+  --cor-sombra-preta-suave: rgba(0, 0, 0, 0.18);
+  --cor-sombra-preta-media: rgba(0, 0, 0, 0.28);
+  --cor-sombra-preta-hover: rgba(0, 0, 0, 0.34);
+  --cor-sombra-preta-forte: rgba(0, 0, 0, 0.42);
+  --cor-foco-primario: rgba(79, 140, 201, 0.22);
+  --cor-foco-suporte: rgba(120, 169, 220, 0.22);
+}

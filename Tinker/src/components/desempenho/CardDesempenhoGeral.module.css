@@ -1,8 +1,8 @@
 /* src/components/desempenho/CardDesempenhoGeral.module.css */
 .card {
-  background: whitesmoke;
+  background: var(--cor-fundo-card-suave);
   border-radius: 18px;
-  box-shadow: 0 8px 25px rgba(15, 35, 52, 0.06);
+  box-shadow: 0 8px 25px var(--cor-sombra-card);
   padding: 20px 22px;
   box-sizing: border-box;
   display: flex;
@@ -17,7 +17,7 @@
 .titulo {
   font-size: 1.5rem; /* Um pouco maior para ser o único título */
   font-weight: 550;
-  color: #142033;
+  color: var(--cor-texto-principal);
   margin: 0 0 7px 0; /* Margem inferior para separar do gráfico */
 }
 
@@ -32,7 +32,7 @@
 .mensagem {
   margin: 0; /* Remove margens padrão */
   font-size: 1.2rem;
-  color: #5e6b7a;
+  color: var(--cor-texto-secundario);
 }
 
 /* Responsividade (se necessário, pode ajustar o tamanho do gráfico) */

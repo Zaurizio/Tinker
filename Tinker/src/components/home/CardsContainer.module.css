@@ -10,9 +10,9 @@
 }
 
 .card {
-  background-color: whitesmoke;
+  background-color: var(--cor-fundo-card-suave);
   border-radius: 15px; /* Cantos arredondados */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra suave */
+  box-shadow: 0 4px 15px var(--cor-sombra-preta-hover); /* Sombra suave */
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -26,19 +26,19 @@
 
 .card:hover {
   transform: translateY(-5px); /* Efeito de "levantar" ao passar o mouse */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Sombra mais pronunciada */
+  box-shadow: 0 8px 25px var(--cor-sombra-preta-hover); /* Sombra mais pronunciada */
 }
 
 .cardIcon {
   font-size: 2.5em; /* Tamanho grande para os ícones */
-  color: #142033; /* Cor do ícone (pode ser ajustada) */
+  color: var(--cor-texto-principal); /* Cor do ícone (pode ser ajustada) */
   margin-bottom: 0; /*margem inferior que empurra titulo*/
 }
 
 .cardTitle {
   font-size: 1.4em;
   font-weight: 600;
-  color: #142033;
+  color: var(--cor-texto-principal);
   margin-top: auto;
   margin-bottom: 0;
 }

@@ -159,7 +159,7 @@ useEffect(() => {
                 onClick={() => setRecorrenciaAberta(!recorrenciaAberta)}
                 >
                 {recorrencia}
-                <IoIosArrowDown size={12} color="#142033" />
+                <IoIosArrowDown size={12} color="var(--cor-texto-principal)" />
                 </button>
                 {recorrenciaAberta && (
                 <div className={estilos.dropdownOpcao}>
@@ -182,7 +182,7 @@ useEffect(() => {
                 onClick={() => setSeletorCorAberto(!seletorCorAberto)}
                 >
                 <span className={estilos.circuloCor} style={{ backgroundColor: corEvento }} />
-                <IoIosArrowDown size={12} color="#142033" />
+                <IoIosArrowDown size={12} color="var(--cor-texto-principal)" />
             </button>
             {seletorCorAberto && (
             <div className={estilos.dropdownCor}>
@@ -190,7 +190,7 @@ useEffect(() => {
                 <button
                     key={c}
                     className={estilos.bolinhaOpcao}
-                    style={{ backgroundColor: c, outline: c === corEvento ? '2px solid #142033' : 'none' }}
+                    style={{ backgroundColor: c, outline: c === corEvento ? '2px solid var(--cor-texto-principal)' : 'none' }}
                     onClick={() => { setCorEvento(c); setSeletorCorAberto(false); }}
                 />
                 ))}

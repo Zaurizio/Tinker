@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background: #f4f6f9;
+  background: var(--cor-fundo-pagina);
 }
 
 .conteudo {

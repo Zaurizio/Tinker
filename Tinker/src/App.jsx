@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 
 // Layouts
@@ -20,6 +21,11 @@ import Turma from "./pages/Turma";
 import Suporte from "./pages/Suporte";
 
 function App() {
+  useEffect(() => {
+    const temaSalvo = localStorage.getItem("tema");
+    document.body.classList.toggle("dark-mode", temaSalvo === "escuro");
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>

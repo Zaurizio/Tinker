@@ -2,10 +2,10 @@
     position: absolute;
     top: 35px;
     right: 5px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
+    background-color: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda-antiga);
     border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px var(--cor-sombra-preta-forte);
     z-index: 10;
     min-width: 180px; /* Aumentei um pouco a largura para acomodar os ícones e o texto */
     list-style: none;
@@ -23,14 +23,14 @@
     padding: 10px 15px;
     cursor: pointer;
     font-size: 0.95em;
-    color: #333;
+    color: var(--cor-texto-antigo);
     transition: background-color 0.2s ease-in-out;
     display: flex; /* Usa flexbox para alinhar ícone e texto */
     align-items: center; /* Centraliza verticalmente */
 }
 
 .dropdownMenu li:hover {
-    background-color: #f0f0f0;
+    background-color: var(--cor-fundo-opcao-antiga);
 }
 
 .dropdownMenu li:first-child {
@@ -44,11 +44,11 @@
 }
 
 .deleteOption {
-    color: #dc3545;
+    color: var(--cor-acao-destrutiva);
 }
 
 .deleteOption:hover {
-    background-color: #ffebeb;
+    background-color: var(--cor-fundo-erro-suave);
 }
 
 .icon {

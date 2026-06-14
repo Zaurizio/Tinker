@@ -8,9 +8,9 @@
 
 .card {
   position: fixed;
-  background-color: white;
+  background-color: var(--cor-fundo-card);
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 24px var(--cor-sombra-preta-forte);
   padding: 24px;
   min-width: 400px;
   width: fit-content;
@@ -30,10 +30,10 @@
   width: 100%;
   height: 44px;
   padding: 0 14px;
-  border: 1px solid #d9e1ea;
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 12px;
-  background: #ffffff;
-  color: #142033;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
   font-size: 0.95rem;
   box-sizing: border-box;
   outline: none;
@@ -41,12 +41,12 @@
 }
 
 .inputEvento:focus {
-  border-color: #2f5d8a;
+  border-color: var(--cor-primaria);
 }
 
 .botaoData {
-  background-color: white;
-  border: 1px solid #d9e1ea;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 6px 12px;
   cursor: pointer;
@@ -55,7 +55,7 @@
 }
 
 .inputHora {
-  border: 1px solid #d9e1ea;
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 13px;
@@ -63,7 +63,7 @@
 }
 
 .selectFrequencia {
-  border: 1px solid #d9e1ea;
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 13px;
@@ -90,13 +90,13 @@
 }
 
 .botaoOpcao {
-  background-color: white;
-  border: 1px solid #d9e1ea;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 6px 12px;
   cursor: pointer;
   font-size: 13px;
-  color: #142033;
+  color: var(--cor-texto-principal);
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -104,17 +104,17 @@
 }
 
 .botaoOpcao:hover {
-  background-color: #eff2f6;
+  background-color: var(--cor-fundo-hover-calendario);
 }
 
 .dropdownOpcao {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background-color: white;
-  border: 1px solid #d9e1ea;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--cor-sombra-preta-media);
   z-index: 300;
   min-width: 150px;
   overflow: hidden;
@@ -130,15 +130,15 @@
   text-align: left;
   cursor: pointer;
   font-size: 13px;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .itemOpcao:hover {
-  background-color: #eff2f6;
+  background-color: var(--cor-fundo-hover-calendario);
 }
 
 .itemAtivo {
-  background-color: #eff2f6;
+  background-color: var(--cor-fundo-hover-calendario);
   font-weight: 500;
 }
 
@@ -162,22 +162,22 @@
 
 .botaoPrimario {
   border: none;
-  background: #2f5d8a;
-  color: #ffffff;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
 }
 
 .botaoPrimario:hover {
-  background: #244a70;
+  background: var(--cor-botao-primario-hover);
 }
 
 .botaoSecundario {
-  border: 1px solid #c7d2df;
-  background: #ffffff;
-  color: #142033;
+  border: 1px solid var(--cor-borda-controle);
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
 }
 
 .botaoSecundario:hover {
-  background: #eef2f6;
+  background: var(--cor-fundo-hover);
 }
 
 /*linha 3*/
@@ -186,7 +186,7 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #142033;
+  color: var(--cor-texto-principal);
   cursor: pointer;
   user-select: none;
 }
@@ -195,12 +195,12 @@
   width: 15px;
   height: 15px;
   cursor: pointer;
-  accent-color: #2f5d8a;
+  accent-color: var(--cor-primaria);
 }
 
 .botaoCor {
-  background-color: white;
-  border: 1px solid #d9e1ea;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 9.5px 12px;
   cursor: pointer;
@@ -211,7 +211,7 @@
 }
 
 .botaoCor:hover {
-  background-color: #eff2f6;
+  background-color: var(--cor-fundo-hover-calendario);
 }
 
 .circuloCor {
@@ -226,10 +226,10 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background-color: white;
-  border: 1px solid #d9e1ea;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--cor-sombra-preta-media);
   z-index: 300;
   padding: 8px;
   display: flex;

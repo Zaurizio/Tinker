@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #F6F8FB;
+  background-color: var(--cor-fundo-base);
 }
 
 .topo {
@@ -14,8 +14,8 @@
 }
 
 .botaoCriar {
-  background-color: #2f5d8a;
-  color: white;
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
   border: none;
   padding: 10px 15px;
   border-radius: 8px;
@@ -29,7 +29,7 @@
 }
 
 .botaoCriar:hover {
-  background-color: #244a70;
+  background-color: var(--cor-botao-primario-hover);
 }
 
 .controles {
@@ -44,30 +44,30 @@
 }
 
 .botaoMenu {
-  background-color: white;
-  border: 1px solid #EAE2D9;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-calendario);
   padding: 8px 15px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .botaoMenu:hover {
-  background-color: #EFF2F6;
+  background-color: var(--cor-fundo-hover-calendario);
 }
 
 .dropdown {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: white;
-  border: 1px solid #EAE2D9;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-calendario);
   border-radius: 8px;
   margin-top: 5px;
   z-index: 10;
   min-width: 120px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--cor-sombra-preta-media);
 }
 
 .opcao {
@@ -79,30 +79,30 @@
   text-align: left;
   cursor: pointer;
   font-size: 14px;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .opcao:hover {
-  background-color: #EFF2F6; 
+  background-color: var(--cor-fundo-hover-calendario); 
 }
 
 .opcao.ativo {
-  background-color: #eff2f6;
+  background-color: var(--cor-fundo-hover-calendario);
   
 }
 
 .botaoHoje {
-  background-color: white;
-  border: 1px solid #EAE2D9;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-calendario);
   padding: 8px 15px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .botaoHoje:hover {
-  background-color: #EFF2F6;
+  background-color: var(--cor-fundo-hover-calendario);
 }
 
 .topoEsquerda {
@@ -114,7 +114,7 @@
 .dataGrande {
   font-size: 22px;
   font-weight: 500;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .seta {
@@ -122,7 +122,7 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  color: #142033;
+  color: var(--cor-texto-principal);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -133,12 +133,12 @@
 }
 
 .seta:hover {
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: var(--cor-sombra-preta-hover);
 }
 
 .dataAtual {
   font-size: 14px;
-  color: #5E6B7A;
+  color: var(--cor-texto-secundario);
   min-width: 150px;
 }
 
@@ -146,40 +146,40 @@
   flex: 1;
   overflow: hidden;
   padding: 0px 20px 20px 20px;
-  background-color: #f6f8fb;
+  background-color: var(--cor-fundo-base);
 }
 
 .calendarioContainer :global(.fc) {
   height: 100%;
   border-radius: 8px;
   overflow: hidden;
-  background-color: white;
-  border: 1px solid #d9e1ea;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   font-family: 'Poppins', sans-serif;
 }
 
 .calendarioContainer :global(.fc-col-header-cell) {
-  background-color: #f6f8fb;
-  border-color: #d9e1ea;
-  color: #142033;
+  background-color: var(--cor-fundo-base);
+  border-color: var(--cor-borda-padrao);
+  color: var(--cor-texto-principal);
   font-weight: 600;
 }
 
 .calendarioContainer :global(.fc-daygrid-day) {
-  border-color: #d9e1ea;
+  border-color: var(--cor-borda-padrao);
 }
 
 
 
 /*
 .calendarioContainer :global(.fc-event) {
-  background-color: #EEF2F6;
-  border-color: #EEF2F6;
+  background-color: var(--cor-fundo-hover);
+  border-color: var(--cor-fundo-hover);
 }
 */
 
 .calendarioContainer :global(.fc-day-today) {
-  background-color: #E7F0F8 !important;
+  background-color: var(--cor-fundo-selecao) !important;
 }
 
 /*tamanho linha allday*/

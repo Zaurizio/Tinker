@@ -5,8 +5,8 @@
   top: 0;
   left: 0;
   z-index: 20;
-  background: whitesmoke;
-  border-right: 1px solid #D9E1EA; /*linha fina na direita*/
+  background: var(--cor-fundo-card-suave);
+  border-right: 1px solid var(--cor-borda-padrao-alternativa); /*linha fina na direita*/
   padding: 18px 16px; /*espaço interno (18 em cima e embaixo, 16 dos lados)*/
   box-sizing: border-box;/*padding dentro da largura total*/
   display: flex;
@@ -42,7 +42,7 @@
   font-family: 'Playfair Display SC', serif; /* Use aspas para nomes de fontes com espaços */
   font-size: 2rem;
   font-weight: 500; /*negrito*/
-  color: #142033;
+  color: var(--cor-texto-principal);
   text-align: center; /* Centraliza o texto */
 }
 
@@ -59,7 +59,7 @@
   border: none;
   background: transparent;
   text-decoration: none; /*tira sublinhado*/
-  color: #5E6B7A;
+  color: var(--cor-texto-secundario);
   display: flex;
   align-items: center; /*alinha icone e texto na mesma linha*/
   gap: 12px; /*espaço entre ícone e texto*/
@@ -73,11 +73,11 @@
 
 .link:hover,
 .linkButton:hover {
-  background: #EEF2F6;
+  background: var(--cor-fundo-hover);
 }
  
 .ativo { /*página atual*/
-  color: #244a70; /*577cf5*/
+  color: var(--cor-primaria-hover); /*577cf5*/
   font-weight: 700;
 }
 

@@ -1,6 +1,9 @@
 .card {
   width: 100%;
   max-width: 620px;
+  background: whitesmoke !important;
+  border: 1px solid #D9E1EA !important;
+  box-shadow: 0 8px 24px rgba(20, 32, 51, 0.04) !important;
 }
 
 .camposDuplos {

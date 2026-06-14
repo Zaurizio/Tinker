@@ -1,21 +1,21 @@
 /* CardDesempenhoPorDisciplina.module.css */
 .card {
-  background-color: whitesmoke;
+  background-color: var(--cor-fundo-card-suave);
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--cor-sombra-preta-media);
   width: 100%; /*ocupa a largura total*/
 }
 
 .titulo {
   text-align: center;
   font-size: 1.2em;
-  color: #333;
+  color: var(--cor-texto-antigo);
   margin-bottom: 15px;
 }
 
 .mensagemVazia {
-  color:#777; /* Cinza claro */
+  color:var(--cor-texto-antigo-muted); /* Cinza claro */
   font-style: italic;
   text-align: center;
   padding: 20px 0;

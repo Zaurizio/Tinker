@@ -2,8 +2,8 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  background: #ffffff;
-  border: 1px solid #d9e1ea;
+  background: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 16px;
   padding: 16px 20px;
   cursor: pointer;
@@ -12,8 +12,8 @@
 }
 
 .card:hover {
-  border-color: #b8c6d6;
-  box-shadow: 0 4px 16px rgba(20, 32, 51, 0.08);
+  border-color: var(--cor-borda-hover);
+  box-shadow: 0 4px 16px var(--cor-sombra-card-media);
 }
 
 .imagemTurma {
@@ -35,7 +35,7 @@
 
 .iconeGrupo {
   font-size: 26px;
-  color: #ffffff;
+  color: var(--cor-texto-claro);
 }
 
 .infoTurma {
@@ -47,10 +47,10 @@
 .nomeTurma {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #142033;
+  color: var(--cor-texto-principal);
 }
 
 .criador {
   font-size: 0.85rem;
-  color: #5e6b7a;
+  color: var(--cor-texto-secundario);
 }

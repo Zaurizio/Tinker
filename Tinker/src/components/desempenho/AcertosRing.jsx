@@ -39,9 +39,9 @@ const AcertosRing = ({ value = 0, animationDuration = 800 }) => { // Adicionamos
         text={`${displayValue}%`}
         strokeWidth={10}
         styles={buildStyles({
-          trailColor: '#e6edf7',
-          pathColor: '#2F5D8A',
-          textColor: '#142033',
+          trailColor: 'var(--cor-trilha-progresso)',
+          pathColor: 'var(--cor-primaria)',
+          textColor: 'var(--cor-texto-principal)',
           textSize: '20px',
           strokeLinecap: 'round',
           transition: 'stroke-dashoffset 0.5s ease 0s', // Transição suave para o preenchimento do círculo

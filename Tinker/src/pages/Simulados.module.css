@@ -3,7 +3,7 @@
 .pagina {
   flex: 1;
   min-height: 100vh;
-  background: #f4f6f9;
+  background: var(--cor-fundo-pagina);
   padding: 36px 32px;
   box-sizing: border-box;
   display: flex; /* Adicionado para centralizar o conteúdo */
@@ -21,7 +21,7 @@
 .titulo { /* Novo estilo para o título "Meus Simulados" */
   font-size: 2.2em;
   font-weight: 450;
-  color: #142033; /* Cor do texto */
+  color: var(--cor-texto-principal); /* Cor do texto */
   margin-bottom: 10px; /* Espaçamento abaixo do título */
   text-align: left; /* Centraliza o texto */
 }
@@ -48,23 +48,23 @@
 }
 
 .botaoCriarSimulado { /* Botão branco */
-  border: 1px solid #c7d2df;
-  background: #ffffff;
-  color: #142033;
+  border: 1px solid var(--cor-borda-controle);
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
 }
 
 .botaoCriarSimulado:hover {
-  background: #eef2f6;
+  background: var(--cor-fundo-hover);
 }
 
 .botaoFiltrarSimulados { /* Botão azul */
   border: none; /* Remova a borda se quiser que seja sólido */
-  background: #2f5d8a;
-  color: #ffffff;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
 }
 
 .botaoFiltrarSimulados:hover {
-  background: #244a70;
+  background: var(--cor-botao-primario-hover);
 }
 
 .listaSimulados {
@@ -75,7 +75,7 @@
 
 .estadoVazio {
   font-size: 0.95rem;
-  color: #8a97a6;
+  color: var(--cor-texto-placeholder);
   padding: 12px 4px;
   text-align: center; /* Centraliza a mensagem de estado vazio */
 }

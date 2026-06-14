@@ -1,10 +1,10 @@
 .mini {
   position: fixed;
-  background-color: white;
-  border: 1px solid #d9e1ea;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 20px var(--cor-sombra-preta-hover);
   z-index: 200;
   width: 260px;
 }
@@ -19,7 +19,7 @@
 .nomeMes {
   font-size: 14px;
   font-weight: 600;
-  color: #142033;
+  color: var(--cor-texto-principal);
   text-transform: capitalize;
 }
 
@@ -33,13 +33,13 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  color: #5e6b7a;
+  color: var(--cor-texto-secundario);
   padding: 2px 6px;
   border-radius: 4px;
 }
 
 .setas button:hover {
-  background-color: #eff2f6;
+  background-color: var(--cor-fundo-hover-calendario);
 }
 
 .grade {
@@ -52,7 +52,7 @@
   text-align: center;
   font-size: 12px;
   font-weight: 600;
-  color: #5e6b7a;
+  color: var(--cor-texto-secundario);
   padding: 4px 0;
 }
 
@@ -61,7 +61,7 @@
   border: none;
   cursor: pointer;
   font-size: 13px;
-  color: #142033;
+  color: var(--cor-texto-principal);
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -72,11 +72,11 @@
 }
 
 .dia:hover {
-  background-color: #eff2f6;
+  background-color: var(--cor-fundo-hover-calendario);
 }
 
 .diaForaMes {
-  color: #b0bac4;
+  color: var(--cor-texto-desabilitado);
   cursor: default;
 }
 
@@ -85,15 +85,15 @@
 }
 
 .hoje {
-  background-color: #2f5d8a;
-  color: white;
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
 }
 
 .hoje:hover {
-  background-color: #244a70;
+  background-color: var(--cor-botao-primario-hover);
 }
 
 .selecionado {
-  background-color: #2f5d8a;
-  color: white;
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
 }
