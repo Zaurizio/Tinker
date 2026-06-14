@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+﻿import { useState, useRef, useEffect } from 'react';
 /*seta baixo*/ import { IoIosArrowDown } from "react-icons/io"; //<IoIosArrowDown />
 import MiniCalendario from './MiniCalendario';
 import InputHora from './InputHora';
@@ -7,12 +7,12 @@ import estilos from './CardEvento.module.css';
 export default function CardEvento({ onFechar, onSalvar, dataSelecionada, anchorRef }) {
 /*onfechar: fecha card, onSalvar: salva evento, dataSelecionada: data navegador, anchorRef: botao evento*/
     const cardRef = useRef(null); /*onde fica o card*/
-    const botaoDataRef = useRef(null); /*onde fica o botão de data*/
+    const botaoDataRef = useRef(null); /*onde fica o botÃ£o de data*/
     /*estados*/
     const [miniCalAberto, setMiniCalAberto] = useState(false); /*minicalendario fechado*/
-    const [dataAtual, setDataAtual] = useState(dataSelecionada); /*data que ta no botão*/
-    const [recorrenciaAberta, setRecorrenciaAberta] = useState(false); /*botão frequencia fechado*/
-    const [recorrencia, setRecorrencia] = useState('Não se repete'); /*guarda frequencia selecionada*/
+    const [dataAtual, setDataAtual] = useState(dataSelecionada); /*data que ta no botÃ£o*/
+    const [recorrenciaAberta, setRecorrenciaAberta] = useState(false); /*botÃ£o frequencia fechado*/
+    const [recorrencia, setRecorrencia] = useState('NÃ£o se repete'); /*guarda frequencia selecionada*/
     const [nomeEvento, setNomeEvento] = useState(''); /*nome do evento*/
     const [corEvento, setCorEvento] = useState('#2f5d8a');
     const [seletorCorAberto, setSeletorCorAberto] = useState(false);
@@ -21,7 +21,7 @@ export default function CardEvento({ onFechar, onSalvar, dataSelecionada, anchor
     const cores = ['#2f5d8a','#8e44ad','#d35400','#2c3e50','#2894F6','#e74c3c','#f39c12', '#16a085'];
 
     const opcoesRecorrencia = [
-    'Não se repete',
+    'NÃ£o se repete',
     'Todos os dias',
     'Semanal',
     'Mensal',
@@ -31,7 +31,7 @@ export default function CardEvento({ onFechar, onSalvar, dataSelecionada, anchor
 function proximaHora() {
   const agora = new Date();
   const h = agora.getHours() + 1; /*hora atual + 1*/
-  return `${String(h > 23 ? 0 : h).padStart(2, '0')}:00`; /*não retorna 24h e garante dois dígitos*/
+  return `${String(h > 23 ? 0 : h).padStart(2, '0')}:00`; /*nÃ£o retorna 24h e garante dois dÃ­gitos*/
 }
 
 const inicioDefault = proximaHora(); /*h botao 1*/
@@ -43,8 +43,8 @@ const [horaFim, setHoraFim] = useState(fimDefault);
 
 /*data escrita*/
 function formatarData() {
-  const diasSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado']
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
+  const diasSemana = ['Domingo','Segunda','TerÃ§a','Quarta','Quinta','Sexta','SÃ¡bado']
+  const meses = ['Janeiro','Fevereiro','MarÃ§o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
   const data = new Date(dataAtual + 'T12:00:00')
   const diaSemana = diasSemana[data.getDay()]
@@ -62,14 +62,14 @@ function handleSalvar() {
     const dataBase = new Date(dataAtual + 'T12:00:00');
 
     const config = {
-        'Não se repete': { total: 1 },
+        'NÃ£o se repete': { total: 1 },
         'Todos os dias': { total: 365, avancar: (d) => d.setDate(d.getDate() + 1) },
         'Semanal':       { total: 52,  avancar: (d) => d.setDate(d.getDate() + 7) },
         'Mensal':        { total: 12,  avancar: (d) => d.setMonth(d.getMonth() + 1) },
         'Anual':         { total: 5,   avancar: (d) => d.setFullYear(d.getFullYear() + 1) },
     };
 
-    const { total, avancar } = config[recorrencia] || config['Não se repete'];
+    const { total, avancar } = config[recorrencia] || config['NÃ£o se repete'];
     const dataLoop = new Date(dataBase);
 
     for (let i = 0; i < total; i++) {
@@ -136,7 +136,7 @@ useEffect(() => {
             {!diaInteiro && (
                 <>
                     <InputHora value={horaInicio} onChange={setHoraInicio} />
-                    <span>—</span>
+                    <span style={{ color: "var(--cor-texto-principal)" }}>—</span>
                     <InputHora value={horaFim} onChange={setHoraFim} />
                 </>
             )}
@@ -210,7 +210,7 @@ useEffect(() => {
     </div>
 
 
-        {/*rodapé*/}
+        {/*rodapÃ©*/}
         <div className={estilos.rodape}>
           <button className={estilos.botaoSecundario} onClick={onFechar}>Cancelar</button>
           <button className={estilos.botaoPrimario} onClick={handleSalvar}>Salvar</button>

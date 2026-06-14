@@ -20,11 +20,18 @@
 .fc-event-title {
   font-size: 0.85rem;
   padding: 2px 4px;
+  color: var(--cor-texto-claro);
 }
 
 .fc-event-time {
   font-size: 0.75rem;
   padding: 2px 4px;
+  color: var(--cor-texto-claro);
+}
+
+.fc-event,
+.fc-event-main {
+  color: var(--cor-texto-claro) !important;
 }
 
 /* dia inteiro */

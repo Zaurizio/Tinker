@@ -92,9 +92,8 @@
 }
 
 .botaoStatusAtivo {
-  background: var(--cor-fundo-selecao);
-  border-color: var(--cor-primaria);
-  color: var(--cor-primaria);
+  background: #132845;
+  border-color: #2F5D95;
 }
 
 .linhaAcoes {

@@ -13,6 +13,8 @@
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 13px;
+  background: var(--cor-fundo-input-suave);
+  color: var(--cor-texto-principal);
   outline: none;
   width: 70px;
   cursor: pointer;
@@ -56,7 +58,7 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background-color: var(--cor-fundo-card);
+  background-color: var(--cor-fundo-input-suave);
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   box-shadow: 0 4px 12px var(--cor-sombra-preta-media);

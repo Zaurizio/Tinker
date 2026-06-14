@@ -32,7 +32,7 @@
   padding: 0 14px;
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 12px;
-  background: var(--cor-fundo-card);
+  background: var(--cor-fundo-input-suave);
   color: var(--cor-texto-principal);
   font-size: 0.95rem;
   box-sizing: border-box;
@@ -45,13 +45,14 @@
 }
 
 .botaoData {
-  background-color: var(--cor-fundo-card);
+  background-color: var(--cor-fundo-input-suave);
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 6px 12px;
   cursor: pointer;
   font-size: 13px;
   min-width: 160px;
+  color: var(--cor-texto-principal);
 }
 
 .inputHora {
@@ -59,6 +60,8 @@
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 13px;
+  background: var(--cor-fundo-input-suave);
+  color: var(--cor-texto-principal);
   outline: none;
 }
 
@@ -67,6 +70,8 @@
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 13px;
+  background: var(--cor-fundo-input-suave);
+  color: var(--cor-texto-principal);
   outline: none;
   cursor: pointer;
 }
@@ -90,7 +95,7 @@
 }
 
 .botaoOpcao {
-  background-color: var(--cor-fundo-card);
+  background-color: var(--cor-fundo-input-suave);
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 6px 12px;
@@ -111,7 +116,7 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background-color: var(--cor-fundo-card);
+  background-color: var(--cor-fundo-input-suave);
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   box-shadow: 0 4px 12px var(--cor-sombra-preta-media);
@@ -199,7 +204,7 @@
 }
 
 .botaoCor {
-  background-color: var(--cor-fundo-card);
+  background-color: var(--cor-fundo-input-suave);
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   padding: 9.5px 12px;
@@ -226,7 +231,7 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  background-color: var(--cor-fundo-card);
+  background-color: var(--cor-fundo-input-suave);
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 8px;
   box-shadow: 0 4px 12px var(--cor-sombra-preta-media);

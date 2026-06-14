@@ -48,6 +48,7 @@
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 14px;
   font-size: 1rem;
+  background: var(--cor-fundo-input-suave);
   color: var(--cor-texto-principal);
   outline: none;
   box-sizing: border-box;

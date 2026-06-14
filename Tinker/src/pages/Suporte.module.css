@@ -255,7 +255,7 @@
   justify-self: start;
   border: 1px solid var(--cor-primaria-destaque);
   background: var(--cor-fundo-card);
-  color: var(--cor-primaria);
+  color: var(--cor-texto-secundario);
   padding: 0 18px;
 }
 

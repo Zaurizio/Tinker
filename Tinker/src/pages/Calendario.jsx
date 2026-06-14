@@ -283,7 +283,7 @@ function aplicarAnimacao(tipo, callback) {
 
               if (view === 'dayGridMonth') {
                 return (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 4px', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 4px', overflow: 'hidden', color: 'var(--cor-texto-claro)' }}>
                     {/* Bolinha colorida */}
                     <span
                       style={{
@@ -309,7 +309,7 @@ function aplicarAnimacao(tipo, callback) {
 
               if (view === 'timeGridWeek' || view === 'timeGridDay') {
                 return (
-                  <div style={{ padding: '2px 4px', overflow: 'hidden' }}>
+                  <div style={{ padding: '2px 4px', overflow: 'hidden', color: 'var(--cor-texto-claro)' }}>
                     {!allDay && (
                       <div style={{ fontSize: '0.75rem', fontWeight: 500, whiteSpace: 'nowrap' }}>
                         {formatHora(start)} – {formatHora(end)}
