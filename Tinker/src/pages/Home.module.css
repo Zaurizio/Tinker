@@ -1,51 +1,60 @@
-/* src/pages/HomePage.module.css */
 .paginaHome {
   width: 100%;
-  min-height: 100vh; /*tamanho da tela*/
-  background: linear-gradient(to bottom right, var(--cor-fundo-pagina) 50%, var(--cor-fundo-gradiente) 100%); /* Copiado de inicial.module.css */
+  min-height: 100vh;
+  background: linear-gradient(
+    to bottom right,
+    var(--cor-fundo-pagina) 50%,
+    var(--cor-fundo-gradiente) 100%
+  );
   display: flex;
-  flex-direction: column; /*elementos em coluna*/
+  flex-direction: column;
 }
 
 .homeContainer {
+  width: 100%;
+  max-width: 1200px;
   flex: 1;
-  display: flex; /* Adicionado para centralizar o conteúdo verticalmente se necessário */
-  flex-direction: column; /* Adicionado para centralizar o conteúdo verticalmente se necessário */
-  padding: 36px 40px; 
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   margin: 0 auto;
-  max-width: 1200px; /* Largura máxima para o conteúdo */
+  padding: 56px clamp(20px, 4vw, 48px) 48px;
+  box-sizing: border-box;
+}
+
+.contentWrapper {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .cardsRow {
+  width: 100%;
   display: flex;
-  flex-wrap: wrap; /* Permite que os cards quebrem a linha se não houver espaço */
-  justify-content: center; /* Centraliza os cards horizontalmente */
-  gap: 20px; /* Espaçamento entre os cards */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
   margin-top: 24px;
   margin-bottom: 32px;
-  width: 100%; /* Ocupa a largura total do homeContainer */
 }
 
-
-/* Linha de baixo: "Hoje" (maior) + "Resumo rápido" (menor) */
 .bottomRow {
+  width: 100%;
   display: flex;
   gap: 20px;
   margin-top: 16px;
-  padding: 40px 78px; 
-  width: 100%;
+  padding: 24px clamp(0px, 3vw, 40px) 0;
 }
 
-/* Bloco Hoje */
 .cardHoje {
-  flex: 1.8; /* maior que o resumo */
+  flex: 1.8;
+  min-width: 0;
+  min-height: 150px;
   background: var(--cor-fundo-card);
   border-radius: 18px;
   box-shadow: 0 4px 15px var(--cor-sombra-preta-suave);
   padding: 20px 22px;
   box-sizing: border-box;
-  min-height: 150px; /* altura fixa mínima */
   display: flex;
   flex-direction: column;
 }
@@ -62,9 +71,9 @@
   color: var(--cor-texto-placeholder);
 }
 
-/* Bloco Resumo rápido */
 .cardResumo {
-  flex: 1.2; /* menor */
+  flex: 1.2;
+  min-width: 260px;
   background: var(--cor-fundo-card);
   border-radius: 18px;
   box-shadow: 0 4px 15px var(--cor-sombra-preta-suave);
@@ -72,7 +81,6 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  /*min-height: 150px;*/
 }
 
 .cardResumoTitulo {
@@ -82,8 +90,8 @@
   margin: 0 0 10px 0;
 }
 
-/* Área clicável dentro do resumo */
 .cardResumoInner {
+  width: 100%;
   margin: 0;
   padding: 12px 14px;
   border-radius: 14px;
@@ -95,7 +103,7 @@
   flex-direction: column;
   gap: 4px;
   transition: background 0.15s ease, border-color 0.15s ease,
-              transform 0.15s ease, box-shadow 0.15s ease;
+    transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .cardResumoInner:hover {
@@ -120,13 +128,35 @@
   color: var(--cor-texto-secundario);
 }
 
-/* Responsivo: empilhar em telas menores */
 @media (max-width: 900px) {
+  .homeContainer {
+    padding-top: 36px;
+  }
+
   .bottomRow {
     flex-direction: column;
+    padding-inline: 0;
   }
+
   .cardHoje,
   .cardResumo {
     width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .homeContainer {
+    padding: 28px 16px 32px;
+  }
+
+  .cardsRow {
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .bottomRow {
+    margin-top: 8px;
+    gap: 14px;
   }
 }

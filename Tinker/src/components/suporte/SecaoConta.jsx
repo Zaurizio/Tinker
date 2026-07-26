@@ -4,14 +4,14 @@ import estiloSuporte from "../../pages/Suporte.module.css";
 
 function carregarPerfilInicial() {
   const perfilPadrao = {
-    nome: "Gustavo",
-    sobrenome: "Zaurizio",
+    nome: JSON.parse(localStorage.getItem('usuario')),//"Gustavo",
+    sobrenome: JSON.parse(localStorage.getItem('sobrenome')),//"Zaurizio",
   };
 
   const usuarioSalvo = localStorage.getItem("usuario");
 
   if (!usuarioSalvo) return perfilPadrao;
-
+  
   try {
     const usuario = JSON.parse(usuarioSalvo);
     const partesNome = usuario?.nome?.trim().split(" ").filter(Boolean);
@@ -26,8 +26,8 @@ function carregarPerfilInicial() {
     console.error("Erro ao carregar usuário do localStorage:", error);
     return perfilPadrao;
   }
+    
 }
-
 function SecaoConta() {
   const [perfil, setPerfil] = useState(carregarPerfilInicial);
   const { nome, sobrenome } = perfil;
@@ -45,6 +45,31 @@ function SecaoConta() {
   function handleEditarPerfil() {
     console.log("Editar perfil", { nome, sobrenome });
   }
+
+async function alterar(e) {
+        e.preventDefault();
+        const dados = new FormData()
+        dados.append("nome", perfil.nome)
+        dados.append("sobrenome", perfil.sobrenome)
+        dados.append("email", JSON.parse(localStorage.getItem('email')))
+
+
+        //precisa startar o servidor PHP na pasta backend
+        const result = await fetch("http://localhost:8000/alterarSuporte.php", {
+        method: "POST",
+        body: dados
+        })
+
+        const resultado = await result.json();
+        
+        if (resultado.sucesso) {
+            alert(resultado.mensagem);
+            localStorage.setItem("usuario", JSON.stringify(perfil.nome));
+            localStorage.setItem("sobrenome", JSON.stringify(perfil.sobrenome));
+        } else {
+            alert(resultado.mensagem);
+        }
+    }
 
   return (
     <article className={estiloSuporte.card}>
@@ -96,7 +121,7 @@ function SecaoConta() {
             <button
               type="button"
               className={estiloSuporte.botaoPrimario}
-              onClick={handleEditarPerfil}
+              onClick={alterar}
             >
               Editar perfil
               <FaPen />

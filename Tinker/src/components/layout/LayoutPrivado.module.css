@@ -5,10 +5,20 @@
 
 .conteudo {
   margin-left: 240px;
-  height: 100vh;
-  min-height: 0;
-  overflow-y: auto;
+  min-height: 100vh;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 760px) {
+  .conteudo {
+    margin-left: 76px;
+  }
+}
+
+@media (max-width: 480px) {
+  .conteudo {
+    margin-left: 68px;
+  }
 }

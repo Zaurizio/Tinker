@@ -14,17 +14,36 @@ function Cadastro() {
     const [senha, setSenha] = useState("");
     const navigate = useNavigate();
 
-    async function handleCadastro(e) {
+    async function cadastrar(e) {
         e.preventDefault();
+        const dados = new FormData()
+        dados.append("nome", nome)
+        dados.append("sobrenome", sobrenome)
+        dados.append("email", email) 
+        dados.append("senha", senha)
 
-        const resultado = await fazerCadastro(nome, sobrenome, email, senha);
+        //precisa startar o servidor PHP na pasta backend
+        const result = await fetch("http://localhost:8000/cadastro.php", {
+        method: "POST",
+        body: dados
+        })
 
+        const resultado = await result.json();
+        
         if (resultado.sucesso) {
             alert(resultado.mensagem);
             navigate("/login");
         } else {
             alert(resultado.mensagem);
         }
+    }
+
+    async function handleCadastro(e) {
+        e.preventDefault();
+
+        const resultado = await fazerCadastro(nome, sobrenome, email, senha);
+
+        
     }
 
   
@@ -48,7 +67,7 @@ function Cadastro() {
           <h1 className={estiloLogin.titulo}>Cadastrar</h1>
           <p className={estiloLogin.subtitulo}>Crie sua conta para continuar</p>
 
-          <form className={estiloLogin.formulario} onSubmit={handleCadastro}>
+          <form className={estiloLogin.formulario} onSubmit={cadastrar}>
             <div className={estiloCad.camposDuplos}>
                 <div className={estiloCad.campoDuplo}>
                     <label className={estiloLogin.label}>Nome</label>

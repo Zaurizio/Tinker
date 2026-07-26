@@ -101,3 +101,42 @@
 #02152B
 #042B3D
 #020f2c*/
+
+@media (max-width: 760px) {
+  .sidebar {
+    width: 76px;
+    padding: 16px 10px;
+  }
+
+  .topo {
+    margin-bottom: 22px;
+  }
+
+  .logoImage {
+    width: 48px;
+    height: 48px;
+  }
+
+  .logoText,
+  .texto {
+    display: none;
+  }
+
+  .link,
+  .linkButton {
+    justify-content: center;
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 68px;
+    padding: 14px 8px;
+  }
+
+  .logoImage {
+    width: 42px;
+    height: 42px;
+  }
+}

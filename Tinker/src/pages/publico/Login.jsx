@@ -11,17 +11,37 @@ function Login() {
   const [senha, setSenha] = useState("");
   const navigate = useNavigate();
 
+  async function logar(e) {
+        e.preventDefault();
+        
+        const dados = new FormData()
+        dados.append("email", email) 
+        dados.append("senha", senha)
+
+        //precisa startar o servidor PHP na pasta backend
+        const result = await fetch("http://localhost:8000/login.php", {
+        method: "POST",
+        body: dados
+        })
+        
+        const resultado = await result.json();
+
+        if (resultado.sucesso) {
+          localStorage.setItem("usuario", JSON.stringify(resultado.nome));
+          localStorage.setItem("sobrenome", JSON.stringify(resultado.sobrenome));
+          localStorage.setItem("email", JSON.stringify(resultado.email));
+          navigate("/home");
+        } else {
+          alert(resultado.mensagem);
+        }
+    }
+
   async function handleLogin(e) {
     e.preventDefault();
 
     const resultado = await fazerLogin(email, senha);
 
-    if (resultado.sucesso) {
-      localStorage.setItem("usuario", JSON.stringify(resultado.usuario));
-      navigate("/home");
-    } else {
-      alert(resultado.mensagem);
-    }
+    
   }
 
   return (
@@ -45,7 +65,7 @@ function Login() {
           <h1 className={estilo.titulo}>Entrar</h1>
           <p className={estilo.subtitulo}>Acesse sua conta para continuar</p>
 
-          <form className={estilo.formulario} onSubmit={handleLogin}>
+          <form className={estilo.formulario} onSubmit={logar}>
             <div className={estilo.campo}>
               <label className={estilo.label}>E-mail</label>
               <input
