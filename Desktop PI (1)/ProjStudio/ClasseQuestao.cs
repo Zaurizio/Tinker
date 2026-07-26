@@ -166,7 +166,7 @@ namespace ProjStudio
             try
             {
                 Conexao.con.Open();
-                MySqlCommand atu = new MySqlCommand("update Aluno set vestibular = '" + vestibular + "', ano = '" + ano + "', fase = '" + fase + "', disciplina = '" + disciplina + "', conteudo = '" + conteudo + "', enunciado = '" + enunciado + "', imagem = '" + imagem + "', alternativaA = '" + alternativaA + "', alternativaB = '" + alternativaB + "', alternativaC = '" + alternativaC + "', alternativaD = '" + alternativaD + "', alternativaE = '" + alternativaE + "', resposta = '" + resposta + "', ativo = '" + Ativo + "'  where cod_questao = " + cod + "", Conexao.con);
+                MySqlCommand atu = new MySqlCommand("update Questao set vestibular = '" + vestibular + "', ano = '" + ano + "', fase = '" + fase + "', disciplina = '" + disciplina + "', conteudo = '" + conteudo + "', enunciado = '" + enunciado + "', imagem = '" + imagem + "', alternativaA = '" + alternativaA + "', alternativaB = '" + alternativaB + "', alternativaC = '" + alternativaC + "', alternativaD = '" + alternativaD + "', alternativaE = '" + alternativaE + "', resposta = '" + resposta + "', ativo = " + ativo + "  where cod_questao = " + cod + "", Conexao.con);
                 atu.ExecuteNonQuery();
                 ctrl = true;
             }

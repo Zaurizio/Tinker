@@ -182,12 +182,17 @@ namespace ProjStudio
                 {
                     try
                     {
+                        int ativo = 0;
+                        if (guna2ComboBox3.Text == "Ativo")
+                        {
+                            ativo = 1;
+                        }
                         byte[] foto = null;
                         if (guna2PictureBox1.Image != null)
                         {
                             foto = ConverterFotoParaByteArray();
                         }
-                        ClasseQuestao cq = new ClasseQuestao(int.Parse(guna2TextBox10.Text), guna2TextBox1.Text, int.Parse(maskedTextBox1.Text), guna2ComboBox1.Text, guna2TextBox2.Text, guna2TextBox3.Text, guna2TextBox4.Text, guna2TextBox5.Text, foto, 1);
+                        ClasseQuestao cq = new ClasseQuestao(int.Parse(guna2TextBox10.Text), guna2TextBox1.Text, int.Parse(maskedTextBox1.Text), guna2ComboBox1.Text, guna2TextBox2.Text, guna2TextBox3.Text, guna2TextBox4.Text, guna2TextBox5.Text, foto, ativo);
                         if (cq.Atualiza())
                         {
                             MessageBox.Show("Atualização Realizada com Sucesso");

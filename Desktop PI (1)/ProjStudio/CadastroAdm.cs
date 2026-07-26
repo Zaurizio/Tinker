@@ -127,7 +127,11 @@ namespace ProjStudio
                 {
                     ClasseLogin cl = new ClasseLogin(guna2TextBox1.Text, int.Parse(guna2TextBox2.Text));
                     if (cl.Cadastro())
+                    {
                         MessageBox.Show("Cadastro Ralizado com Sucesso");
+                        guna2TextBox1.Text = "";
+                        guna2TextBox2.Text = "";
+                    }
                     else
                         MessageBox.Show("Erro no Cadastro");
                 }
