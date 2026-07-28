@@ -116,5 +116,10 @@ namespace ProjStudio
             // Esconde o form
             this.Hide();
         }
+
+        private void panelHeader_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
