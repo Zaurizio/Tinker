@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:thinker_prototipo/Classes/info.dart';
-import 'package:thinker_prototipo/_comum/colors.dart';
-import 'package:thinker_prototipo/drawer.dart';
+import 'package:tinker/Classes/info.dart';
+import 'package:tinker/drawer.dart';
+
 class Contato extends StatefulWidget {
   const Contato({super.key});
 
   @override
   State<Contato> createState() => _ContatoState();
 }
-TextEditingController nome = TextEditingController();
-TextEditingController email = TextEditingController();
-TextEditingController numContato   = TextEditingController();
-TextEditingController msg = TextEditingController();
 
-String nomeF ="";
-String emailU = "";
-int numC = 0;
-String mensagem ="";
+class _ContatoState extends State<Contato> {
+  final nomeCtrl = TextEditingController();
+  final emailCtrl = TextEditingController();
+  final numCtrl = TextEditingController();
+  final msgCtrl = TextEditingController();
 
-List<Mensagem> listaMensagem =[];
 void Mostrar(){
   listaMensagem.forEach((Mensagem m){
     print("nome:" + m.nomeF);
@@ -29,278 +25,172 @@ void Mostrar(){
   });
 }
 
+  List<Mensagem> listaMensagem = [];
 
-final text = TextStyle(color: Colors.white,);
-final tituloContornado = Stack(
-  alignment: Alignment.center,
-  children: [
-   
-    Text(
-      'Tinker',
-      style: TextStyle(
-        fontFamily: 'Stardom',
-        fontSize: 90,
-        foreground: Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 4
-          ..color = Colors.black,
-      ),
-    ),
+  Widget campoContato(TextEditingController ctrl, String label, String hint,
+      {int maxLines = 1, TextInputType teclado = TextInputType.text}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+        SizedBox(height: 6),
+        TextField(
+          controller: ctrl,
+          maxLines: maxLines,
 
-   
-    Text(
-      'Tinker',
-      style: TextStyle(
-        fontFamily: 'Stardom',
-        fontSize: 90,
-        color: Colors.white,
-      ),
-    ),
-  ],
-);
-class _ContatoState extends State<Contato> {
+          keyboardType: teclado,
+          style: TextStyle(color: Colors.white, fontSize: 14),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(color: Color(0xFF4A6A8A), fontSize: 13),
+            filled: true,
+            fillColor: Color(0xFF0D1B2A),
+            contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+
+
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+
+
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1)),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-appBar: AppBar(
-backgroundColor: minhasCores.pretoC,
-       iconTheme: IconThemeData(color: Colors.white70,size: 30),
-),
-drawer: MeuDrawer(),
-backgroundColor: minhasCores.pretoC,
-                body:
-                 
-                  Stack 
-      (
-       fit: StackFit.expand,
-children:[
-     
-         
-    
-Stack(children: [
+      backgroundColor: Color(0xFF0D1B2A),
+      drawer: MeuDrawer(),
+      appBar: AppBar(
+         backgroundColor: Color(0xFF0D1B2A),
+         iconTheme: IconThemeData(color: Colors.white),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 16),
 
-    Positioned(
- top: 50,
- left: 16,
-  child:Container(
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color:minhasCores.azul2C,
-    ),
+             
+              Row(
+                children: [
+                  SizedBox(width: 20),
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Color(0xFF1A4A7A),
+                    child: Image.asset('assets/images/tinker_images/logo2.png'),
+                  ),
+                  SizedBox(width: 8),
+                  Text('TINKER',
+                      style: TextStyle(
+                          fontFamily: 'Stardom',
+                          color: Colors.white,
+                          fontSize: 25,
+                          letterSpacing: 3)),
+                ],
+              ),
 
-  ),
-),
-SafeArea(child: Padding(padding: EdgeInsets.all(16),
-child:SingleChildScrollView(child: 
-Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    SizedBox(height: 30,),
-    Center(
-      child: Container(
-        width: 400,
-        height: 150,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+              SizedBox(height: 20),
+
+              Text('Fale conosco',
+                  style: TextStyle(
+                      color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600)),
+              SizedBox(height: 4),
+              Text('Estamos aqui para ajudar! Preencha o formulário abaixo e nossa equipe entrará em contato.',
+                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
+
+              SizedBox(height: 20),
+
+              
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Color(0xFF0F2744),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    campoContato(nomeCtrl, 'Seu nome', 'Digite seu nome'),
+                    SizedBox(height: 16),
+
+
+                    campoContato(emailCtrl, 'Seu e-mail', 'Digite seu e-mail',
+                        teclado: TextInputType.emailAddress),
+                    SizedBox(height: 16),
+
+                    campoContato(numCtrl, 'Número de contato', 'Digite seu número de contato',
+                        teclado: TextInputType.phone),
+                    SizedBox(height: 16),
+
+                    campoContato(msgCtrl, 'Mensagem', 'Escreva sua mensagem aqui...',
+                        maxLines: 5),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF1A56DB),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          elevation: 0,
+                        ),
+                        onPressed: () {
+                          if (nomeCtrl.text.isEmpty || numCtrl.text.isEmpty) return;
+                          Mensagem m = Mensagem(
+                            nomeCtrl.text,
+                            emailCtrl.text,
+                            int.tryParse(numCtrl.text) ?? 0,
+                            msgCtrl.text,
+
+                          );
+
+                          setState(() {
+                            listaMensagem.add(m);
+                            nomeCtrl.clear();
+                            emailCtrl.clear();
+                            numCtrl.clear();
+                            msgCtrl.clear();
+                          });
+                          Mostrar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Mensagem enviada com sucesso!'),
+                              backgroundColor: Color(0xFF0F3A2A),
+                            ),
+                          );
+                        },
+                        child: Text('Enviar mensagem',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 24),
+            ],
+          ),
         ),
-child: Stack(
-  clipBehavior: Clip.none,
-  alignment: Alignment.center,
-  children: [
-    Positioned(
-      top: -90,
-      left: 1,
-      child:IgnorePointer(
-        child: Image.asset("assets/images/logo.png",
-        width: 400,
-       
-        ),
-      ), 
-    ),
-
-    Center(
-      child:tituloContornado ,),
-
-          ],
-        ),
       ),
-    ),
-SizedBox(height: 60,),
-Center(
-  child: Container(
-    width: 360,
-    height:600,
-    decoration: BoxDecoration(
-      color:Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.white,width:1.5),
-      
-    ),
-    child:
-    Center(
-      
-      child:Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-      Center(child: 
-     Text("Fale Conosco",style: TextStyle(color: minhasCores.pretoC,fontSize: 30,)),
-      ),
-SizedBox(height: 20,),
-  Padding(padding: EdgeInsets.all(20),
-child: 
-     TextField(
-controller: nome,
- decoration: InputDecoration(
-           focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black, width:1.5),
-    ),
-         floatingLabelStyle: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-          labelText: "Seu nome",
-          
-            labelStyle: TextStyle(
-      color: Colors.black54,
-      fontSize: 16,
-    ),
-          filled: true,
-         fillColor: Colors.white,
-        border:OutlineInputBorder(borderRadius: BorderRadius.circular(10))
-         ),
-      ),
-),
-
-
-
-
-
-
-
-
-SizedBox(height: 10,),
-  Padding(padding: EdgeInsets.all(20),
-child: 
-     TextField(
-controller: email,
- decoration: InputDecoration(
-           focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black, width:1.5),
-    ),
-         floatingLabelStyle: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-          labelText: "Seu E-mail",
-          
-            labelStyle: TextStyle(
-      color: Colors.black54,
-      fontSize: 16,
-    ),
-          filled: true,
-         fillColor: Colors.white,
-        border:OutlineInputBorder(borderRadius: BorderRadius.circular(10))
-         ),
-      ),
-),
-
-
-
-
-
-
-
-
-SizedBox(height: 10,),
-  Padding(padding: EdgeInsets.all(20),
-child: 
-     TextField(
-controller: numContato,
- decoration: InputDecoration(
-           focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black, width:1.5),
-    ),
-         floatingLabelStyle: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-          labelText: "Numero de contato",
-          
-            labelStyle: TextStyle(
-      color: Colors.black54,
-      fontSize: 16,
-    ),
-          filled: true,
-         fillColor: Colors.white,
-        border:OutlineInputBorder(borderRadius: BorderRadius.circular(10))
-         ),
-      ),
-),
-SizedBox(height: 10,),
-
-
-
-
-
-
-
-
-  Padding(padding: EdgeInsets.all(20),
-child: 
-     TextField(
-      maxLines: 5,
-controller: msg,
- decoration: InputDecoration(
-           focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black, width:1.5),
-      
-    ),
-         floatingLabelStyle: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-          labelText: "Mensagem",
-           alignLabelWithHint: true,
-          
-            labelStyle: TextStyle(
-      color: Colors.black54,
-      fontSize: 16,
-      
-    ),
-          filled: true,
-         fillColor: Colors.white,
-        border:OutlineInputBorder(borderRadius: BorderRadius.circular(10))
-        
-         ),
-      ),
-),
-   
-   Center(child: 
-   
-   ElevatedButton(
-    
-    onPressed: (){
-      String nomeF = nome.text;
-      String emailU = email.text;
-      int numC = int.parse(numContato.text);
-      String mensagem = msg.text;
-
-      Mensagem m = new Mensagem(nomeF,emailU,numC,mensagem);
-      listaMensagem.add(m);
-      Mostrar();
-      setState(() {
-        
-      });
-      listaMensagem.add(m);
-   },
-   style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.black,
-    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-   ),
-   
-    child: Text("Enviar",style: TextStyle(color: Colors.white),))
-   )
-        ]
-     )
-    )
- ) )]
-    )
-    )
-)
-)  
-  ]
-)
-
-])
     );
   }
 }

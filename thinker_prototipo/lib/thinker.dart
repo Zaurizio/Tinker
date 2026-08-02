@@ -1,100 +1,113 @@
 import 'package:flutter/material.dart';
-import 'package:thinker_prototipo/_comum/colors.dart';
-import 'package:thinker_prototipo/cadastrologin.dart';
+import 'package:tinker/cadastrologin.dart';
 
 class Thinker extends StatelessWidget {
-  Thinker({super.key});
+  const Thinker({super.key});
 
-  final text = TextStyle(color: Colors.white,);
-    final titulo =TextStyle(fontFamily: 'Stardom',fontSize: 90,color:Colors.white,);
-
-    
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack
-      (
-       fit: StackFit.expand,
-       children: [
-        Image.asset('assets/images/constelacao.png',fit: BoxFit.cover,),
+      backgroundColor: Color(0xFF0D1B2E),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFF2A7FC1),
+                    ),
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage('assets/images/tinker_images/logo2.png'),
+                      backgroundColor: Color(0xFF2A7FC1),
+                      radius: 50,
+                    ),
+                  ),
+                  SizedBox(width: 14),
+                  Text(
+                    'TINKER',
+                    style: TextStyle(
+                      fontFamily: 'Stardom',
+                      fontSize: 60,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 3,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
 
-        SafeArea(child: Padding(padding:const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
-        Center(child: Text('Tinker',style: titulo,textAlign: TextAlign.center,)
+              SizedBox(height: 32),
 
-        
+              Text(
+                'Estude com mais foco.\nChegue mais longe.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  height: 1.4,
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              Text(
+                'Questões de vestibular, simulados,\n'
+                'desempenho e colaboração\n'
+                'com sua turma — tudo em um só lugar.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xFFB0BEC5),
+                  height: 1.6,
+                ),
+              ),
+
+              SizedBox(height: 40),
+
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginCadastro()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF3A7BD5),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Começar agora',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 16),
+            ],
+          ),
         ),
-
-       
-        
-Center(child:
-        
-        DecoratedBox(decoration: BoxDecoration(
-          
-          border: Border.all(color: const Color.fromARGB(255, 22, 83, 122)),
-          color: const Color.fromARGB(255, 30, 103, 148),
-          borderRadius: BorderRadius.circular(20)),
-        child: Padding(padding: EdgeInsets.all(30),child:Column( children: [
-          
-      
-        Text('Textinhos legais sobre o projeto que eu não faço ideia sobre já que Tinker foi inspirado na ideia de que o conhecimento deve ser algo definitivamente o que escrever,que Tinker foi inspirado na ideia de que o conhecimento deve ser algo definitivamente.',style: text,textAlign: TextAlign.justify,), 
-        SizedBox(height: 20,),
-       Text("Mergulhar nunca foi tão bom!!!",style:text,textAlign:TextAlign.justify,) 
-        ]
-
-        
-         ),     
-        )
-       ),
       ),
-
- Spacer(),
-
- Center(child:  
- 
- 
-      ElevatedButton(onPressed: (){
-Navigator.push(context, MaterialPageRoute(builder: (context) => LoginCadastro()),
-            );
-
-      }, 
-      style: ElevatedButton.styleFrom(
-        backgroundColor:  minhasCores.pretoC,
-       minimumSize:Size(200, 55), 
-      ),
-      child: Text("Começe agora",style: TextStyle(color: Colors.white),))
- 
-       ,),
-
- 
-Spacer(),
-
-      
-        
-        ],
-        ),
-        
-        ),
-        
-        ),
-       
-   Positioned( 
-    bottom: -125 ,
-    right: -475,
-    child: IgnorePointer(
-child:Transform.rotate(angle: 0.30,
-
-child:  Image.asset("assets/images/logo.png",width: 1100,alignment: Alignment.bottomRight)),
-    ) 
-)
-        
-       ],
-       
-       
-      ), 
-    
-    
     );
   }
 }

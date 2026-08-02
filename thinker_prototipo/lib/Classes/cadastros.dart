@@ -1,4 +1,4 @@
-class Cadastros {
+/*class Cadastros {
   String _nome;
   String _senha;
   String _email;
@@ -15,4 +15,4 @@ class Cadastros {
  set email( value) => this._email = value;
 
 Cadastros(this._nome, this._senha, this._email);
-}
+} */

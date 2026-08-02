@@ -1,6 +1,6 @@
 {
-    "name": "thinker_prototipo",
-    "short_name": "thinker_prototipo",
+    "name": "tinker",
+    "short_name": "tinker",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

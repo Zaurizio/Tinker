@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:thinker_prototipo/_comum/colors.dart';
 
 class Simulado extends StatefulWidget {
   const Simulado({super.key});
@@ -9,281 +8,291 @@ class Simulado extends StatefulWidget {
 }
 
 class _SimuladoState extends State<Simulado> {
-  final List<Map<String, String>> _simulados = [];
+  final buscaCtrl = TextEditingController();
+  final List<Map<String, String>> simulados = [];
+  List<Map<String, String>> simuladosFiltrados = [];
 
-  dynamic adicionarSimulado() {
+  @override
+  void initState() {
+    super.initState();
+    simuladosFiltrados = List.from(simulados);
+  }
+
+  void filtrar(String texto) {
+    setState(() {
+      if (texto.isEmpty) {
+        simuladosFiltrados = List.from(simulados);
+      } else {
+        simuladosFiltrados = simulados
+            .where((s) =>
+                s["nome"]!.toLowerCase().contains(texto.toLowerCase()) ||
+                s["materia"]!.toLowerCase().contains(texto.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  void remover(Map<String, String> simulado) {
+    setState(() {
+      simulados.remove(simulado);
+      filtrar(buscaCtrl.text);
+    });
+  }
+
+  void criarSimulado() {
     final nomeCtrl = TextEditingController();
     final materiaCtrl = TextEditingController();
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: minhasCores.pretoC,
-        title: Text("Novo simulado", style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFF0F2744),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        title: Text('Novo simulado',
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              style: TextStyle(color: Colors.white),
-              controller: nomeCtrl,
-              decoration: InputDecoration(
-                labelText: "Nome",
-                labelStyle: TextStyle(color: Colors.white),
-              ),
-            ),
-            TextField(
-              style: TextStyle(color: Colors.white),
-              controller: materiaCtrl,
-              decoration: InputDecoration(
-                labelText: "Matéria",
-                labelStyle: TextStyle(color: Colors.white),
-              ),
-            ),
+            Text('Nome', style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+            SizedBox(height: 6),
+            campoDeSimulado(nomeCtrl, 'Ex: Simulado ENEM 2026'),
+            SizedBox(height: 14),
+            Text('Matéria', style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+            SizedBox(height: 6),
+            campoDeSimulado(materiaCtrl, 'Ex: Geral'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text("Cancelar", style: TextStyle(color: Colors.white)),
+            child: Text('Cancelar', style: TextStyle(color: Color(0xFF8AABCC))),
           ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.white),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF1A4A8A),
+              foregroundColor: Color(0xFF4A9EFF),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              elevation: 0,
+            ),
             onPressed: () {
-              if (nomeCtrl.text.isEmpty) return;
-              setState(
-                () => _simulados.add({
-                  "nome": nomeCtrl.text,
-                  "materia": materiaCtrl.text,
-                }),
-              );
+              if (nomeCtrl.text.trim().isEmpty) return;
+              setState(() {
+                simulados.insert(0, {
+                  "nome": nomeCtrl.text.trim(),
+                  "materia": materiaCtrl.text.trim().isEmpty
+                      ? "Geral"
+                      : materiaCtrl.text.trim(),
+                });
+                filtrar(buscaCtrl.text);
+              });
               Navigator.pop(ctx);
             },
-
-            child: Text("Criar", style: TextStyle(color: Colors.white)),
+            child: Text('Criar'),
           ),
         ],
       ),
     );
   }
 
-  final text = TextStyle(color: Colors.white);
-  final tituloContornado = Stack(
-    alignment: Alignment.center,
-    children: [
-      Text(
-        'Tinker',
-        style: TextStyle(
-          fontFamily: 'Stardom',
-          fontSize: 45,
-          foreground: Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 4
-            ..color = Colors.black,
-        ),
+  Widget campoDeSimulado(TextEditingController ctrl, String hint) {
+    return TextField(
+      controller: ctrl,
+      style: TextStyle(color: Colors.white, fontSize: 14),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14),
+        filled: true,
+        fillColor: Color(0xFF0D1B2A),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1)),
       ),
+    );
+  }
 
-      Text(
-        'Tinker',
-        style: TextStyle(
-          fontFamily: 'Stardom',
-          fontSize: 45,
-          color: Colors.white,
-        ),
-      ),
-    ],
-  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset('assets/images/constelacao.png', fit: BoxFit.cover),
-          Stack(
+      backgroundColor: Color(0xFF0D1B2A),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Positioned(
-                top: 50,
-                left: 16,
+              SizedBox(height: 16),
+
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFF0F2744),
+                        border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                      ),
+                      child: Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  CircleAvatar(
+                    radius: 24,
+                    backgroundColor: Color(0xFF1A4A7A),
+                    child: Image.asset('assets/images/tinker_images/logo2.png'),
+                  ),
+                  SizedBox(width: 8),
+                  Text('TINKER',
+                      style: TextStyle(
+                          fontFamily: 'Stardom',
+                          color: Colors.white,
+                          fontSize: 25,
+                          letterSpacing: 3)),
+                ],
+              ),
+
+              SizedBox(height: 20),
+
+              Text('Simulados',
+                  style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600)),
+              SizedBox(height: 4),
+              Text('Pratique e acompanhe seus simulados',
+                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
+
+              SizedBox(height: 20),
+
+              TextField(
+                controller: buscaCtrl,
+                onChanged: filtrar,
+                style: TextStyle(color: Colors.white, fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Buscar simulado ou matéria...',
+                  hintStyle: TextStyle(color: Color(0xFF4A6A8A), fontSize: 13),
+                  prefixIcon: Icon(Icons.search, color: Color(0xFF4A6A8A), size: 20),
+                  filled: true,
+                  fillColor: Color(0xFF0F2744),
+                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1)),
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              Text('SEUS SIMULADOS',
+                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 11, letterSpacing: 1.2)),
+
+              SizedBox(height: 10),
+
+              GestureDetector(
+                onTap: criarSimulado,
                 child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: minhasCores.azulC,
+                    color: Color(0xFF0F2744),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
                   ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add, color: Color(0xFF4A9EFF), size: 18),
+                      SizedBox(width: 8),
+                      Text('Adicionar simulado',
+                          style: TextStyle(color: Color(0xFF4A9EFF), fontSize: 14)),
+                    ],
                   ),
                 ),
               ),
-              Positioned(
-                top: -50,
-                left: 60,
-                child: IgnorePointer(
-                  child: Image.asset('assets/images/logo.png', width: 300),
+
+              SizedBox(height: 12),
+
+              if (simuladosFiltrados.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Column(
+                      children: [
+                        Icon(Icons.quiz_outlined, color: Color(0xFF4A6A8A), size: 40),
+                        SizedBox(height: 12),
+                        Text('Nenhum simulado encontrado.',
+                            style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14)),
+                        SizedBox(height: 4),
+                        Text('Adicione seu primeiro simulado acima.',
+                            style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 13)),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                ...simuladosFiltrados.map(
+                  (s) => Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF0F2744),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF1A3A6A),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(Icons.quiz_outlined, color: Color(0xFF4A9EFF), size: 18),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(s["nome"]!,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
+                              SizedBox(height: 3),
+                              Text(s["materia"]!,
+                                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => remover(s),
+                          icon: Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+
+              SizedBox(height: 24),
             ],
           ),
-
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 30),
-                  Center(child: tituloContornado),
-                  SizedBox(height: 60),
-                  Column(
-                    children: [
-                      Center(
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              width: 360,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: minhasCores.azulC,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-
-                              child: Center(
-                                child: Text(
-                                  "Simulados",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 35,
-                                    fontWeight: FontWeight(30),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: 20),
-                      Center(
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                color: minhasCores.pretoC,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: minhasCores.azul2C,
-                                  width: 1,
-                                ),
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  adicionarSimulado();
-                                },
-                                icon: Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                  size: 18,
-                                ),
-                              ),
-                            ),
-                            ..._simulados.map(
-                              
-                              (s) => Container(
-                                
-                                width: double.infinity,
-                               
-                                margin: EdgeInsets.only(top: 12),
-                               
-                                decoration: BoxDecoration(
-                                  color:Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                 
-                                ),
-                                 clipBehavior: Clip.antiAlias,
-                                 
-                               
-                                  child: 
-                                   Stack(
-                                  
-                                  children: [
-                                     Column(
-                                        
-                                            crossAxisAlignment:CrossAxisAlignment.start ,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                            width: double.infinity,
-                                            color: minhasCores.pretoC,
-                                            child: 
-                                          Text(
-                                            s["nome"]!,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          ),
-                                          Padding(
-                                            padding:EdgeInsets.all(20),
-                                       child:  Text(
-                                            s["materia"]!,
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          )
-                                        ],
-                                      ),
-                                    
-
-                                    Positioned(
-                                      top: -4,
-                                      right: -6,
-
-                                      child: IconButton(
-                                        onPressed: () => setState(
-                                          () => _simulados.removeAt(
-                                            _simulados.indexOf(s),
-                                          ),
-                                        ),
-                                        icon: Icon(
-                                          Icons.close,
-                                          color: Colors.white54,
-                                        )
-                                        ),
-                                      ),
-                                  ]
-                                    ),
-                              
-                            )
-                            )
-                                  ],
-                                ),
-                              ),
-                                            
-
-                          ]              
-                            ),
-                ]
-                      )
-            )
-          )
-                          ],
-                        ),
-                
-                      );
-            
-          
-                    
-                  
-    
-       
+        ),
+      ),
+    );
   }
 }

@@ -1,88 +1,162 @@
 import 'package:flutter/material.dart';
-import 'package:thinker_prototipo/cadastro.dart';
-import 'package:thinker_prototipo/login.dart';
+import 'package:tinker/cadastro.dart';
+import 'package:tinker/login.dart';
 
 class LoginCadastro extends StatelessWidget {
-  LoginCadastro({super.key});
+  const LoginCadastro({super.key});
 
-  final text = TextStyle(color: Colors.white,);
-    final titulo =TextStyle(fontFamily: 'Stardom',fontSize: 90,color:Colors.white,);
-
-    
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack
-      (
-       fit: StackFit.expand,
-       children: [
-        Image.asset('assets/images/constelacao.png',fit: BoxFit.cover,),
+      backgroundColor:  Color(0xFF0D1B2E),
+      body: SafeArea(
+        child: Padding(
+          padding:  EdgeInsets.symmetric(horizontal: 28.0),
+          child: Column(
+            children: [
+              Spacer(flex: 1),
 
-        SafeArea(child: Padding(padding:const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
-        Center(child: Text('Tinker',style: titulo,textAlign: TextAlign.center,)
+             
+               CircleAvatar(
+                radius: 70,
+                backgroundColor: Color(0xFF2A7FC1),
+                backgroundImage: AssetImage('assets/images/tinker_images/logo2.png'),
+              ),
+
+              SizedBox(height: 20),
+
+              
+               Text(
+                'TINKER',
+                style: TextStyle(
+                  fontFamily: 'Stardom',
+                  fontSize: 48,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 4,
+                  color: Colors.white,
+                ),
+              ),
+
+               Spacer(flex: 1),
+
+         
+              Text(
+                'Estude com mais foco.\nChegue mais longe.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  height: 1.4,
+                ),
+              ),
+
+              SizedBox(height: 18),
 
         
+               Text(
+                'Questões de vestibular, simulados,\n'
+                'desempenho e colaboração com sua\n'
+                'turma — tudo em um só lugar.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xFFB0BEC5),
+                  height: 1.6,
+                ),
+              ),
+
+               Spacer(flex: 2),
+
+           
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                     Navigator.push(context,
+                       MaterialPageRoute(builder: (context) => Login()));
+                  },
+                  icon: Icon(Icons.login_rounded, color: Colors.white),
+                  label:  Text(
+                    'Entrar',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:  Color(0xFF3A7BD5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
+                  ),
+                ),
+              ),
+
+               SizedBox(height: 14),
+
+              
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(context,
+                         MaterialPageRoute(builder: (context) => Cadastro()));
+                  },
+                  icon:  Icon(Icons.person_add_outlined, color: Colors.white),
+                  label:  Text(
+                    'Criar conta',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side:  BorderSide(color: Color(0xFF3A5A80), width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+
+               SizedBox(height: 28),
+
+             
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Já tem uma conta? ',
+                    style: TextStyle(color: Color(0xFFB0BEC5), fontSize: 14),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                       Navigator.push(context,
+                         MaterialPageRoute(builder: (context) => Login()));
+                    },
+                    child:  Text(
+                      'Faça login',
+                      style: TextStyle(
+                        color: Color(0xFF4A90D9),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+               SizedBox(height: 50),
+            ],
+          ),
         ),
-
-       
-        
-
-        
-     
-
-      SizedBox(height:200 ,),
-      Row(mainAxisAlignment: MainAxisAlignment.center ,children: [
-
- Center(child:  
-      ElevatedButton(onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Login())
-
-        );
-      }, 
-      
-      style: ElevatedButton.styleFrom(
-        backgroundColor:  Color.fromARGB(255, 0, 0, 0),
-       minimumSize:Size(100, 55), 
       ),
-      child: Text("Entrar",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
- 
-       ,),
-
-       SizedBox(width: 50,),
-
-Center(child:  
-      ElevatedButton(onPressed: (){
-
- Navigator.push(context, MaterialPageRoute(builder: (context) => Cadastro())
- );
-
-      }, 
-      style: ElevatedButton.styleFrom(
-        backgroundColor:  Color.fromARGB(255, 0, 0, 0),
-        minimumSize:Size(150, 55), 
-      ),
-      child: Text("Cadastrar-se",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),))
-        ,),    
-       ],
-     ),
-        ]
-        )  ,
-        
-   ), 
- ),
-
-   Positioned( 
-    bottom: -125,
-    right: -475,
-    child: IgnorePointer(
-child:Transform.rotate(angle: 0.30,
-child:  Image.asset("assets/images/logo.png",width: 1100,alignment: Alignment.bottomRight)),
-    )
-)
-       ], 
-      ), 
     );
   }
 }
