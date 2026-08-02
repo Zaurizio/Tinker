@@ -247,5 +247,10 @@ namespace ProjStudio
         {
             
         }
+
+        private void guna2TextBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -121,5 +121,10 @@ namespace ProjStudio
         {
 
         }
+
+        private void Professor_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

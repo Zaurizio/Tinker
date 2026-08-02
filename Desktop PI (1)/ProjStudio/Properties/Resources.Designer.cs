@@ -19,7 +19,7 @@ namespace ProjStudio.Properties {
     // através de uma ferramenta como ResGen ou Visual Studio.
     // Para adicionar ou remover um associado, edite o arquivo .ResX e execute ResGen novamente
     // com a opção /str, ou recrie o projeto do VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -63,9 +63,9 @@ namespace ProjStudio.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap alunos {
+        internal static System.Drawing.Bitmap adminofc {
             get {
-                object obj = ResourceManager.GetObject("alunos", resourceCulture);
+                object obj = ResourceManager.GetObject("adminofc", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace ProjStudio.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap professor {
+        internal static System.Drawing.Bitmap alunoofc {
             get {
-                object obj = ResourceManager.GetObject("professor", resourceCulture);
+                object obj = ResourceManager.GetObject("alunoofc", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace ProjStudio.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap questoes {
+        internal static System.Drawing.Bitmap homeofc {
             get {
-                object obj = ResourceManager.GetObject("questoes", resourceCulture);
+                object obj = ResourceManager.GetObject("homeofc", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,29 @@ namespace ProjStudio.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap sistema {
+        internal static System.Drawing.Bitmap professorofc {
             get {
-                object obj = ResourceManager.GetObject("sistema", resourceCulture);
+                object obj = ResourceManager.GetObject("professorofc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap questaoofc {
+            get {
+                object obj = ResourceManager.GetObject("questaoofc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap turmaofc {
+            get {
+                object obj = ResourceManager.GetObject("turmaofc", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

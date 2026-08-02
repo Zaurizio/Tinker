@@ -37,8 +37,8 @@
             this.buttonProf = new Guna.UI2.WinForms.Guna2Button();
             this.buttonAluno = new Guna.UI2.WinForms.Guna2Button();
             this.buttonAdm = new Guna.UI2.WinForms.Guna2Button();
-            this.buttonHome = new Guna.UI2.WinForms.Guna2Button();
             this.panelSidebar = new Guna.UI2.WinForms.Guna2Panel();
+            this.buttonHome = new Guna.UI2.WinForms.Guna2Button();
             this.guna2ControlBox3 = new Guna.UI2.WinForms.Guna2ControlBox();
             this.guna2ControlBox2 = new Guna.UI2.WinForms.Guna2ControlBox();
             this.guna2ControlBox1 = new Guna.UI2.WinForms.Guna2ControlBox();
@@ -192,26 +192,6 @@
             this.buttonAdm.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.buttonAdm.Click += new System.EventHandler(this.buttonAdm_Click);
             // 
-            // buttonHome
-            // 
-            this.buttonHome.Animated = true;
-            this.buttonHome.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.buttonHome.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.buttonHome.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.buttonHome.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.buttonHome.FillColor = System.Drawing.Color.Transparent;
-            this.buttonHome.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonHome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.buttonHome.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonHome.Location = new System.Drawing.Point(18, 90);
-            this.buttonHome.Name = "buttonHome";
-            this.buttonHome.Size = new System.Drawing.Size(190, 35);
-            this.buttonHome.TabIndex = 6;
-            this.buttonHome.Tag = "";
-            this.buttonHome.Text = "Home";
-            this.buttonHome.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonHome.Click += new System.EventHandler(this.buttonHome_Click);
-            // 
             // panelSidebar
             // 
             this.panelSidebar.BackColor = System.Drawing.Color.Transparent;
@@ -223,13 +203,33 @@
             this.panelSidebar.Controls.Add(this.buttonAluno);
             this.panelSidebar.Controls.Add(this.buttonAdm);
             this.panelSidebar.Controls.Add(this.buttonHome);
-            this.panelSidebar.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
+            this.panelSidebar.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
             this.panelSidebar.ForeColor = System.Drawing.Color.Black;
-            this.panelSidebar.Location = new System.Drawing.Point(5, 160);
+            this.panelSidebar.Location = new System.Drawing.Point(5, 103);
             this.panelSidebar.Name = "panelSidebar";
-            this.panelSidebar.Size = new System.Drawing.Size(250, 452);
+            this.panelSidebar.Size = new System.Drawing.Size(247, 585);
             this.panelSidebar.TabIndex = 7;
             this.panelSidebar.Paint += new System.Windows.Forms.PaintEventHandler(this.panelSidebar_Paint);
+            // 
+            // buttonHome
+            // 
+            this.buttonHome.Animated = true;
+            this.buttonHome.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.buttonHome.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.buttonHome.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.buttonHome.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.buttonHome.FillColor = System.Drawing.Color.Transparent;
+            this.buttonHome.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonHome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
+            this.buttonHome.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonHome.Location = new System.Drawing.Point(19, 90);
+            this.buttonHome.Name = "buttonHome";
+            this.buttonHome.Size = new System.Drawing.Size(189, 35);
+            this.buttonHome.TabIndex = 6;
+            this.buttonHome.Tag = "";
+            this.buttonHome.Text = "Home";
+            this.buttonHome.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonHome.Click += new System.EventHandler(this.buttonHome_Click);
             // 
             // guna2ControlBox3
             // 
@@ -274,16 +274,16 @@
             // 
             // label2
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI Semibold", 32.25F, System.Drawing.FontStyle.Bold);
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 30F);
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label2.Location = new System.Drawing.Point(530, 14);
+            this.label2.Location = new System.Drawing.Point(300, 0);
             this.label2.Name = "label2";
             this.label2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label2.Size = new System.Drawing.Size(441, 59);
+            this.label2.Size = new System.Drawing.Size(750, 88);
             this.label2.TabIndex = 1;
             this.label2.Text = "Painel Administrativo";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
@@ -389,7 +389,6 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::ProjStudio.Properties.Resources.alunos;
             this.pictureBox1.Location = new System.Drawing.Point(40, 27);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(218, 125);
@@ -460,7 +459,6 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::ProjStudio.Properties.Resources.professor;
             this.pictureBox2.Location = new System.Drawing.Point(69, 50);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(171, 89);
@@ -532,7 +530,6 @@
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Image = global::ProjStudio.Properties.Resources.questoes;
             this.pictureBox3.Location = new System.Drawing.Point(86, 59);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(137, 80);
@@ -602,7 +599,6 @@
             // 
             // pictureBox4
             // 
-            this.pictureBox4.Image = global::ProjStudio.Properties.Resources.sistema;
             this.pictureBox4.Location = new System.Drawing.Point(74, 53);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(154, 86);

@@ -36,17 +36,11 @@
             this.guna2ControlBox1 = new Guna.UI2.WinForms.Guna2ControlBox();
             this.timerSidebar = new System.Windows.Forms.Timer(this.components);
             this.label6 = new System.Windows.Forms.Label();
-            this.buttonAlunoP = new Guna.UI2.WinForms.Guna2Button();
-            this.buttonQuest = new Guna.UI2.WinForms.Guna2Button();
-            this.buttonProf = new Guna.UI2.WinForms.Guna2Button();
-            this.buttonAluno = new Guna.UI2.WinForms.Guna2Button();
-            this.buttonAdm = new Guna.UI2.WinForms.Guna2Button();
-            this.buttonHome = new Guna.UI2.WinForms.Guna2Button();
             this.panelSidebar = new Guna.UI2.WinForms.Guna2Panel();
+            this.guna2Separator1 = new Guna.UI2.WinForms.Guna2Separator();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.panelHeader = new Guna.UI2.WinForms.Guna2Panel();
-            this.guna2CirclePictureBox1 = new Guna.UI2.WinForms.Guna2CirclePictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.guna2TextBox1 = new Guna.UI2.WinForms.Guna2TextBox();
             this.guna2TextBox3 = new Guna.UI2.WinForms.Guna2TextBox();
@@ -63,6 +57,13 @@
             this.guna2Button2 = new Guna.UI2.WinForms.Guna2Button();
             this.guna2TextBox7 = new Guna.UI2.WinForms.Guna2TextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.buttonAlunoP = new Guna.UI2.WinForms.Guna2Button();
+            this.buttonQuest = new Guna.UI2.WinForms.Guna2Button();
+            this.buttonProf = new Guna.UI2.WinForms.Guna2Button();
+            this.buttonAluno = new Guna.UI2.WinForms.Guna2Button();
+            this.buttonAdm = new Guna.UI2.WinForms.Guna2Button();
+            this.buttonHome = new Guna.UI2.WinForms.Guna2Button();
+            this.guna2CirclePictureBox1 = new Guna.UI2.WinForms.Guna2CirclePictureBox();
             this.panelSidebar.SuspendLayout();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.guna2CirclePictureBox1)).BeginInit();
@@ -116,135 +117,20 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label6.Location = new System.Drawing.Point(14, 27);
+            this.label6.Location = new System.Drawing.Point(24, 25);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(207, 25);
+            this.label6.Size = new System.Drawing.Size(195, 30);
             this.label6.TabIndex = 12;
             this.label6.Tag = "";
             this.label6.Text = "Bem-vindo, admin!";
-            // 
-            // buttonAlunoP
-            // 
-            this.buttonAlunoP.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.buttonAlunoP.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.buttonAlunoP.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.buttonAlunoP.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.buttonAlunoP.FillColor = System.Drawing.Color.Transparent;
-            this.buttonAlunoP.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAlunoP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.buttonAlunoP.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonAlunoP.Location = new System.Drawing.Point(18, 400);
-            this.buttonAlunoP.Name = "buttonAlunoP";
-            this.buttonAlunoP.Size = new System.Drawing.Size(190, 35);
-            this.buttonAlunoP.TabIndex = 11;
-            this.buttonAlunoP.Tag = "";
-            this.buttonAlunoP.Text = "Turma";
-            this.buttonAlunoP.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonAlunoP.Click += new System.EventHandler(this.buttonAlunoP_Click);
-            // 
-            // buttonQuest
-            // 
-            this.buttonQuest.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.buttonQuest.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.buttonQuest.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.buttonQuest.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.buttonQuest.FillColor = System.Drawing.Color.Transparent;
-            this.buttonQuest.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonQuest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.buttonQuest.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonQuest.Location = new System.Drawing.Point(18, 338);
-            this.buttonQuest.Name = "buttonQuest";
-            this.buttonQuest.Size = new System.Drawing.Size(190, 35);
-            this.buttonQuest.TabIndex = 10;
-            this.buttonQuest.Tag = "";
-            this.buttonQuest.Text = "Questões";
-            this.buttonQuest.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonQuest.Click += new System.EventHandler(this.buttonQuest_Click);
-            // 
-            // buttonProf
-            // 
-            this.buttonProf.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.buttonProf.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.buttonProf.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.buttonProf.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.buttonProf.FillColor = System.Drawing.Color.Transparent;
-            this.buttonProf.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonProf.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.buttonProf.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonProf.Location = new System.Drawing.Point(18, 276);
-            this.buttonProf.Name = "buttonProf";
-            this.buttonProf.Size = new System.Drawing.Size(190, 35);
-            this.buttonProf.TabIndex = 9;
-            this.buttonProf.Tag = "";
-            this.buttonProf.Text = "Professor";
-            this.buttonProf.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonProf.Click += new System.EventHandler(this.buttonProf_Click);
-            // 
-            // buttonAluno
-            // 
-            this.buttonAluno.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.buttonAluno.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.buttonAluno.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.buttonAluno.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.buttonAluno.FillColor = System.Drawing.Color.Transparent;
-            this.buttonAluno.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAluno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.buttonAluno.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonAluno.Location = new System.Drawing.Point(18, 214);
-            this.buttonAluno.Name = "buttonAluno";
-            this.buttonAluno.Size = new System.Drawing.Size(190, 35);
-            this.buttonAluno.TabIndex = 8;
-            this.buttonAluno.Tag = "";
-            this.buttonAluno.Text = "Aluno";
-            this.buttonAluno.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonAluno.Click += new System.EventHandler(this.buttonAluno_Click);
-            // 
-            // buttonAdm
-            // 
-            this.buttonAdm.Animated = true;
-            this.buttonAdm.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.buttonAdm.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.buttonAdm.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.buttonAdm.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.buttonAdm.FillColor = System.Drawing.Color.Transparent;
-            this.buttonAdm.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonAdm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.buttonAdm.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonAdm.Location = new System.Drawing.Point(18, 152);
-            this.buttonAdm.Name = "buttonAdm";
-            this.buttonAdm.Size = new System.Drawing.Size(190, 35);
-            this.buttonAdm.TabIndex = 7;
-            this.buttonAdm.Tag = "";
-            this.buttonAdm.Text = "Administrador";
-            this.buttonAdm.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonAdm.Click += new System.EventHandler(this.buttonAdm_Click);
-            // 
-            // buttonHome
-            // 
-            this.buttonHome.Animated = true;
-            this.buttonHome.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.buttonHome.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.buttonHome.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
-            this.buttonHome.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.buttonHome.FillColor = System.Drawing.Color.Transparent;
-            this.buttonHome.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonHome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.buttonHome.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonHome.Location = new System.Drawing.Point(18, 90);
-            this.buttonHome.Name = "buttonHome";
-            this.buttonHome.Size = new System.Drawing.Size(190, 35);
-            this.buttonHome.TabIndex = 6;
-            this.buttonHome.Tag = "";
-            this.buttonHome.Text = "Home";
-            this.buttonHome.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.buttonHome.Click += new System.EventHandler(this.buttonHome_Click);
             // 
             // panelSidebar
             // 
             this.panelSidebar.BackColor = System.Drawing.Color.Transparent;
             this.panelSidebar.BorderRadius = 7;
+            this.panelSidebar.Controls.Add(this.guna2Separator1);
             this.panelSidebar.Controls.Add(this.label6);
             this.panelSidebar.Controls.Add(this.buttonAlunoP);
             this.panelSidebar.Controls.Add(this.buttonQuest);
@@ -252,25 +138,33 @@
             this.panelSidebar.Controls.Add(this.buttonAluno);
             this.panelSidebar.Controls.Add(this.buttonAdm);
             this.panelSidebar.Controls.Add(this.buttonHome);
-            this.panelSidebar.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
+            this.panelSidebar.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
             this.panelSidebar.ForeColor = System.Drawing.Color.Black;
-            this.panelSidebar.Location = new System.Drawing.Point(5, 160);
+            this.panelSidebar.Location = new System.Drawing.Point(5, 103);
             this.panelSidebar.Name = "panelSidebar";
-            this.panelSidebar.Size = new System.Drawing.Size(247, 452);
+            this.panelSidebar.Size = new System.Drawing.Size(247, 585);
             this.panelSidebar.TabIndex = 52;
+            // 
+            // guna2Separator1
+            // 
+            this.guna2Separator1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.guna2Separator1.Location = new System.Drawing.Point(13, 58);
+            this.guna2Separator1.Name = "guna2Separator1";
+            this.guna2Separator1.Size = new System.Drawing.Size(215, 10);
+            this.guna2Separator1.TabIndex = 80;
             // 
             // label2
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI Semibold", 32.25F, System.Drawing.FontStyle.Bold);
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label2.Location = new System.Drawing.Point(530, 14);
+            this.label2.Location = new System.Drawing.Point(300, 0);
             this.label2.Name = "label2";
             this.label2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label2.Size = new System.Drawing.Size(428, 59);
+            this.label2.Size = new System.Drawing.Size(750, 88);
             this.label2.TabIndex = 1;
             this.label2.Text = "Exclusão de Questão";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
@@ -298,25 +192,12 @@
             this.panelHeader.Size = new System.Drawing.Size(1200, 88);
             this.panelHeader.TabIndex = 51;
             // 
-            // guna2CirclePictureBox1
-            // 
-            this.guna2CirclePictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("guna2CirclePictureBox1.Image")));
-            this.guna2CirclePictureBox1.ImageRotate = 0F;
-            this.guna2CirclePictureBox1.Location = new System.Drawing.Point(18, 6);
-            this.guna2CirclePictureBox1.Margin = new System.Windows.Forms.Padding(1);
-            this.guna2CirclePictureBox1.Name = "guna2CirclePictureBox1";
-            this.guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
-            this.guna2CirclePictureBox1.Size = new System.Drawing.Size(79, 76);
-            this.guna2CirclePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.guna2CirclePictureBox1.TabIndex = 80;
-            this.guna2CirclePictureBox1.TabStop = false;
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.label3.Location = new System.Drawing.Point(293, 120);
+            this.label3.Location = new System.Drawing.Point(293, 103);
             this.label3.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(129, 25);
@@ -335,12 +216,14 @@
             this.guna2TextBox1.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox1.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox1.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox1.Location = new System.Drawing.Point(427, 120);
+            this.guna2TextBox1.Location = new System.Drawing.Point(298, 132);
+            this.guna2TextBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox1.Name = "guna2TextBox1";
             this.guna2TextBox1.PlaceholderText = "";
             this.guna2TextBox1.SelectedText = "";
-            this.guna2TextBox1.Size = new System.Drawing.Size(197, 30);
+            this.guna2TextBox1.Size = new System.Drawing.Size(211, 30);
             this.guna2TextBox1.TabIndex = 57;
+            this.guna2TextBox1.TextChanged += new System.EventHandler(this.guna2TextBox1_TextChanged);
             // 
             // guna2TextBox3
             // 
@@ -354,7 +237,8 @@
             this.guna2TextBox3.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox3.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox3.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox3.Location = new System.Drawing.Point(558, 278);
+            this.guna2TextBox3.Location = new System.Drawing.Point(558, 288);
+            this.guna2TextBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox3.Name = "guna2TextBox3";
             this.guna2TextBox3.PlaceholderText = "";
             this.guna2TextBox3.SelectedText = "";
@@ -373,7 +257,8 @@
             this.guna2TextBox2.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox2.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox2.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox2.Location = new System.Drawing.Point(298, 278);
+            this.guna2TextBox2.Location = new System.Drawing.Point(298, 288);
+            this.guna2TextBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox2.Name = "guna2TextBox2";
             this.guna2TextBox2.PlaceholderText = "";
             this.guna2TextBox2.SelectedText = "";
@@ -392,7 +277,8 @@
             this.guna2TextBox4.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox4.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox4.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox4.Location = new System.Drawing.Point(298, 197);
+            this.guna2TextBox4.Location = new System.Drawing.Point(298, 207);
+            this.guna2TextBox4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox4.Name = "guna2TextBox4";
             this.guna2TextBox4.PlaceholderText = "";
             this.guna2TextBox4.SelectedText = "";
@@ -404,7 +290,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label8.Location = new System.Drawing.Point(553, 250);
+            this.label8.Location = new System.Drawing.Point(553, 260);
             this.label8.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(95, 25);
@@ -416,7 +302,7 @@
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label7.Location = new System.Drawing.Point(293, 250);
+            this.label7.Location = new System.Drawing.Point(293, 260);
             this.label7.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(94, 25);
@@ -428,7 +314,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label4.Location = new System.Drawing.Point(553, 169);
+            this.label4.Location = new System.Drawing.Point(553, 179);
             this.label4.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(46, 25);
@@ -440,7 +326,7 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label5.Location = new System.Drawing.Point(293, 169);
+            this.label5.Location = new System.Drawing.Point(293, 179);
             this.label5.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 25);
@@ -459,7 +345,8 @@
             this.guna2TextBox5.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox5.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox5.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox5.Location = new System.Drawing.Point(558, 197);
+            this.guna2TextBox5.Location = new System.Drawing.Point(558, 207);
+            this.guna2TextBox5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox5.Name = "guna2TextBox5";
             this.guna2TextBox5.PlaceholderText = "";
             this.guna2TextBox5.SelectedText = "";
@@ -471,7 +358,7 @@
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label9.Location = new System.Drawing.Point(701, 169);
+            this.label9.Location = new System.Drawing.Point(701, 179);
             this.label9.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(48, 25);
@@ -490,7 +377,8 @@
             this.guna2TextBox6.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox6.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox6.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox6.Location = new System.Drawing.Point(706, 197);
+            this.guna2TextBox6.Location = new System.Drawing.Point(706, 207);
+            this.guna2TextBox6.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox6.Name = "guna2TextBox6";
             this.guna2TextBox6.PlaceholderText = "";
             this.guna2TextBox6.SelectedText = "";
@@ -504,13 +392,13 @@
             this.guna2Button1.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
             this.guna2Button1.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button1.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.guna2Button1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(93)))), ((int)(((byte)(138)))));
+            this.guna2Button1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(64)))), ((int)(((byte)(102)))));
             this.guna2Button1.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.guna2Button1.ForeColor = System.Drawing.Color.White;
-            this.guna2Button1.Location = new System.Drawing.Point(298, 567);
+            this.guna2Button1.Location = new System.Drawing.Point(298, 577);
             this.guna2Button1.Margin = new System.Windows.Forms.Padding(1);
             this.guna2Button1.Name = "guna2Button1";
-            this.guna2Button1.Size = new System.Drawing.Size(150, 45);
+            this.guna2Button1.Size = new System.Drawing.Size(268, 45);
             this.guna2Button1.TabIndex = 76;
             this.guna2Button1.Text = "Excluir";
             this.guna2Button1.TextOffset = new System.Drawing.Point(0, -1);
@@ -524,13 +412,13 @@
             this.guna2Button2.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
             this.guna2Button2.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button2.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.guna2Button2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(93)))), ((int)(((byte)(138)))));
+            this.guna2Button2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(64)))), ((int)(((byte)(102)))));
             this.guna2Button2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.guna2Button2.ForeColor = System.Drawing.Color.White;
-            this.guna2Button2.Location = new System.Drawing.Point(654, 116);
-            this.guna2Button2.Margin = new System.Windows.Forms.Padding(1);
+            this.guna2Button2.Location = new System.Drawing.Point(531, 128);
+            this.guna2Button2.Margin = new System.Windows.Forms.Padding(4);
             this.guna2Button2.Name = "guna2Button2";
-            this.guna2Button2.Size = new System.Drawing.Size(100, 38);
+            this.guna2Button2.Size = new System.Drawing.Size(100, 39);
             this.guna2Button2.TabIndex = 77;
             this.guna2Button2.Text = "Buscar";
             this.guna2Button2.TextOffset = new System.Drawing.Point(0, -1);
@@ -548,12 +436,13 @@
             this.guna2TextBox7.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox7.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox7.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.guna2TextBox7.Location = new System.Drawing.Point(298, 360);
+            this.guna2TextBox7.Location = new System.Drawing.Point(298, 370);
+            this.guna2TextBox7.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox7.Name = "guna2TextBox7";
             this.guna2TextBox7.PlaceholderText = "";
             this.guna2TextBox7.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.guna2TextBox7.SelectedText = "";
-            this.guna2TextBox7.Size = new System.Drawing.Size(811, 185);
+            this.guna2TextBox7.Size = new System.Drawing.Size(629, 185);
             this.guna2TextBox7.TabIndex = 79;
             // 
             // label10
@@ -561,12 +450,159 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label10.Location = new System.Drawing.Point(293, 332);
+            this.label10.Location = new System.Drawing.Point(293, 342);
             this.label10.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(101, 25);
             this.label10.TabIndex = 78;
             this.label10.Text = "Enunciado";
+            // 
+            // buttonAlunoP
+            // 
+            this.buttonAlunoP.BorderRadius = 5;
+            this.buttonAlunoP.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.buttonAlunoP.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.buttonAlunoP.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.buttonAlunoP.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.buttonAlunoP.FillColor = System.Drawing.Color.Transparent;
+            this.buttonAlunoP.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold);
+            this.buttonAlunoP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
+            this.buttonAlunoP.Image = global::ProjStudio.Properties.Resources.turmaofc;
+            this.buttonAlunoP.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonAlunoP.ImageSize = new System.Drawing.Size(30, 30);
+            this.buttonAlunoP.Location = new System.Drawing.Point(13, 395);
+            this.buttonAlunoP.Name = "buttonAlunoP";
+            this.buttonAlunoP.Size = new System.Drawing.Size(215, 40);
+            this.buttonAlunoP.TabIndex = 11;
+            this.buttonAlunoP.Tag = "";
+            this.buttonAlunoP.Text = "Turma";
+            this.buttonAlunoP.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonAlunoP.Click += new System.EventHandler(this.buttonAlunoP_Click);
+            // 
+            // buttonQuest
+            // 
+            this.buttonQuest.BorderRadius = 5;
+            this.buttonQuest.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.buttonQuest.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.buttonQuest.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.buttonQuest.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.buttonQuest.FillColor = System.Drawing.Color.Transparent;
+            this.buttonQuest.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold);
+            this.buttonQuest.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
+            this.buttonQuest.Image = global::ProjStudio.Properties.Resources.questaoofc;
+            this.buttonQuest.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonQuest.ImageSize = new System.Drawing.Size(28, 28);
+            this.buttonQuest.Location = new System.Drawing.Point(13, 333);
+            this.buttonQuest.Name = "buttonQuest";
+            this.buttonQuest.Size = new System.Drawing.Size(215, 40);
+            this.buttonQuest.TabIndex = 10;
+            this.buttonQuest.Tag = "";
+            this.buttonQuest.Text = "Questões";
+            this.buttonQuest.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonQuest.Click += new System.EventHandler(this.buttonQuest_Click);
+            // 
+            // buttonProf
+            // 
+            this.buttonProf.BorderRadius = 5;
+            this.buttonProf.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.buttonProf.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.buttonProf.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.buttonProf.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.buttonProf.FillColor = System.Drawing.Color.Transparent;
+            this.buttonProf.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold);
+            this.buttonProf.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
+            this.buttonProf.Image = global::ProjStudio.Properties.Resources.professorofc;
+            this.buttonProf.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonProf.ImageSize = new System.Drawing.Size(32, 32);
+            this.buttonProf.Location = new System.Drawing.Point(13, 271);
+            this.buttonProf.Name = "buttonProf";
+            this.buttonProf.Size = new System.Drawing.Size(215, 40);
+            this.buttonProf.TabIndex = 9;
+            this.buttonProf.Tag = "";
+            this.buttonProf.Text = "Professor";
+            this.buttonProf.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonProf.Click += new System.EventHandler(this.buttonProf_Click);
+            // 
+            // buttonAluno
+            // 
+            this.buttonAluno.BorderRadius = 5;
+            this.buttonAluno.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.buttonAluno.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.buttonAluno.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.buttonAluno.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.buttonAluno.FillColor = System.Drawing.Color.Transparent;
+            this.buttonAluno.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold);
+            this.buttonAluno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
+            this.buttonAluno.Image = global::ProjStudio.Properties.Resources.alunoofc;
+            this.buttonAluno.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonAluno.ImageSize = new System.Drawing.Size(35, 35);
+            this.buttonAluno.Location = new System.Drawing.Point(13, 209);
+            this.buttonAluno.Name = "buttonAluno";
+            this.buttonAluno.Size = new System.Drawing.Size(215, 40);
+            this.buttonAluno.TabIndex = 8;
+            this.buttonAluno.Tag = "";
+            this.buttonAluno.Text = "Aluno";
+            this.buttonAluno.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonAluno.Click += new System.EventHandler(this.buttonAluno_Click);
+            // 
+            // buttonAdm
+            // 
+            this.buttonAdm.Animated = true;
+            this.buttonAdm.BorderRadius = 5;
+            this.buttonAdm.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.buttonAdm.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.buttonAdm.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.buttonAdm.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.buttonAdm.FillColor = System.Drawing.Color.Transparent;
+            this.buttonAdm.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold);
+            this.buttonAdm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
+            this.buttonAdm.Image = global::ProjStudio.Properties.Resources.adminofc;
+            this.buttonAdm.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonAdm.ImageSize = new System.Drawing.Size(30, 30);
+            this.buttonAdm.Location = new System.Drawing.Point(13, 147);
+            this.buttonAdm.Name = "buttonAdm";
+            this.buttonAdm.Size = new System.Drawing.Size(215, 40);
+            this.buttonAdm.TabIndex = 7;
+            this.buttonAdm.Tag = "";
+            this.buttonAdm.Text = "Administrador";
+            this.buttonAdm.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonAdm.Click += new System.EventHandler(this.buttonAdm_Click);
+            // 
+            // buttonHome
+            // 
+            this.buttonHome.Animated = true;
+            this.buttonHome.BorderRadius = 5;
+            this.buttonHome.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.buttonHome.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.buttonHome.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.buttonHome.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.buttonHome.FillColor = System.Drawing.Color.Transparent;
+            this.buttonHome.Font = new System.Drawing.Font("Segoe UI Semibold", 15.75F, System.Drawing.FontStyle.Bold);
+            this.buttonHome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
+            this.buttonHome.Image = global::ProjStudio.Properties.Resources.homeofc;
+            this.buttonHome.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonHome.ImageSize = new System.Drawing.Size(30, 30);
+            this.buttonHome.Location = new System.Drawing.Point(13, 85);
+            this.buttonHome.Name = "buttonHome";
+            this.buttonHome.Size = new System.Drawing.Size(215, 40);
+            this.buttonHome.TabIndex = 6;
+            this.buttonHome.Tag = "";
+            this.buttonHome.Text = "Home";
+            this.buttonHome.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.buttonHome.Click += new System.EventHandler(this.buttonHome_Click);
+            // 
+            // guna2CirclePictureBox1
+            // 
+            this.guna2CirclePictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("guna2CirclePictureBox1.Image")));
+            this.guna2CirclePictureBox1.ImageRotate = 0F;
+            this.guna2CirclePictureBox1.Location = new System.Drawing.Point(18, 6);
+            this.guna2CirclePictureBox1.Margin = new System.Windows.Forms.Padding(1);
+            this.guna2CirclePictureBox1.Name = "guna2CirclePictureBox1";
+            this.guna2CirclePictureBox1.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
+            this.guna2CirclePictureBox1.Size = new System.Drawing.Size(79, 76);
+            this.guna2CirclePictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.guna2CirclePictureBox1.TabIndex = 80;
+            this.guna2CirclePictureBox1.TabStop = false;
             // 
             // ExcluirQuest
             // 
@@ -646,5 +682,6 @@
         private Guna.UI2.WinForms.Guna2TextBox guna2TextBox7;
         private System.Windows.Forms.Label label10;
         private Guna.UI2.WinForms.Guna2CirclePictureBox guna2CirclePictureBox1;
+        private Guna.UI2.WinForms.Guna2Separator guna2Separator1;
     }
 }

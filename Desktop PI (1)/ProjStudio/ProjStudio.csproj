@@ -354,19 +354,22 @@
     <None Include="Resources\rodape_tinker.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\imgRazor.png" />
+    <None Include="Resources\homeofc.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\alunos.png" />
+    <None Include="Resources\adminofc.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\professor.png" />
+    <None Include="Resources\alunoofc.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\questoes.png" />
+    <None Include="Resources\professorofc.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\sistema.png" />
+    <None Include="Resources\questaoofc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\turmaofc.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
