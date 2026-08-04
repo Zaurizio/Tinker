@@ -401,7 +401,7 @@
             this.guna2TextBox1.Name = "guna2TextBox1";
             this.guna2TextBox1.PlaceholderText = "";
             this.guna2TextBox1.SelectedText = "";
-            this.guna2TextBox1.Size = new System.Drawing.Size(184, 30);
+            this.guna2TextBox1.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox1.TabIndex = 65;
             // 
             // label3
@@ -445,7 +445,7 @@
             this.guna2TextBox2.Name = "guna2TextBox2";
             this.guna2TextBox2.PlaceholderText = "";
             this.guna2TextBox2.SelectedText = "";
-            this.guna2TextBox2.Size = new System.Drawing.Size(184, 30);
+            this.guna2TextBox2.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox2.TabIndex = 67;
             // 
             // label5
@@ -478,7 +478,7 @@
             this.guna2TextBox3.PlaceholderText = "";
             this.guna2TextBox3.ReadOnly = true;
             this.guna2TextBox3.SelectedText = "";
-            this.guna2TextBox3.Size = new System.Drawing.Size(184, 30);
+            this.guna2TextBox3.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox3.TabIndex = 69;
             // 
             // label7
@@ -511,7 +511,7 @@
             this.guna2TextBox4.PlaceholderText = "";
             this.guna2TextBox4.ReadOnly = true;
             this.guna2TextBox4.SelectedText = "";
-            this.guna2TextBox4.Size = new System.Drawing.Size(184, 30);
+            this.guna2TextBox4.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox4.TabIndex = 71;
             // 
             // guna2Button1

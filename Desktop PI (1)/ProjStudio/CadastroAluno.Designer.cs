@@ -389,7 +389,7 @@
             this.guna2TextBox1.Name = "guna2TextBox1";
             this.guna2TextBox1.PlaceholderText = "";
             this.guna2TextBox1.SelectedText = "";
-            this.guna2TextBox1.Size = new System.Drawing.Size(230, 30);
+            this.guna2TextBox1.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox1.TabIndex = 46;
             this.guna2TextBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.guna2TextBox1_KeyPress);
             // 
@@ -410,7 +410,7 @@
             this.guna2TextBox2.Name = "guna2TextBox2";
             this.guna2TextBox2.PlaceholderText = "";
             this.guna2TextBox2.SelectedText = "";
-            this.guna2TextBox2.Size = new System.Drawing.Size(230, 30);
+            this.guna2TextBox2.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox2.TabIndex = 47;
             this.guna2TextBox2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.guna2TextBox2_KeyPress);
             // 
@@ -431,7 +431,7 @@
             this.guna2TextBox3.Name = "guna2TextBox3";
             this.guna2TextBox3.PlaceholderText = "";
             this.guna2TextBox3.SelectedText = "";
-            this.guna2TextBox3.Size = new System.Drawing.Size(230, 30);
+            this.guna2TextBox3.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox3.TabIndex = 48;
             this.guna2TextBox3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.guna2TextBox3_KeyPress);
             // 
@@ -452,7 +452,7 @@
             this.guna2TextBox4.Name = "guna2TextBox4";
             this.guna2TextBox4.PlaceholderText = "";
             this.guna2TextBox4.SelectedText = "";
-            this.guna2TextBox4.Size = new System.Drawing.Size(230, 30);
+            this.guna2TextBox4.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox4.TabIndex = 49;
             this.guna2TextBox4.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.guna2TextBox4_KeyPress);
             // 

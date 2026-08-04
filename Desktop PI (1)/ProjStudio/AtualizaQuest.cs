@@ -235,5 +235,10 @@ namespace ProjStudio
             }
             dialog.Dispose();
         }
+
+        private void guna2TextBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

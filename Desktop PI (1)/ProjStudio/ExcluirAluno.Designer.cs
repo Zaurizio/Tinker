@@ -339,11 +339,11 @@
             this.guna2TextBox1.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2TextBox1.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.guna2TextBox1.Location = new System.Drawing.Point(4, 30);
-            this.guna2TextBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.guna2TextBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.guna2TextBox1.Name = "guna2TextBox1";
             this.guna2TextBox1.PlaceholderText = "";
             this.guna2TextBox1.SelectedText = "";
-            this.guna2TextBox1.Size = new System.Drawing.Size(230, 30);
+            this.guna2TextBox1.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox1.TabIndex = 48;
             this.guna2TextBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.guna2TextBox1_KeyPress);
             this.guna2TextBox1.Leave += new System.EventHandler(this.guna2TextBox1_Leave);
@@ -366,7 +366,7 @@
             this.guna2TextBox2.PlaceholderText = "";
             this.guna2TextBox2.ReadOnly = true;
             this.guna2TextBox2.SelectedText = "";
-            this.guna2TextBox2.Size = new System.Drawing.Size(230, 30);
+            this.guna2TextBox2.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox2.TabIndex = 49;
             // 
             // guna2Button1

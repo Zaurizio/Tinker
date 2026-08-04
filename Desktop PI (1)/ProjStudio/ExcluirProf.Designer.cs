@@ -343,7 +343,7 @@
             this.guna2TextBox1.PlaceholderText = "";
             this.guna2TextBox1.ReadOnly = true;
             this.guna2TextBox1.SelectedText = "";
-            this.guna2TextBox1.Size = new System.Drawing.Size(230, 28);
+            this.guna2TextBox1.Size = new System.Drawing.Size(240, 28);
             this.guna2TextBox1.TabIndex = 49;
             // 
             // guna2Button1
@@ -382,7 +382,7 @@
             this.guna2TextBox2.Name = "guna2TextBox2";
             this.guna2TextBox2.PlaceholderText = "";
             this.guna2TextBox2.SelectedText = "";
-            this.guna2TextBox2.Size = new System.Drawing.Size(230, 30);
+            this.guna2TextBox2.Size = new System.Drawing.Size(240, 30);
             this.guna2TextBox2.TabIndex = 51;
             this.guna2TextBox2.TextChanged += new System.EventHandler(this.guna2TextBox2_TextChanged);
             this.guna2TextBox2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.guna2TextBox2_KeyPress);
