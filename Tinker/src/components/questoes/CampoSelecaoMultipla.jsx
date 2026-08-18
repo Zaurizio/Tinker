@@ -9,7 +9,7 @@ import Checkbox from "@mui/material/Checkbox";
 import estiloCampoSelM from "./CampoSelecaoMultipla.module.css";
 
 function CampoSelecaoMultipla({ 
-  /*props*/
+  /*props que vem de */
   label,
   placeholder,
   opcoes = [],
@@ -82,7 +82,7 @@ function CampoSelecaoMultipla({
     }
 
     setSelecionadasTemporarias([...selecionadasTemporarias, opcao]);
-    /*o que caralhos isso significa*/
+    /*adiciona opçao*/
   }
 
   function aplicarSelecao() {
@@ -134,7 +134,7 @@ function CampoSelecaoMultipla({
           <span
             className={`${estiloCampoSelM.seta} ${aberto ? estiloCampoSelM.setaAberta : ""}`}
           >
-            <IoIosArrowDown /> {/*tem que centralizar a seta*/}
+            <IoIosArrowDown />
           </span>
         </button>
 

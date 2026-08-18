@@ -50,7 +50,7 @@ function PainelBuscaQuestoes() {
           {/*Disciplinas*/}
           <CampoSelecaoMultipla
             label="Disciplina"
-            placeholder="Selecione disciplinas"
+            placeholder="Todas"
             opcoes={disciplinas}
             selecionadas={filtros.disciplinas}
             onChange={(novasDisciplinas) =>
@@ -61,7 +61,7 @@ function PainelBuscaQuestoes() {
           {/*Conteúdos*/}
           <CampoSelecaoMultipla
             label="Conteúdo"
-            placeholder="Selecione conteúdos"
+            placeholder="Todas"
             opcoes={conteudos}
             selecionadas={filtros.conteudos}
             onChange={(novosConteudos) =>
@@ -74,7 +74,7 @@ function PainelBuscaQuestoes() {
           {/*Instituições*/}
           <CampoSelecaoMultipla
             label="Instituição"
-            placeholder="Selecione instituições"
+            placeholder="Todas"
             opcoes={instituicoes}
             selecionadas={filtros.instituicoes}
             onChange={(novasInstituicoes) =>
@@ -85,7 +85,7 @@ function PainelBuscaQuestoes() {
           {/*Anos*/}
           <CampoSelecaoMultipla
             label="Anos"
-            placeholder="Anos"
+            placeholder="Todas"
             opcoes={anos}
             selecionadas={filtros.anos}
             onChange={(novosAnos) =>

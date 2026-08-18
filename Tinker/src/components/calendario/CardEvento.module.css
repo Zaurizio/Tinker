@@ -44,6 +44,11 @@
   border-color: var(--cor-primaria);
 }
 
+.inputEvento::placeholder {
+  color: var(--cor-texto-placeholder);
+  opacity: 1;
+}
+
 .botaoData {
   background-color: var(--cor-fundo-input-suave);
   border: 1px solid var(--cor-borda-padrao);

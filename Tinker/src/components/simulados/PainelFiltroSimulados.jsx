@@ -59,7 +59,7 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
           {/*Disciplinas*/}
           <CampoSelecaoMultipla
             label="Disciplina"
-            placeholder="Selecione disciplinas"
+            placeholder="Todas"
             opcoes={disciplinas}
             selecionadas={filtros.disciplinas}
             onChange={(novasDisciplinas) =>
@@ -70,7 +70,7 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
           {/*Conteúdos*/}
           <CampoSelecaoMultipla
             label="Conteúdo"
-            placeholder="Selecione conteúdos"
+            placeholder="Todas"
             opcoes={conteudos}
             selecionadas={filtros.conteudos}
             onChange={(novosConteudos) =>
@@ -83,7 +83,7 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
           {/*Instituições*/}
           <CampoSelecaoMultipla
             label="Instituição"
-            placeholder="Selecione instituições"
+            placeholder="Todas"
             opcoes={instituicoes}
             selecionadas={filtros.instituicoes}
             onChange={(novasInstituicoes) =>
@@ -96,7 +96,7 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
           <div className={estiloPainel.grupoAnosQuantidade}>
             <CampoSelecaoMultipla
               label="Anos"
-              placeholder="Anos"
+              placeholder="Todas"
               opcoes={anos}
               selecionadas={filtros.anos}
               onChange={(novosAnos) =>

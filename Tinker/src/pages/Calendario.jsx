@@ -8,7 +8,6 @@ import CardEvento from "../components/calendario/CardEvento";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import listPlugin from "@fullcalendar/list";
 
 import estiloCalendario from "./Calendario.module.css";
 import './CalendarioGlobal.css';
@@ -44,8 +43,7 @@ function Calendario() {
   const opcoes = [
     { valor: "timeGridDay", label: "Dia" },
     { valor: "timeGridWeek", label: "Semana" },
-    { valor: "dayGridMonth", label: "Mês" },
-    { valor: "listMonth", label: "Ano" }
+    { valor: "dayGridMonth", label: "Mês" }
   ];
 
   const labelVisualizacao = opcoes.find(opcao => opcao.valor === visualizacao)?.label || "Mês";
@@ -120,9 +118,6 @@ function formatarData() {
 
   if (visualizacao === 'timeGridDay') {
     return `${dia} de ${mes} de ${ano}`
-  }
-  if (visualizacao === 'listMonth') {
-    return `${ano}`
   }
   return `${mes} de ${ano}`
 }
@@ -208,7 +203,7 @@ function aplicarAnimacao(tipo, callback) {
               setDataAtual(info.view.currentStart)
             }}
 
-            plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+            plugins={[dayGridPlugin, timeGridPlugin]}
             initialView={visualizacao}
             locale="pt-br"
             events={eventos}

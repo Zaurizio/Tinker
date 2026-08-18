@@ -1,3 +1,4 @@
+//filtrosQuestoes.js
 export const disciplinas = [
   "Matemática",
   "Português",
@@ -27,3 +28,5 @@ export const instituicoes = [
 ];
 
 export const anos = ["2025", "2024", "2023", "2022"];
+
+//se vier null não precisa aplicar o filtro (todas)
