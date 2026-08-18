@@ -196,11 +196,22 @@
   user-select: none;
 }
 
-.checkbox {
-  width: 15px;
-  height: 15px;
-  cursor: pointer;
-  accent-color: var(--cor-primaria);
+/*desmarcado*/
+.checkboxCustom {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  color: var(--cor-primaria-hover) !important;
+}
+
+/*marcado*/
+.checkboxCustom:global(.Mui-checked) {
+  color: var(--cor-primaria-hover) !important;
+}
+
+/*tamanho icone interno*/
+.checkboxCustom :global(.MuiSvgIcon-root) {
+  font-size: 18px;
 }
 
 .botaoCor {

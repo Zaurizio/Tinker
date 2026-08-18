@@ -1,5 +1,6 @@
 ﻿import { useState, useRef, useEffect } from 'react';
 /*seta baixo*/ import { IoIosArrowDown } from "react-icons/io"; //<IoIosArrowDown />
+import Checkbox from "@mui/material/Checkbox";
 import MiniCalendario from './MiniCalendario';
 import InputHora from './InputHora';
 import estilos from './CardEvento.module.css';
@@ -199,11 +200,11 @@ useEffect(() => {
         </div>
 
         <label className={estilos.labelCheck}>
-            <input
-            type="checkbox"
-            checked={diaInteiro}
-            onChange={(e) => setDiaInteiro(e.target.checked)}
-            className={estilos.checkbox}
+            <Checkbox
+              checked={diaInteiro}
+              onChange={(e) => setDiaInteiro(e.target.checked)}
+              className={estilos.checkboxCustom}
+              disableRipple
             />
             Dia inteiro
         </label>

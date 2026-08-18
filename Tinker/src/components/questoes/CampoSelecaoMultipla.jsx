@@ -1,6 +1,7 @@
 /*seta baixo*/ import { IoIosArrowDown } from "react-icons/io"; //<IoIosArrowDown />
 /*seta cima*/ import { IoIosArrowUp } from "react-icons/io"; //<IoIosArrowUp />
 import { useEffect, useMemo, useRef, useState } from "react";
+import Checkbox from "@mui/material/Checkbox";
 {/*useEffect: executa efeitos quando algo muda,
   useRef: guarda referencia de um elemento do DOM,
   useMemo: calcula valor derivado sem recalcular tudo a toa  
@@ -153,10 +154,11 @@ function CampoSelecaoMultipla({
               {opcoesFiltradas.length > 0 ? (
                 opcoesFiltradas.map((opcao) => (
                   <label key={opcao} className={estiloCampoSelM.itemOpcao}>
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={selecionadasTemporarias.includes(opcao)}
                       onChange={() => toggleOpcao(opcao)}
+                      className={estiloCampoSelM.checkboxCustom}
+                      disableRipple
                     />
                     <span>{opcao}</span>
                   </label>
