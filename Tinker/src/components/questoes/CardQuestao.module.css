@@ -1,0 +1,185 @@
+.cardQuestao {
+  padding: 22px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  box-shadow: 0 4px 14px var(--cor-sombra-card);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--cor-texto-secundario);
+  font-size: 0.85rem;
+}
+
+.metadados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding-top: 6px;
+}
+
+.areaSeletorSimulados {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.botaoSalvar {
+  flex: 0 0 auto;
+  margin: -6px -6px 0 0 !important;
+  color: var(--cor-primaria-destaque) !important;
+}
+
+.botaoSalvar:hover {
+  background: var(--cor-fundo-hover) !important;
+}
+
+.painelSimulados {
+  top: calc(100% + 8px);
+  right: -6px;
+  left: auto;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.mensagemErro {
+  margin: 10px 0 0;
+  color: var(--cor-alerta);
+  font-size: 0.9rem;
+}
+
+.painelSimulados .mensagemErro {
+  margin-top: 12px;
+}
+
+.painelSimulados button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.enunciado {
+  margin: 18px 0;
+  line-height: 1.6;
+}
+
+.alternativas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alternativa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 8px 6px 10px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 10px;
+  background: var(--cor-fundo-input-suave);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.alternativa:hover {
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+}
+
+.alternativa.correta,
+.alternativa.correta:hover {
+  border-color: #2e7d32;
+}
+
+.alternativa.incorreta,
+.alternativa.incorreta:hover {
+  border-color: var(--cor-alerta);
+}
+
+.conteudoAlternativa {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.conteudoAlternativa span {
+  line-height: 1.45;
+}
+
+.botaoEliminar {
+  display: inline-flex;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 7px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-secundario);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.botaoEliminar:hover {
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+  color: var(--cor-texto-principal);
+}
+
+.botaoEliminar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botaoEliminar:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
+}
+
+.eliminada .conteudoAlternativa {
+  color: var(--cor-texto-desabilitado);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 18px;
+}
+
+.botaoEnviar {
+  height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 10px;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.botaoEnviar:hover:not(:disabled) {
+  background: var(--cor-botao-primario-hover);
+}
+
+.botaoEnviar:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
+}
+
+.botaoEnviar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -9,7 +9,7 @@ import {
   anos,
 } from "../../data/filtrosQuestoes";
 
-function PainelBuscaQuestoes() {
+function PainelBuscaQuestoes({ onBuscarQuestoes }) {
   const [filtros, setFiltros] = useState({
     disciplinas: [],
     conteudos: [],
@@ -39,7 +39,7 @@ function PainelBuscaQuestoes() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log("Filtros atuais:", filtros);
+    onBuscarQuestoes(filtros);
   }
 
   return (

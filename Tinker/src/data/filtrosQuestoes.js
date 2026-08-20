@@ -1,32 +1,10 @@
-//filtrosQuestoes.js
-export const disciplinas = [
-  "Matemática",
-  "Português",
-  "Espanhol",
-  "Inglês",
-  "Biologia",
-  "Química",
-  "Física",
-  "História",
-  "Filosofia",
-  "Sociologia",
-  "Literatura",
-];
+import {
+  conteudosCatalogo,
+  disciplinasCatalogo,
+  instituicoesCatalogo,
+} from "./catalogosQuestoes";
 
-export const conteudos = [
-  "Funções",
-  "Geometria",
-  "Ecologia",
-  "Interpretação de texto"
-];
-
-export const instituicoes = [
-  "ENEM",
-  "FUVEST",
-  "UNICAMP",
-  "UNESP"
-];
-
+export const disciplinas = disciplinasCatalogo.map(({ nome }) => nome);
+export const conteudos = conteudosCatalogo.map(({ nome }) => nome);
+export const instituicoes = instituicoesCatalogo.map(({ nome }) => nome);
 export const anos = ["2025", "2024", "2023", "2022"];
-
-//se vier null não precisa aplicar o filtro (todas)
