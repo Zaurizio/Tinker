@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tinker/paginas/calendario.dart';
 import 'package:tinker/paginas/desempenho.dart';
-import 'package:tinker/paginas/questoes.dart';
-import 'package:tinker/paginas/simulado.dart';
+import 'package:tinker/paginas/Questoes/questoes.dart';
+import 'package:tinker/paginas/Simulado/simulado.dart';
 import 'package:tinker/paginas/turma.dart';
 
 class Home extends StatefulWidget {

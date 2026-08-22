@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'questoes_responder.dart';
 
 class Questoes extends StatefulWidget {
   const Questoes({super.key});
@@ -13,9 +13,9 @@ class _QuestoesState extends State<Questoes> {
   final buscaCtrl = TextEditingController();
 
   final List<Map<String, String>> questoes = [
-    {"assunto": "Derivadas", "materia": "Matemática", "dificuldade": "Médio"},
-    {"assunto": "Segunda Guerra Mundial", "materia": "História", "dificuldade": "Fácil"},
-    {"assunto": "Tabela Periódica", "materia": "Química", "dificuldade": "Difícil"},
+    {"id": "1", "assunto": "Derivadas", "materia": "Matemática", "dificuldade": "Médio"},
+    {"id": "2", "assunto": "Segunda Guerra Mundial", "materia": "História", "dificuldade": "Fácil"},
+    {"id": "3", "assunto": "Tabela Periódica", "materia": "Química", "dificuldade": "Difícil"},
   ];
 
   List<Map<String, String>> filtradas = [];
@@ -47,6 +47,15 @@ class _QuestoesState extends State<Questoes> {
     });
   }
 
+  void abrirQuestao(Map<String, String> questao) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => QuestoesResponder(questaoId: questao["id"]),
+      ),
+    );
+  }
+
   void CriarQ() {
     final assuntoCtrl = TextEditingController();
     final materiaCtrl = TextEditingController();
@@ -54,32 +63,32 @@ class _QuestoesState extends State<Questoes> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor:  Color(0xFF0F2744),
+        backgroundColor: Color(0xFF0F2744),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        title:  Text('Nova questão',
+        title: Text('Nova questão',
             style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Assunto', style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
-             SizedBox(height: 6),
+            SizedBox(height: 6),
             CampoDeQuestao(assuntoCtrl, 'Ex: Derivadas'),
             SizedBox(height: 14),
-             Text('Matéria', style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
-             SizedBox(height: 6),
+            Text('Matéria', style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+            SizedBox(height: 6),
             CampoDeQuestao(materiaCtrl, 'Ex: Matemática'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child:  Text('Cancelar', style: TextStyle(color: Color(0xFF8AABCC))),
+            child: Text('Cancelar', style: TextStyle(color: Color(0xFF8AABCC))),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor:  Color(0xFF1A4A8A),
-              foregroundColor:  Color(0xFF4A9EFF),
+              backgroundColor: Color(0xFF1A4A8A),
+              foregroundColor: Color(0xFF4A9EFF),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               elevation: 0,
             ),
@@ -87,6 +96,7 @@ class _QuestoesState extends State<Questoes> {
               if (assuntoCtrl.text.trim().isEmpty) return;
               setState(() {
                 questoes.insert(0, {
+                  "id": DateTime.now().millisecondsSinceEpoch.toString(),
                   "assunto": assuntoCtrl.text.trim(),
                   "materia": materiaCtrl.text.trim().isEmpty
                       ? "Sem matéria"
@@ -107,29 +117,24 @@ class _QuestoesState extends State<Questoes> {
   Widget CampoDeQuestao(TextEditingController ctrl, String hint) {
     return TextField(
       controller: ctrl,
-      style:  TextStyle(color: Colors.white, fontSize: 14),
+      style: TextStyle(color: Colors.white, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle:  TextStyle(color: Color(0xFF4A6A8A), fontSize: 14),
+        hintStyle: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14),
         filled: true,
-        fillColor:  Color(0xFF0D1B2A),
-        contentPadding:  EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        fillColor: Color(0xFF0D1B2A),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide:  BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
+          borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
         ),
-
-
-
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide:  BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
+          borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
         ),
-
-
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide:  BorderSide(color: Color(0xFF4A9EFF), width: 1),
+          borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1),
         ),
       ),
     );
@@ -137,41 +142,39 @@ class _QuestoesState extends State<Questoes> {
 
   Color sombraCor(String dificuldade) {
     switch (dificuldade) {
-      case 'Fácil': return  Color(0xFF0F3A2A);
-      case 'Difícil': return  Color(0xFF3A1520);
-      default: return  Color(0xFF1E4A8A);
+      case 'Fácil': return Color(0xFF0F3A2A);
+      case 'Difícil': return Color(0xFF3A1520);
+      default: return Color(0xFF1E4A8A);
     }
   }
 
   Color cor(String dificuldade) {
     switch (dificuldade) {
-      case 'Fácil': return  Color(0xFF4ABA8A);
-      case 'Difícil': return  Color(0xFFE05C6A);
-      default: return  Color(0xFF4A9EFF);
+      case 'Fácil': return Color(0xFF4ABA8A);
+      case 'Difícil': return Color(0xFFE05C6A);
+      default: return Color(0xFF4A9EFF);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  Color(0xFF0D1B2A),
+      backgroundColor: Color(0xFF0D1B2A),
       body: Stack(
         children: [
       SafeArea(
         child: Column(children: [
-       
-        SingleChildScrollView(
-          padding:  EdgeInsets.symmetric(horizontal: 16),
+        Expanded(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             
-               SizedBox(height: 16),
-             
-                   
-               Row(
+              SizedBox(height: 16),
+
+              Row(
                 children: [
-                   GestureDetector(
+                  GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
                       width: 38,
@@ -187,32 +190,31 @@ class _QuestoesState extends State<Questoes> {
                   SizedBox(width: 20,),
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor:  Color(0xFF1A4A7A),
+                    backgroundColor: Color(0xFF1A4A7A),
                     child: Image.asset('assets/images/tinker_images/logo2.png'),
                   ),
-                   SizedBox(width: 10),
-                   Text('TINKER',
+                  SizedBox(width: 10),
+                  Text('TINKER',
                       style: TextStyle(
                           fontFamily: 'Stardom',
                           color: Colors.white,
                           fontSize: 25,
                           letterSpacing: 3
                       ),
-                          ),       
+                          ),
                 ],
               ),
-              
-               SizedBox(height: 20),
 
-               Text('Questões',
+              SizedBox(height: 20),
+
+              Text('Questões',
                   style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600)),
-               SizedBox(height: 4),
-               Text('Gerencie e estude suas questões',
+              SizedBox(height: 4),
+              Text('Gerencie e estude suas questões',
                   style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
 
-               SizedBox(height: 20),
+              SizedBox(height: 20),
 
-              
               Row(
                 children: [
                   Expanded(
@@ -222,44 +224,38 @@ class _QuestoesState extends State<Questoes> {
                       style: TextStyle(color: Colors.white, fontSize: 14),
                       decoration: InputDecoration(
                         hintText: 'Buscar por assunto ou matéria...',
-                        hintStyle:  TextStyle(color: Color(0xFF4A6A8A), fontSize: 13),
-                        prefixIcon:  Icon(Icons.search, color: Color(0xFF4A6A8A), size: 20),
+                        hintStyle: TextStyle(color: Color(0xFF4A6A8A), fontSize: 13),
+                        prefixIcon: Icon(Icons.search, color: Color(0xFF4A6A8A), size: 20),
                         filled: true,
-                        fillColor:  Color(0xFF0F2744),
-                        contentPadding:  EdgeInsets.symmetric(vertical: 12),
+                        fillColor: Color(0xFF0F2744),
+                        contentPadding: EdgeInsets.symmetric(vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:  BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
+                          borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
                         ),
-
-
-
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:  BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
+                          borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5),
                         ),
-
-
-
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:  BorderSide(color: Color(0xFF4A9EFF), width: 1),
+                          borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1),
                         ),
                       ),
                     ),
                   ),
-                   SizedBox(width: 10),
+                  SizedBox(width: 10),
                   GestureDetector(
                     onTap: () => setState(() => filtroAberto = !filtroAberto),
                     child: Container(
-                      padding:  EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       decoration: BoxDecoration(
-                        color:  Color(0xFF0F2744),
+                        color: Color(0xFF0F2744),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color: filtroAberto
-                              ?  Color(0xFF4A9EFF)
-                              :  Color(0xFF1E3D5C),
+                              ? Color(0xFF4A9EFF)
+                              : Color(0xFF1E3D5C),
                           width: 0.5,
                         ),
                       ),
@@ -267,14 +263,14 @@ class _QuestoesState extends State<Questoes> {
                         children: [
                           Icon(Icons.tune_rounded,
                               color: filtroAberto
-                                  ?  Color(0xFF4A9EFF)
+                                  ? Color(0xFF4A9EFF)
                                   : Color(0xFF8AABCC),
                               size: 18),
-                           SizedBox(width: 6),
+                          SizedBox(width: 6),
                           Text('Filtros',
                               style: TextStyle(
                                   color: filtroAberto
-                                      ?  Color(0xFF4A9EFF)
+                                      ? Color(0xFF4A9EFF)
                                       : Color(0xFF8AABCC),
                                   fontSize: 13)),
                         ],
@@ -284,73 +280,70 @@ class _QuestoesState extends State<Questoes> {
                 ],
               ),
 
-              
               AnimatedSize(
-                duration:  Duration(milliseconds: 250),
+                duration: Duration(milliseconds: 250),
                 curve: Curves.easeInOut,
                 child: filtroAberto
                     ? Container(
-                        margin:  EdgeInsets.only(top: 10),
+                        margin: EdgeInsets.only(top: 10),
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color:  Color(0xFF0F2744),
+                          color: Color(0xFF0F2744),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color:  Color(0xFF1E3D5C), width: 0.5),
+                          border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
                         ),
                         child: Column(
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                 Text('Filtrar por',
+                                Text('Filtrar por',
                                     style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
                                 GestureDetector(
                                   onTap: () => setState(() => filtroAberto = false),
-                                  child:  Icon(Icons.close, color: Color(0xFFE05C6A), size: 18),
+                                  child: Icon(Icons.close, color: Color(0xFFE05C6A), size: 18),
                                 ),
                               ],
                             ),
-                             Divider(color: Color(0xFF1E3D5C), height: 16),
+                            Divider(color: Color(0xFF1E3D5C), height: 16),
                             for (final label in ['Disciplina', 'Ano', 'Conteúdo', 'Instituição', 'Dificuldade'])
                               Padding(
-                                padding:  EdgeInsets.symmetric(vertical: 8),
+                                padding: EdgeInsets.symmetric(vertical: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(label, style:  TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
-                                     Icon(Icons.keyboard_arrow_down, color: Color(0xFF4A6A8A), size: 18),
+                                    Text(label, style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
+                                    Icon(Icons.keyboard_arrow_down, color: Color(0xFF4A6A8A), size: 18),
                                   ],
                                 ),
                               ),
                           ],
                         ),
                       )
-                    :  SizedBox.shrink(),
+                    : SizedBox.shrink(),
               ),
 
-               SizedBox(height: 20),
+              SizedBox(height: 20),
 
-              
-               Text('SUAS QUESTÕES',
+              Text('SUAS QUESTÕES',
                   style: TextStyle(color: Color(0xFF8AABCC), fontSize: 11, letterSpacing: 1.2)),
 
-               SizedBox(height: 10),
+              SizedBox(height: 10),
 
-              
               GestureDetector(
                 onTap: CriarQ,
                 child: Container(
                   width: double.infinity,
-                  padding:  EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color:  Color(0xFF0F2744),
+                    color: Color(0xFF0F2744),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color:  Color(0xFF1E3D5C),
+                        color: Color(0xFF1E3D5C),
                         width: 0.5,
                         style: BorderStyle.solid),
                   ),
-                  child:  Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.add, color: Color(0xFF4A9EFF), size: 18),
@@ -362,21 +355,20 @@ class _QuestoesState extends State<Questoes> {
                 ),
               ),
 
-               SizedBox(height: 12),
+              SizedBox(height: 12),
 
-             
               if (filtradas.isEmpty)
                 Center(
                   child: Padding(
-                    padding:  EdgeInsets.symmetric(vertical: 40),
+                    padding: EdgeInsets.symmetric(vertical: 40),
                     child: Column(
                       children: [
-                        Icon(Icons.notes_rounded, color:  Color(0xFF4A6A8A), size: 40),
-                         SizedBox(height: 12),
-                         Text('Nenhuma questão encontrada.',
+                        Icon(Icons.notes_rounded, color: Color(0xFF4A6A8A), size: 40),
+                        SizedBox(height: 12),
+                        Text('Nenhuma questão encontrada.',
                             style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14)),
-                         SizedBox(height: 4),
-                         Text('Adicione sua primeira questão acima.',
+                        SizedBox(height: 4),
+                        Text('Adicione sua primeira questão acima.',
                             style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 13)),
                       ],
                     ),
@@ -384,65 +376,69 @@ class _QuestoesState extends State<Questoes> {
                 )
               else
                 ...filtradas.map(
-                  (q) => Container(
-                    margin:  EdgeInsets.only(bottom: 10),
-                    padding:  EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                    decoration: BoxDecoration(
-                      color:  Color(0xFF0F2744),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color:  Color(0xFF1E3D5C), width: 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            color:  Color(0xFF1A3A6A),
-                            borderRadius: BorderRadius.circular(8),
+                  (q) => GestureDetector(
+                    onTap: () => abrirQuestao(q),
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF0F2744),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF1A3A6A),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.description_outlined,
+                                color: Color(0xFF4A9EFF), size: 18),
                           ),
-                          child:  Icon(Icons.description_outlined,
-                              color: Color(0xFF4A9EFF), size: 18),
-                        ),
-                         SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(q["assunto"]!,
-                                  style:  TextStyle(
-                                      color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
-                               SizedBox(height: 3),
-                              Text(q["materia"]!,
-                                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
-                               SizedBox(height: 6),
-                              Container(
-                                padding:  EdgeInsets.symmetric(horizontal: 9, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: sombraCor(q["dificuldade"]!),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text (q["dificuldade"]!,
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(q["assunto"]!,
                                     style: TextStyle(
-                                        color: cor(q["dificuldade"]!), fontSize: 11)),
-                              ),
-                            ],
+                                        color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
+                                SizedBox(height: 3),
+                                Text(q["materia"]!,
+                                    style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+                                SizedBox(height: 6),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 9, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: sombraCor(q["dificuldade"]!),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(q["dificuldade"]!,
+                                      style: TextStyle(
+                                          color: cor(q["dificuldade"]!), fontSize: 11)),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () => remover(q),
-                          icon:  Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
-                          padding: EdgeInsets.zero,
-                          constraints:  BoxConstraints(),
-                        ),
-                      ],
+                          IconButton(
+                            onPressed: () => remover(q),
+                            icon: Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
 
-               SizedBox(height: 24),
+              SizedBox(height: 24),
             ],
           ),
+        ),
         ),
         ],
         )

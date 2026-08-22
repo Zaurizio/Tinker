@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tinker/Models/simulado_model.dart';
+import 'package:tinker/paginas/Simulado/simulado_detalhes.dart';
+
 
 class Simulado extends StatefulWidget {
   const Simulado({super.key});
@@ -9,8 +12,8 @@ class Simulado extends StatefulWidget {
 
 class _SimuladoState extends State<Simulado> {
   final buscaCtrl = TextEditingController();
-  final List<Map<String, String>> simulados = [];
-  List<Map<String, String>> simuladosFiltrados = [];
+  final List<SimuladoModel> simulados = [];
+  List<SimuladoModel> simuladosFiltrados = [];
 
   @override
   void initState() {
@@ -25,18 +28,26 @@ class _SimuladoState extends State<Simulado> {
       } else {
         simuladosFiltrados = simulados
             .where((s) =>
-                s["nome"]!.toLowerCase().contains(texto.toLowerCase()) ||
-                s["materia"]!.toLowerCase().contains(texto.toLowerCase()))
+                s.nome.toLowerCase().contains(texto.toLowerCase()) ||
+                s.materia.toLowerCase().contains(texto.toLowerCase()))
             .toList();
       }
     });
   }
 
-  void remover(Map<String, String> simulado) {
+  void remover(SimuladoModel simulado) {
     setState(() {
       simulados.remove(simulado);
       filtrar(buscaCtrl.text);
     });
+  }
+
+  void abrirSimulado(SimuladoModel simulado) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => SimuladoDetalhe(simulado: simulado)),
+    );
+    setState(() {});
   }
 
   void criarSimulado() {
@@ -78,12 +89,15 @@ class _SimuladoState extends State<Simulado> {
             onPressed: () {
               if (nomeCtrl.text.trim().isEmpty) return;
               setState(() {
-                simulados.insert(0, {
-                  "nome": nomeCtrl.text.trim(),
-                  "materia": materiaCtrl.text.trim().isEmpty
-                      ? "Geral"
-                      : materiaCtrl.text.trim(),
-                });
+                simulados.insert(
+                  0,
+                  SimuladoModel(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    nome: nomeCtrl.text.trim(),
+                    materia:
+                        materiaCtrl.text.trim().isEmpty ? "Geral" : materiaCtrl.text.trim(),
+                  ),
+                );
                 filtrar(buscaCtrl.text);
               });
               Navigator.pop(ctx);
@@ -244,46 +258,52 @@ class _SimuladoState extends State<Simulado> {
                 )
               else
                 ...simuladosFiltrados.map(
-                  (s) => Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF0F2744),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            color: Color(0xFF1A3A6A),
-                            borderRadius: BorderRadius.circular(8),
+                  (s) => GestureDetector(
+                    onTap: () => abrirSimulado(s),
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF0F2744),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF1A3A6A),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.quiz_outlined, color: Color(0xFF4A9EFF), size: 18),
                           ),
-                          child: Icon(Icons.quiz_outlined, color: Color(0xFF4A9EFF), size: 18),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(s["nome"]!,
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
-                              SizedBox(height: 3),
-                              Text(s["materia"]!,
-                                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
-                            ],
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(s.nome,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
+                                SizedBox(height: 3),
+                                Text(s.materia,
+                                    style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+                                SizedBox(height: 6),
+                                Text('${s.questoesIds.length} questão(ões)',
+                                    style: TextStyle(color: Color(0xFF4A9EFF), fontSize: 11)),
+                              ],
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () => remover(s),
-                          icon: Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
-                          padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(),
-                        ),
-                      ],
+                          IconButton(
+                            onPressed: () => remover(s),
+                            icon: Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
