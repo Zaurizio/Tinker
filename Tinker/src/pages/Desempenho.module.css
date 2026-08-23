@@ -77,3 +77,15 @@
     grid-row: auto; /* Remove o span de linha em telas menores */
   }
 }
+
+.estado,
+.erro {
+  margin: 0;
+  padding: 20px 0;
+  color: var(--cor-texto-secundario);
+  text-align: center;
+}
+
+.erro {
+  color: var(--cor-alerta);
+}

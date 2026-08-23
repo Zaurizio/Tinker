@@ -21,9 +21,11 @@ const CardMateriaDestaque = ({
         <h4 className={styles.materia} style={{ color: corDestaque }}>
           {materia}
         </h4>
-        <span className={styles.taxa} style={{ color: corDestaque }}>
-          {taxa}%
-        </span>
+        {taxa !== null && (
+          <span className={styles.taxa} style={{ color: corDestaque }}>
+            {taxa}%
+          </span>
+        )}
       </div>
     </div>
   );

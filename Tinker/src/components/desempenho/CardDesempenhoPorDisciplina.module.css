@@ -10,12 +10,12 @@
 .titulo {
   text-align: center;
   font-size: 1.2em;
-  color: var(--cor-texto-antigo);
+  color: var(--cor-texto-principal);
   margin-bottom: 15px;
 }
 
 .mensagemVazia {
-  color:var(--cor-texto-antigo-muted); /* Cinza claro */
+  color: var(--cor-texto-secundario);
   font-style: italic;
   text-align: center;
   padding: 20px 0;
@@ -29,19 +29,37 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 15px;
+  color: var(--cor-texto-secundario);
 }
 
 .tabelaContainer th,
 .tabelaContainer td {
   text-align: left;
   padding: 10px;
-  border-bottom: 1px solid var(--cor-borda-tabela);
+  border-bottom: 1px solid var(--cor-borda-padrao);
 }
 
 .tabelaContainer th {
-  background-color: var(--cor-cabecalho-tabela);
+  background-color: var(--cor-fundo-card);
   font-weight: bold;
-  color: var(--cor-texto-cabecalho-tabela);
+  color: var(--cor-texto-principal);
+}
+
+.tabelaContainer th:first-child {
+  border-top-left-radius: 6px;
+}
+
+.tabelaContainer th:last-child {
+  border-top-right-radius: 6px;
+}
+
+.tabelaContainer td:first-child {
+  color: var(--cor-texto-principal);
+}
+
+.tabelaContainer th:nth-child(n + 2),
+.tabelaContainer td:nth-child(n + 2) {
+  text-align: center;
 }
 
 .tabelaContainer tr:last-child td {
