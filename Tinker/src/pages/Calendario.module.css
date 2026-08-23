@@ -28,8 +28,13 @@
   font-weight: 500;
 }
 
-.botaoCriar:hover {
+.botaoCriar:hover:not(:disabled) {
   background-color: var(--cor-botao-primario-hover);
+}
+
+.botaoCriar:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .controles {
@@ -194,4 +199,26 @@
 
 .allDayPequeno :global(.fc-daygrid-day-events) {
   min-height: 0 !important;
+}
+
+.estadoEventos,
+.erroEventos {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-secundario);
+}
+
+.erroEventos {
+  color: var(--cor-alerta);
+}
+
+.areaCalendario {
+  position: relative;
+  height: 100%;
 }

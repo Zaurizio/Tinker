@@ -6,7 +6,8 @@ export const eventos = [
     data: "2026-08-20",
     tipo: "com_horario",
     horarioInicio: "08:00",
-    horarioFim: "09:30"
+    horarioFim: "09:30",
+    cor: "#2f5d8a"
   },
   {
     id: 2,
@@ -14,7 +15,8 @@ export const eventos = [
     data: "2026-08-22",
     tipo: "dia_inteiro",
     horarioInicio: null,
-    horarioFim: null
+    horarioFim: null,
+    cor: "#8e44ad"
   }
 ];
 

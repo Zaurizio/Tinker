@@ -1,5 +1,14 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import CardEvento from "../components/calendario/CardEvento";
+import CardDetalhesEvento from "../components/calendario/CardDetalhesEvento";
+import {
+  criarEvento,
+  excluirEvento,
+  excluirSerieEventos,
+  listarEventosDoUsuario,
+  obterEventoPorId,
+  possuiOutrasOcorrenciasDaSerie,
+} from "../services/calendarioService";
 
 /*seta esquerda*/ import { IoIosArrowBack } from "react-icons/io"; //<IoIosArrowBack />
 /*seta direita*/ import { IoIosArrowForward } from "react-icons/io"; //<IoIosArrowForward />
@@ -7,6 +16,7 @@ import CardEvento from "../components/calendario/CardEvento";
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
 import estiloCalendario from "./Calendario.module.css";
@@ -20,18 +30,58 @@ function Calendario() {
   const [animacao, setAnimacao] = useState('') /*transição*/
   const [dataVisivel, setDataVisivel] = useState(new Date())
   const calendarRef = useRef(null);
+  const componenteMontadoRef = useRef(true);
+  const criacaoEmAndamentoRef = useRef(false);
+  const remocaoEmAndamentoRef = useRef(false);
+  const requisicaoDetalhesRef = useRef(0);
 
-  const [eventos, setEventos] = useState([
-    //{ title: "Prova de Matemática", start: "2026-05-03", allDay: true},
-    //{ title: "Prova de fisica", start: "2026-05-03", allDay: true}
-  ]);
+  const [eventos, setEventos] = useState([]);
+  const [carregandoEventos, setCarregandoEventos] = useState(true);
+  const [erroEventos, setErroEventos] = useState("");
+  const [salvandoEvento, setSalvandoEvento] = useState(false);
+  const [erroCriacaoEvento, setErroCriacaoEvento] = useState("");
+  const [eventoSelecionado, setEventoSelecionado] = useState(null);
+  const [carregandoDetalhesEvento, setCarregandoDetalhesEvento] = useState(false);
+  const [erroDetalhesEvento, setErroDetalhesEvento] = useState("");
+  const [etapaRemocao, setEtapaRemocao] = useState("detalhes");
+  const [removendoEvento, setRemovendoEvento] = useState(false);
+  const [erroRemocaoEvento, setErroRemocaoEvento] = useState("");
 
-  /*ve se tem evento allday nos dias mostrados*/
-  const hasAllDayEvents = eventos.some(event => {
-    if (!event.allDay) return false
-    const eventoData = new Date(event.start + 'T12:00:00').toDateString()
-    return eventoData === dataVisivel.toDateString()
-  })
+  useEffect(() => {
+    let componenteMontado = true;
+    componenteMontadoRef.current = true;
+
+    async function carregarEventos() {
+      setCarregandoEventos(true);
+      setErroEventos("");
+
+      try {
+        const eventosCarregados = await listarEventosDoUsuario();
+        if (componenteMontado) {
+          setEventos((eventosAtuais) => {
+            const eventosPorId = new Map(
+              eventosCarregados.map((evento) => [evento.id, evento])
+            );
+
+            eventosAtuais.forEach((evento) => eventosPorId.set(evento.id, evento));
+            return Array.from(eventosPorId.values());
+          });
+        }
+      } catch {
+        if (componenteMontado) {
+          setErroEventos("Não foi possível carregar os eventos. Tente novamente.");
+        }
+      } finally {
+        if (componenteMontado) setCarregandoEventos(false);
+      }
+    }
+
+    carregarEventos();
+    return () => {
+      componenteMontado = false;
+      componenteMontadoRef.current = false;
+    };
+  }, []);
 
 /*conta quantos eventos allDay tem no dia visível*/
   const qtdAllDay = eventos.filter(event => {
@@ -50,64 +100,194 @@ function Calendario() {
   const botaoCriarRef = useRef(null);
 
   function handleCriar() {
-    const hoje = new Date().toISOString().split('T')[0];
+    if (carregandoEventos || erroEventos || salvandoEvento || removendoEvento) return;
+
+    const dataLocal = new Date();
+    const hoje = [
+      dataLocal.getFullYear(),
+      String(dataLocal.getMonth() + 1).padStart(2, "0"),
+      String(dataLocal.getDate()).padStart(2, "0"),
+    ].join("-");
+    setErroCriacaoEvento("");
+    setEventoSelecionado(null);
     setCardAberto(hoje);
   }
 
-  function handleMudarVisualizacao(novaVisualizacao) {
-    setVisualizacao(novaVisualizacao);
-    setMenuAberto(false);
-    if (calendarRef.current) {
-        calendarRef.current.getApi().changeView(novaVisualizacao);
+  async function handleAbrirEvento(info) {
+    info.jsEvent?.stopPropagation();
+    if (carregandoEventos || erroEventos || salvandoEvento || removendoEvento) return;
+
+    const numeroRequisicao = requisicaoDetalhesRef.current + 1;
+    requisicaoDetalhesRef.current = numeroRequisicao;
+    setCardAberto(false);
+    setEventoSelecionado(null);
+    setEtapaRemocao("detalhes");
+    setErroDetalhesEvento("");
+    setErroRemocaoEvento("");
+    setCarregandoDetalhesEvento(true);
+
+    try {
+      const evento = await obterEventoPorId(info.event.id);
+      if (
+        componenteMontadoRef.current
+        && requisicaoDetalhesRef.current === numeroRequisicao
+      ) setEventoSelecionado(evento);
+    } catch (erro) {
+      if (
+        componenteMontadoRef.current
+        && requisicaoDetalhesRef.current === numeroRequisicao
+      ) {
+        setErroDetalhesEvento(
+          erro instanceof Error ? erro.message : "Não foi possível carregar o evento."
+        );
+      }
+    } finally {
+      if (
+        componenteMontadoRef.current
+        && requisicaoDetalhesRef.current === numeroRequisicao
+      ) setCarregandoDetalhesEvento(false);
     }
   }
 
+  function handleFecharDetalhes() {
+    if (removendoEvento || carregandoDetalhesEvento) return;
+    requisicaoDetalhesRef.current += 1;
+    setEventoSelecionado(null);
+    setErroDetalhesEvento("");
+    setErroRemocaoEvento("");
+    setEtapaRemocao("detalhes");
+  }
+
+  async function executarRemocao(removerSerie) {
+    if (!eventoSelecionado || removendoEvento || remocaoEmAndamentoRef.current) return;
+
+    remocaoEmAndamentoRef.current = true;
+    setRemovendoEvento(true);
+    setErroRemocaoEvento("");
+
+    try {
+      if (removerSerie) {
+        await excluirSerieEventos(eventoSelecionado.serieId);
+      } else {
+        await excluirEvento(eventoSelecionado.id);
+      }
+
+      if (componenteMontadoRef.current) {
+        setEventos((eventosAtuais) => eventosAtuais.filter((evento) => {
+          if (removerSerie) {
+            return String(evento.extendedProps?.serieId ?? "")
+              !== String(eventoSelecionado.serieId);
+          }
+          return String(evento.id) !== String(eventoSelecionado.id);
+        }));
+        setEventoSelecionado(null);
+        setEtapaRemocao("detalhes");
+      }
+    } catch (erro) {
+      if (componenteMontadoRef.current) {
+        setErroRemocaoEvento(
+          erro instanceof Error ? erro.message : "Não foi possível remover o evento."
+        );
+      }
+    } finally {
+      remocaoEmAndamentoRef.current = false;
+      if (componenteMontadoRef.current) setRemovendoEvento(false);
+    }
+  }
+
+  async function handleContinuarRemocao() {
+    if (!eventoSelecionado || removendoEvento) return;
+
+    setErroRemocaoEvento("");
+    setCarregandoDetalhesEvento(true);
+    try {
+      const possuiOutras = await possuiOutrasOcorrenciasDaSerie(eventoSelecionado.id);
+      if (!componenteMontadoRef.current) return;
+
+      if (possuiOutras) {
+        setEtapaRemocao("escolhaSerie");
+      } else {
+        setCarregandoDetalhesEvento(false);
+        await executarRemocao(false);
+      }
+    } catch (erro) {
+      if (componenteMontadoRef.current) {
+        setErroRemocaoEvento(
+          erro instanceof Error ? erro.message : "Não foi possível verificar a sequência."
+        );
+      }
+    } finally {
+      if (componenteMontadoRef.current) setCarregandoDetalhesEvento(false);
+    }
+  }
+
+  function handleMudarVisualizacao(novaVisualizacao) {
+    setMenuAberto(false);
+    if (carregandoEventos || erroEventos || !calendarRef.current) return;
+
+    setVisualizacao(novaVisualizacao);
+    calendarRef.current.getApi().changeView(novaVisualizacao);
+  }
+
   function handleHoje() {
+    if (carregandoEventos || erroEventos || !calendarRef.current) return;
+
     aplicarAnimacao('fc-fade-enter', () => {
       calendarRef.current.getApi().today()
     })
   }
 
   function handleProximo() {
+    if (carregandoEventos || erroEventos || !calendarRef.current) return;
+
     aplicarAnimacao('fc-slide-enter', () => calendarRef.current.getApi().next())
   }
 
   function handleAnterior() {
+    if (carregandoEventos || erroEventos || !calendarRef.current) return;
+
     aplicarAnimacao('fc-slide-enter-back', () => calendarRef.current.getApi().prev())
   }
 
   /*adiciona evento novo*/
-  function handleSalvarEvento(novosEventos) {
-    //const eventos = gerarEventos(novoEvento);
-    setEventos(prev => [...prev, ...novosEventos]);
+  async function handleSalvarEvento(dadosEvento) {
+    if (
+      carregandoEventos
+      || erroEventos
+      || salvandoEvento
+      || criacaoEmAndamentoRef.current
+    ) return;
+
+    criacaoEmAndamentoRef.current = true;
+    setSalvandoEvento(true);
+    setErroCriacaoEvento("");
+
+    try {
+      const novosEventos = await criarEvento(dadosEvento);
+
+      if (componenteMontadoRef.current) {
+        setEventos((eventosAtuais) => [...eventosAtuais, ...novosEventos]);
+        setCardAberto(false);
+      }
+    } catch (erro) {
+      if (componenteMontadoRef.current) {
+        setErroCriacaoEvento(
+          erro instanceof Error
+            ? erro.message
+            : "Não foi possível salvar o evento. Tente novamente."
+        );
+      }
+    } finally {
+      criacaoEmAndamentoRef.current = false;
+      if (componenteMontadoRef.current) setSalvandoEvento(false);
+    }
   }
 
-  /*gera o mesmo evento em vários dias*/
-  function gerarEventos(evento) {
-    const { title, date, horaInicio, horaFim, recorrencia } = evento;
-    const lista = [];
-    const dataInicio = new Date(date + 'T12:00:00');
-
-    // quantas repetições e como avançar a data
-    const config = {
-        'Não se repete':  { total: 1 },
-        'Todos os dias':  { total: 365, avancar: (d) => d.setDate(d.getDate() + 1) },
-        'Semanal':        { total: 52,  avancar: (d) => d.setDate(d.getDate() + 7) },
-        'Mensal':         { total: 12,  avancar: (d) => d.setMonth(d.getMonth() + 1) },
-        'Anual':          { total: 5,   avancar: (d) => d.setFullYear(d.getFullYear() + 1) },
-    };
-
-    const { total, avancar } = config[recorrencia] || config['Não se repete'];
-    const dataAtual = new Date(dataInicio);
-
-    for (let i = 0; i < total; i++) {
-        const dataStr = dataAtual.toISOString().split('T')[0];
-        lista.push({ title, date: dataStr, horaInicio, horaFim });
-        if (avancar) avancar(dataAtual);
-    }
-
-    return lista;
-}
+  function handleFecharCardEvento() {
+    if (salvandoEvento) return;
+    setCardAberto(false);
+    setErroCriacaoEvento("");
+  }
 
 /*data escrita*/
 function formatarData() {
@@ -143,6 +323,7 @@ function aplicarAnimacao(tipo, callback) {
             ref={botaoCriarRef}
             className={estiloCalendario.botaoCriar}
             onClick={handleCriar}
+            disabled={carregandoEventos || Boolean(erroEventos) || salvandoEvento || removendoEvento}
           >
             <FaPlus size={20}/> Marcar
           </button>
@@ -191,10 +372,25 @@ function aplicarAnimacao(tipo, callback) {
 
 
       <div className={`${estiloCalendario.calendarioContainer} ${qtdAllDay >= 2 ? 'allday-multiplo' : ''}`}>
-        <div className={animacao} style={{ height: '100%' }}>
+        <div className={`${animacao} ${estiloCalendario.areaCalendario}`}>
+          {carregandoEventos && (
+            <p className={estiloCalendario.estadoEventos}>Carregando eventos...</p>
+          )}
+          {erroEventos && !carregandoEventos && (
+            <p className={estiloCalendario.erroEventos} role="alert">
+              {erroEventos}
+            </p>
+          )}
           <FullCalendar
             key="Calendar-instance"
-            dateClick={(info) => setCardAberto(info.dateStr)}
+            dateClick={(info) => {
+              if (!carregandoEventos && !erroEventos && !salvandoEvento && !removendoEvento) {
+                setErroCriacaoEvento("");
+                setEventoSelecionado(null);
+                setCardAberto(info.dateStr);
+              }
+            }}
+            eventClick={handleAbrirEvento}
             ref={calendarRef}
             //allDaySlot={hasAllDayEvents}
             allDaySlot={true} //sempre mostra, na teoria
@@ -203,10 +399,10 @@ function aplicarAnimacao(tipo, callback) {
               setDataAtual(info.view.currentStart)
             }}
 
-            plugins={[dayGridPlugin, timeGridPlugin]}
+            plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
             initialView={visualizacao}
             locale="pt-br"
-            events={eventos}
+            events={carregandoEventos || erroEventos ? [] : eventos}
             headerToolbar={false}
             height="100%"
             allDayText=""
@@ -278,7 +474,10 @@ function aplicarAnimacao(tipo, callback) {
 
               if (view === 'dayGridMonth') {
                 return (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 4px', overflow: 'hidden', color: 'var(--cor-texto-claro)' }}>
+                  <div
+                    className="conteudo-evento-calendario"
+                    style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 4px', overflow: 'hidden', color: 'var(--cor-texto-claro)' }}
+                  >
                     {/* Bolinha colorida */}
                     <span
                       style={{
@@ -304,7 +503,10 @@ function aplicarAnimacao(tipo, callback) {
 
               if (view === 'timeGridWeek' || view === 'timeGridDay') {
                 return (
-                  <div style={{ padding: '2px 4px', overflow: 'hidden', color: 'var(--cor-texto-claro)' }}>
+                  <div
+                    className="conteudo-evento-calendario"
+                    style={{ padding: '2px 4px', overflow: 'hidden', color: 'var(--cor-texto-claro)' }}
+                  >
                     {!allDay && (
                       <div style={{ fontSize: '0.75rem', fontWeight: 500, whiteSpace: 'nowrap' }}>
                         {formatHora(start)} – {formatHora(end)}
@@ -325,9 +527,29 @@ function aplicarAnimacao(tipo, callback) {
         {cardAberto && (
           <CardEvento
             dataSelecionada={cardAberto}
-            onFechar={() => setCardAberto(false)}
+            onFechar={handleFecharCardEvento}
             onSalvar={handleSalvarEvento}
             anchorRef={botaoCriarRef}
+            salvando={salvandoEvento}
+            erro={erroCriacaoEvento}
+          />
+        )}
+        {(carregandoDetalhesEvento || erroDetalhesEvento || eventoSelecionado) && (
+          <CardDetalhesEvento
+            evento={eventoSelecionado}
+            etapa={etapaRemocao}
+            carregando={carregandoDetalhesEvento}
+            erroDetalhes={erroDetalhesEvento}
+            removendo={removendoEvento}
+            erroRemocao={erroRemocaoEvento}
+            onFechar={handleFecharDetalhes}
+            onRemover={() => {
+              setErroRemocaoEvento("");
+              setEtapaRemocao("confirmacao");
+            }}
+            onContinuar={handleContinuarRemocao}
+            onRemoverOcorrencia={() => executarRemocao(false)}
+            onRemoverSerie={() => executarRemocao(true)}
           />
         )}
       </div>

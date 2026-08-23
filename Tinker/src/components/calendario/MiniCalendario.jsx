@@ -23,7 +23,7 @@ export default function MiniCalendario({ dataSelecionada, onSelecionar, onFechar
     }
     document.addEventListener('mousedown', handleClickFora);
     return () => document.removeEventListener('mousedown', handleClickFora);
-  }, [onFechar]);
+  }, [anchorRef, onFechar]);
 
   function diasDoMes() {
     const ano = mes.getFullYear();

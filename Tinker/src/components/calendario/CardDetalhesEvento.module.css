@@ -1,0 +1,130 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: var(--cor-sombra-preta-media);
+}
+
+.card {
+  width: min(400px, 100%);
+  box-sizing: border-box;
+  padding: 19px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 12px;
+  background-color: var(--cor-fundo-card);
+  box-shadow: 0 4px 24px var(--cor-sombra-preta-forte);
+  color: var(--cor-texto-principal);
+}
+
+.titulo {
+  position: relative;
+  margin: 0 0 14px;
+  padding: 0 18px;
+  text-align: center;
+  font-size: 1.08rem;
+  overflow-wrap: anywhere;
+}
+
+.corEvento {
+  position: absolute;
+  top: 0.35em;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 50%;
+}
+
+.detalhes {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.detalhes div {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.detalhes dt {
+  flex: 0 0 auto;
+  color: var(--cor-texto-principal);
+  font-weight: 500;
+}
+
+.detalhes dd {
+  margin: 0;
+  color: var(--cor-texto-principal);
+  font-weight: 400;
+}
+
+.estado,
+.mensagem,
+.erro {
+  margin: 0;
+  color: var(--cor-texto-principal);
+}
+
+.erro {
+  margin-top: 12px;
+  color: var(--cor-alerta);
+  font-size: 0.875rem;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 17px;
+}
+
+.botaoSecundario,
+.botaoPerigo {
+  min-height: 36px;
+  padding: 0 13px;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.botaoSecundario {
+  border: 1px solid var(--cor-borda-controle);
+  background-color: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+}
+
+.botaoSecundario:hover:not(:disabled) {
+  background-color: var(--cor-fundo-hover);
+}
+
+.botaoPerigo {
+  border: none;
+  background-color: var(--cor-alerta);
+  color: var(--cor-texto-claro);
+}
+
+.botaoPerigo:disabled,
+.botaoSecundario:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 480px) {
+  .acoes {
+    justify-content: stretch;
+  }
+
+  .acoes button {
+    flex: 1 1 auto;
+  }
+}
