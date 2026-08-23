@@ -10,11 +10,17 @@
     justify-content: space-between;
     min-height: 120px; /* Garante que todos os cards tenham uma altura mínima consistente */
     cursor: pointer; /* Indica que o card é interativo */
-    transition: box-shadow 0.2s ease-in-out;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .cardSimulado:hover {
-    box-shadow: 0 4px 8px var(--cor-sombra-preta-media);
+    border-color: var(--cor-borda-hover);
+    box-shadow: 0 4px 16px var(--cor-sombra-card-media);
+}
+
+.cardSimulado:focus-visible {
+    outline: 3px solid var(--cor-foco-primario);
+    outline-offset: 2px;
 }
 
 .header {

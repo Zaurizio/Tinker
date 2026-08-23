@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import styles from './CardSimulado.module.css';
 import SimuladoOptions from './SimuladoOptions';
 
-const CardSimulado = ({ simulado, onMoveToFolder, onDelete, onRename, onDownload, onChangeCop }) => {
+const CardSimulado = ({ simulado, onAbrir, onRenomear, onBaixar, onExcluir }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, shouldGoUp: false });
     const buttonRef = useRef(null); // Referência para o botão de três pontinhos
@@ -48,21 +48,53 @@ const CardSimulado = ({ simulado, onMoveToFolder, onDelete, onRename, onDownload
         setShowMenu(false);
     };
 
+    const handleAbrirSimulado = () => {
+        handleCloseMenu();
+        onAbrir(simulado.id);
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.target !== event.currentTarget) return;
+
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleAbrirSimulado();
+        }
+    };
+
     // Handlers para as ações do menu (mantidos como estavam)
-    const handleMoveToFolderClick = () => { onMoveToFolder(simulado.id); handleCloseMenu(); };
-    const handleDeleteClick = () => { onDelete(simulado.id); handleCloseMenu(); };
-    const handleRenameClick = () => { onRename(simulado.id, simulado.nome); handleCloseMenu(); };
-    const handleDownloadClick = () => { onDownload(simulado.id); handleCloseMenu(); };
-    const handleChangeCopClick = () => { onChangeCop(simulado.id); handleCloseMenu(); };
+    const handleRenomearClick = () => {
+        handleCloseMenu();
+        onRenomear(simulado);
+    };
+
+    const handleBaixarClick = () => {
+        handleCloseMenu();
+        onBaixar(simulado);
+    };
+
+    const handleExcluirClick = () => {
+        handleCloseMenu();
+        onExcluir(simulado);
+    };
 
     return (
-        <div className={styles.cardSimulado} onClick={handleCloseMenu} ref={cardRef}> {/* Adicione a referência ao card */}
+        <div
+            className={styles.cardSimulado}
+            onClick={handleAbrirSimulado}
+            onKeyDown={handleKeyDown}
+            ref={cardRef}
+            role="button"
+            tabIndex={0}
+        >
             <div className={styles.header}>
-                <h3 className={styles.simuladoTitle}>{simulado.nome}</h3>
+                <h3 className={styles.simuladoTitle}>{simulado.titulo}</h3>
                 <button
+                    type="button"
                     ref={buttonRef}
                     className={styles.menuButton}
                     onClick={handleToggleMenu}
+                    aria-label={`Abrir opções de ${simulado.titulo}`}
                 >
                     ...
                 </button>
@@ -70,15 +102,16 @@ const CardSimulado = ({ simulado, onMoveToFolder, onDelete, onRename, onDownload
                     <SimuladoOptions
                         onClose={handleCloseMenu}
                         position={menuPosition}
-                        onMoveToFolder={handleMoveToFolderClick}
-                        onDelete={handleDeleteClick}
-                        onRename={handleRenameClick}
-                        onDownload={handleDownloadClick}
-                        onChangeCop={handleChangeCopClick}
+                        onAbrir={handleAbrirSimulado}
+                        onRenomear={handleRenomearClick}
+                        onBaixar={handleBaixarClick}
+                        onExcluir={handleExcluirClick}
                     />
                 )}
             </div>
-            <p className={styles.simuladoDescription}>{simulado.descricao || "Nenhuma descrição disponível."}</p>
+            <p className={styles.simuladoDescription}>
+                {simulado.quantidadeQuestoes} questões · {simulado.respondidas} respondidas · {simulado.acertos} acertos
+            </p>
         </div>
     );
 };

@@ -15,6 +15,7 @@ import Cadastro from "./pages/publico/Cadastro";
 import Home from "./pages/Home";
 import Questoes from "./pages/Questoes";
 import Simulados from "./pages/Simulados";
+import DetalhesSimulado from "./pages/DetalhesSimulado";
 import Desempenho from "./pages/Desempenho";
 import Calendario from "./pages/Calendario";
 import Turma from "./pages/Turma";
@@ -43,6 +44,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/questoes" element={<Questoes />} />
           <Route path="/simulados" element={<Simulados />} />
+          <Route path="/simulados/:simuladoId" element={<DetalhesSimulado />} />
           <Route path="/desempenho" element={<Desempenho />} />
           
           <Route path="/calendario" element={<Calendario />} />

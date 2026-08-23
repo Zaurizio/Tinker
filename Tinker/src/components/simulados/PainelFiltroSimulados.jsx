@@ -13,6 +13,7 @@ import {
 } from "../../data/filtrosQuestoes";
 
 function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
+  const [erroQuantidade, setErroQuantidade] = useState("");
   const [filtros, setFiltros] = useState({
     disciplinas: [],
     conteudos: [],
@@ -23,6 +24,7 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
   });
 
   function atualizarFiltro(campo, valor) {
+    if (campo === "quantidadeQuestoes") setErroQuantidade("");
     setFiltros((estadoAtual) => ({
       ...estadoAtual,
       [campo]: valor,
@@ -30,6 +32,7 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
   }
 
   function limparFiltrosInterno() {
+    setErroQuantidade("");
     setFiltros({
       disciplinas: [],
       conteudos: [],
@@ -45,9 +48,27 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log("Filtros de simulado atuais:", filtros);
+    const quantidadeQuestoes = Number(filtros.quantidadeQuestoes);
+
+    if (
+      !Number.isInteger(quantidadeQuestoes) ||
+      quantidadeQuestoes < 1 ||
+      quantidadeQuestoes > 200
+    ) {
+      setErroQuantidade("Informe uma quantidade inteira entre 1 e 200.");
+      return;
+    }
+
+    setErroQuantidade("");
     if (onGerarSimulado) {
-      onGerarSimulado(filtros);
+      onGerarSimulado({
+        disciplinas: [...filtros.disciplinas],
+        conteudos: [...filtros.conteudos],
+        instituicoes: [...filtros.instituicoes],
+        anos: [...filtros.anos],
+        status: filtros.status,
+        quantidadeQuestoes,
+      });
     }
   }
 
@@ -165,6 +186,12 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
         </div>
 
         {/*Botão de envio e limpar*/}
+        {erroQuantidade && (
+          <p className={estiloPainel.erro} role="alert">
+            {erroQuantidade}
+          </p>
+        )}
+
         <div className={estiloPainel.linhaAcoes}>
           <button
             type="button"

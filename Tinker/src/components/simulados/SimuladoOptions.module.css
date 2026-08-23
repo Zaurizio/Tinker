@@ -1,57 +1,50 @@
 .dropdownMenu {
-    position: absolute;
-    top: 35px;
-    right: 5px;
-    background-color: var(--cor-fundo-card);
-    border: 1px solid var(--cor-borda-antiga);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px var(--cor-sombra-preta-forte);
-    z-index: 10;
-    min-width: 180px; /* Aumentei um pouco a largura para acomodar os ícones e o texto */
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  min-width: 180px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda-antiga);
+  border-radius: 6px;
+  background-color: var(--cor-fundo-card);
+  box-shadow: 0 4px 12px var(--cor-sombra-preta-forte);
 }
 
-.dropdownMenu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.opcao {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  background: transparent;
+  color: var(--cor-texto-antigo);
+  font: inherit;
+  font-size: 0.95em;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.dropdownMenu li {
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 0.95em;
-    color: var(--cor-texto-antigo);
-    transition: background-color 0.2s ease-in-out;
-    display: flex; /* Usa flexbox para alinhar ícone e texto */
-    align-items: center; /* Centraliza verticalmente */
+.opcao:hover {
+  background-color: var(--cor-fundo-opcao-antiga);
 }
 
-.dropdownMenu li:hover {
-    background-color: var(--cor-fundo-opcao-antiga);
+.opcao:focus-visible {
+  position: relative;
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: -3px;
 }
 
-.dropdownMenu li:first-child {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+.opcaoDestrutiva {
+  color: var(--cor-acao-destrutiva);
 }
 
-.dropdownMenu li:last-child {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+.opcaoDestrutiva:hover {
+  background-color: var(--cor-fundo-erro-suave);
 }
 
-.deleteOption {
-    color: var(--cor-acao-destrutiva);
-}
-
-.deleteOption:hover {
-    background-color: var(--cor-fundo-erro-suave);
-}
-
-.icon {
-    margin-right: 10px; /* Espaçamento entre o ícone e o texto */
-    font-size: 1.1em; /* Ajusta o tamanho do ícone */
+.icone {
+  margin-right: 10px;
+  font-size: 1.1em;
 }

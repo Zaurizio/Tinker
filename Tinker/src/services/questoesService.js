@@ -25,6 +25,20 @@ const disciplinasPorId = criarMapaPorId(disciplinasCatalogo);
 const conteudosPorId = criarMapaPorId(conteudosCatalogo);
 const instituicoesPorId = criarMapaPorId(instituicoesCatalogo);
 
+function prepararQuestaoParaExibicao(questao) {
+  const { respostaCorretaId, ...questaoSemGabarito } = questao;
+  void respostaCorretaId;
+
+  return {
+    ...questaoSemGabarito,
+    alternativas: questao.alternativas.map((alternativa) => ({ ...alternativa })),
+    simuladosIds: [...(questao.simuladosIds ?? [])],
+    disciplina: disciplinasPorId.get(questao.disciplinaId),
+    conteudo: conteudosPorId.get(questao.conteudoId),
+    instituicao: instituicoesPorId.get(questao.instituicaoId),
+  };
+}
+
 function correspondeAoRelacionamento(selecionados, mapaPorNome, idQuestao) {
   if (selecionados.length === 0) return true;
 
@@ -76,22 +90,31 @@ export async function buscarQuestoes(filtros, { pagina, tamanho }) {
 
   const itens = questoesFiltradas
     .slice(inicio, inicio + tamanho)
-    .map((questao) => {
-      const { respostaCorretaId, ...questaoSemGabarito } = questao;
-      void respostaCorretaId;
-
-      return {
-        ...questaoSemGabarito,
-        disciplina: disciplinasPorId.get(questao.disciplinaId),
-        conteudo: conteudosPorId.get(questao.conteudoId),
-        instituicao: instituicoesPorId.get(questao.instituicaoId),
-      };
-    });
+    .map(prepararQuestaoParaExibicao);
 
   return {
     itens,
     temMais: inicio + tamanho < questoesFiltradas.length,
+    total: questoesFiltradas.length,
   };
+}
+
+export async function buscarQuestoesPorIds(ids) {
+  if (!Array.isArray(ids)) {
+    throw new Error("A lista de questões associadas é inválida.");
+  }
+
+  const questoesPorId = new Map(questoes.map((questao) => [questao.id, questao]));
+
+  return ids.map((id) => {
+    const questao = questoesPorId.get(id);
+
+    if (!questao) {
+      throw new Error("Os dados do simulado estão inconsistentes.");
+    }
+
+    return prepararQuestaoParaExibicao(questao);
+  });
 }
 
 export async function responderQuestao(questaoId, alternativaSelecionadaId) {

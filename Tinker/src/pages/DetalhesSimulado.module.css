@@ -1,0 +1,95 @@
+.pagina {
+  flex: 1;
+  min-height: 100vh;
+  padding: 36px 32px;
+  box-sizing: border-box;
+  background: var(--cor-fundo-pagina);
+}
+
+.topo {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto 28px;
+}
+
+.botaoVoltar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.botaoVoltar:hover {
+  background: var(--cor-fundo-hover);
+}
+
+.botaoVoltar:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
+}
+
+.titulo {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto-principal);
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.conteudo {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.listaQuestoes {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.estado,
+.erro {
+  margin: 0;
+  padding: 16px 4px;
+  color: var(--cor-texto-secundario);
+  text-align: center;
+}
+
+.erro {
+  color: var(--cor-alerta);
+}
+
+@media (max-width: 600px) {
+  .pagina {
+    padding: 24px 16px;
+  }
+
+  .topo {
+    grid-template-columns: 42px minmax(0, 1fr) 42px;
+    gap: 8px;
+  }
+
+  .botaoVoltar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .titulo {
+    font-size: 1.5rem;
+  }
+}

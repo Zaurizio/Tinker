@@ -56,6 +56,12 @@
   color: var(--cor-texto-placeholder);
 }
 
+.erro {
+  margin: -8px 0 0;
+  color: var(--cor-erro, #b42318);
+  font-size: 0.875rem;
+}
+
 .linhaStatus { /*linha botões*/
   display: flex;
   flex-direction: column;
