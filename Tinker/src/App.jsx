@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router";
 
 // Layouts
 import LayoutPublico from "./components/layout/LayoutPublico";
@@ -19,6 +19,7 @@ import DetalhesSimulado from "./pages/DetalhesSimulado";
 import Desempenho from "./pages/Desempenho";
 import Calendario from "./pages/Calendario";
 import Turma from "./pages/Turma";
+import DetalhesTurma from "./pages/DetalhesTurma";
 import Suporte from "./pages/Suporte";
 
 function App() {
@@ -49,6 +50,13 @@ function App() {
           
           <Route path="/calendario" element={<Calendario />} />
           <Route path="/turma" element={<Turma />} />
+          <Route
+            path="/turma/:turmaId"
+            element={<Navigate to="simulados" replace />}
+          />
+          <Route path="/turma/:turmaId/simulados" element={<DetalhesTurma />} />
+          <Route path="/turma/:turmaId/eventos" element={<DetalhesTurma />} />
+          <Route path="/turma/:turmaId/membros" element={<DetalhesTurma />} />
           <Route path="/suporte" element={<Suporte />} />
         </Route>
 

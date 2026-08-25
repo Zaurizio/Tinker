@@ -64,6 +64,12 @@
   color: var(--cor-texto-placeholder);
 }
 
+.erro {
+  margin-top: -8px;
+  font-size: 0.85rem;
+  color: var(--cor-alerta);
+}
+
 .acoes {
   display: flex;
   justify-content: flex-end;
@@ -99,4 +105,11 @@
 
 .botaoSecundario:hover {
   background: var(--cor-fundo-hover);
+}
+
+.botaoPrimario:disabled,
+.botaoSecundario:disabled,
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }

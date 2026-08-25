@@ -1,27 +1,73 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import BarraBusca from "../components/ui/BarraBusca";
 import CardTurma from "../components/turma/CardTurma";
 import ModalEntrarTurma from "../components/turma/ModalEntrarTurma";
 import ModalCriarTurma from "../components/turma/ModalCriarTurma";
-import estiloTurma from "./Turma.module.css"
-
-const turmasSimuladas = [
-  { id: 1, nome: "Turma de Matemática", criador: "Prof. João Silva", imagem: null, cor: "#2f5d8a" },
-  { id: 2, nome: "Biologia — FUVEST", criador: "Ana Souza", imagem: null, cor: "#4a7c6f" },
-  { id: 3, nome: "Redação Intensiva", criador: "Carlos Mendes", imagem: null, cor: "#7a5c8a" },
-];
+import {
+  criarTurma,
+  entrarEmTurma,
+  listarTurmasDoUsuario,
+} from "../services/turmaService";
+import estiloTurma from "./Turma.module.css";
 
 function Turma() {
   const [busca, setBusca] = useState("");
   const [modalAberto, setModalAberto] = useState(null); // "entrar" | "criar" | null
+  const [turmas, setTurmas] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+  const componenteMontadoRef = useRef(true);
+
+  useEffect(() => {
+    let carregamentoAtivo = true;
+    componenteMontadoRef.current = true;
+
+    async function carregarTurmas() {
+      try {
+        const turmasCarregadas = await listarTurmasDoUsuario();
+        if (carregamentoAtivo) setTurmas(turmasCarregadas);
+      } catch {
+        if (carregamentoAtivo) {
+          setErro("Não foi possível carregar as turmas.");
+        }
+      } finally {
+        if (carregamentoAtivo) setCarregando(false);
+      }
+    }
+
+    carregarTurmas();
+
+    return () => {
+      carregamentoAtivo = false;
+      componenteMontadoRef.current = false;
+    };
+  }, []);
 
   const turmasFiltradas = useMemo(() => {
     const normalizar = (texto) =>
       texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    return turmasSimuladas.filter((t) =>
+    return turmas.filter((t) =>
       normalizar(t.nome).includes(normalizar(busca))
     );
-  }, [busca]);
+  }, [busca, turmas]);
+
+  async function handleCriarTurma(dadosTurma) {
+    const novaTurma = await criarTurma(dadosTurma);
+    if (!componenteMontadoRef.current) return novaTurma;
+    setTurmas((turmasAtuais) => [...turmasAtuais, novaTurma]);
+    return novaTurma;
+  }
+
+  async function handleEntrarEmTurma(codigo) {
+    const turmaIngressada = await entrarEmTurma(codigo);
+    if (!componenteMontadoRef.current) return turmaIngressada;
+    setTurmas((turmasAtuais) =>
+      turmasAtuais.some((turma) => turma.id === turmaIngressada.id)
+        ? turmasAtuais
+        : [...turmasAtuais, turmaIngressada]
+    );
+    return turmaIngressada;
+  }
 
   return (
     <div className={estiloTurma.pagina}>
@@ -44,7 +90,15 @@ function Turma() {
         </div>
 
         <div className={estiloTurma.listaTurmas}>
-          {turmasFiltradas.length > 0 ? (
+          {carregando ? (
+            <div className={estiloTurma.estadoVazio} role="status">
+              Carregando turmas...
+            </div>
+          ) : erro ? (
+            <div className={estiloTurma.estadoVazio} role="alert">
+              {erro}
+            </div>
+          ) : turmasFiltradas.length > 0 ? (
             turmasFiltradas.map((turma) => (
               <CardTurma key={turma.id} turma={turma} />
             ))
@@ -56,10 +110,16 @@ function Turma() {
       </div>
 
       {modalAberto === "entrar" && (
-        <ModalEntrarTurma onFechar={() => setModalAberto(null)} />
+        <ModalEntrarTurma
+          onEntrar={handleEntrarEmTurma}
+          onFechar={() => setModalAberto(null)}
+        />
       )}
       {modalAberto === "criar" && (
-        <ModalCriarTurma onFechar={() => setModalAberto(null)} />
+        <ModalCriarTurma
+          onCriar={handleCriarTurma}
+          onFechar={() => setModalAberto(null)}
+        />
       )}
 
     </div>

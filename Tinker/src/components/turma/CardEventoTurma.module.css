@@ -1,0 +1,117 @@
+.card {
+  min-height: 104px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  box-shadow: 0 2px 4px var(--cor-sombra-preta-suave);
+}
+
+.data {
+  width: 74px;
+  min-height: 74px;
+  flex-shrink: 0;
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 12px;
+  background: var(--cor-fundo-input-suave);
+  line-height: 1;
+}
+
+.mes,
+.diaSemana {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.data strong {
+  margin: 4px 0;
+  color: var(--cor-texto-principal);
+  font-size: 1.6rem;
+  font-weight: 650;
+}
+
+.informacoes {
+  min-width: 0;
+  flex: 1;
+}
+
+.informacoes h3 {
+  margin: 0 0 7px;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto-principal);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.informacoes p {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.86rem;
+}
+
+.acao {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.acao button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 12px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-primaria-destaque);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.acao button:hover:not(:disabled) {
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+}
+
+.acao button:disabled {
+  cursor: not-allowed;
+  color: var(--cor-texto-desabilitado);
+  opacity: 0.75;
+}
+
+.erro {
+  max-width: 220px;
+  color: var(--cor-alerta);
+  font-size: 0.76rem;
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 12px;
+    gap: 13px;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .acao {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .erro {
+    max-width: none;
+    text-align: left;
+  }
+}

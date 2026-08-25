@@ -1,9 +1,14 @@
 import { MdGroups } from "react-icons/md";
+import { Link } from "react-router";
 import estiloCard from "./CardTurma.module.css";
 
 function CardTurma({ turma }) {
   return (
-    <div className={estiloCard.card}>
+    <Link
+      to={`/turma/${turma.id}/simulados`}
+      className={estiloCard.card}
+      aria-label={`Abrir turma ${turma.nome}`}
+    >
       <div
         className={estiloCard.imagemTurma}
         style={{ backgroundColor: turma.cor }}
@@ -18,7 +23,7 @@ function CardTurma({ turma }) {
         <span className={estiloCard.nomeTurma}>{turma.nome}</span>
         <span className={estiloCard.criador}>{turma.criador}</span>
       </div>
-    </div>
+    </Link>
   );
 }
 

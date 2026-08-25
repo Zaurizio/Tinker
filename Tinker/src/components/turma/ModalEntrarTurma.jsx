@@ -1,19 +1,58 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import estiloModal from "./ModalTurma.module.css";
 
-function ModalEntrarTurma({ onFechar }) {
+function ModalEntrarTurma({ onEntrar, onFechar }) {
   const [codigo, setCodigo] = useState("");
+  const [entrando, setEntrando] = useState(false);
+  const [erro, setErro] = useState("");
+  const operacaoEmAndamentoRef = useRef(false);
+  const componenteMontadoRef = useRef(true);
 
-  function handleSubmit(e) {
+  useEffect(() => {
+    componenteMontadoRef.current = true;
+
+    return () => {
+      componenteMontadoRef.current = false;
+    };
+  }, []);
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log("Código digitado:", codigo);
-    onFechar();
+    const codigoNormalizado = codigo.trim().toUpperCase();
+
+    if (operacaoEmAndamentoRef.current) return;
+
+    if (!codigoNormalizado) {
+      setErro("Digite o código da turma.");
+      return;
+    }
+
+    operacaoEmAndamentoRef.current = true;
+    setEntrando(true);
+    setErro("");
+
+    try {
+      await onEntrar(codigoNormalizado);
+      if (componenteMontadoRef.current) onFechar();
+    } catch (erroEntrada) {
+      if (!componenteMontadoRef.current) return;
+
+      setErro(erroEntrada.message || "Não foi possível entrar na turma.");
+      operacaoEmAndamentoRef.current = false;
+      setEntrando(false);
+    }
   }
 
   return (
-    <div className={estiloModal.overlay} onClick={onFechar}>
-      <div className={estiloModal.modal} onClick={(e) => e.stopPropagation()}>
-        <h2 className={estiloModal.titulo}>Entrar em turma</h2>
+    <div className={estiloModal.overlay} onClick={entrando ? undefined : onFechar}>
+      <div
+        className={estiloModal.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-entrar-turma"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 id="titulo-entrar-turma" className={estiloModal.titulo}>Entrar em turma</h2>
         <p className={estiloModal.descricao}>
           Digite o código da turma compartilhado pelo administrador.
         </p>
@@ -24,14 +63,25 @@ function ModalEntrarTurma({ onFechar }) {
             value={codigo}
             onChange={(e) => setCodigo(e.target.value)}
             className={estiloModal.input}
+            disabled={entrando}
             autoFocus
           />
+          {erro && (
+            <div className={estiloModal.erro} role="alert">
+              {erro}
+            </div>
+          )}
           <div className={estiloModal.acoes}>
-            <button type="button" className={estiloModal.botaoSecundario} onClick={onFechar}>
+            <button
+              type="button"
+              className={estiloModal.botaoSecundario}
+              onClick={onFechar}
+              disabled={entrando}
+            >
               Cancelar
             </button>
-            <button type="submit" className={estiloModal.botaoPrimario}>
-              Entrar
+            <button type="submit" className={estiloModal.botaoPrimario} disabled={entrando}>
+              {entrando ? "Entrando..." : "Entrar"}
             </button>
           </div>
         </form>

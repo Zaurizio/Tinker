@@ -1,0 +1,73 @@
+.lista {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.membro {
+  min-height: 68px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-input-suave);
+}
+
+.administrador {
+  border-color: var(--cor-primaria-destaque-borda);
+  background: var(--cor-primaria-destaque-fundo);
+}
+
+.foto {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--cor-fundo-selecao);
+  color: var(--cor-primaria-destaque);
+  font-size: 1.6rem;
+}
+
+.foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.identificacao {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nome {
+  overflow: hidden;
+  color: var(--cor-texto-principal);
+  font-size: 0.96rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.papel {
+  color: var(--cor-texto-secundario);
+  font-size: 0.82rem;
+}
+
+.administrador .papel {
+  color: var(--cor-primaria-destaque);
+  font-weight: 600;
+}
+
+.estado {
+  padding: 18px 4px;
+  color: var(--cor-texto-placeholder);
+  font-size: 0.9rem;
+}

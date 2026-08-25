@@ -1,4 +1,5 @@
 import { eventos } from "../data/calendario";
+import { usuarioAtual } from "../data/usuario";
 
 const eventosEmMemoria = eventos.map((evento) => ({
   ...evento,
@@ -22,6 +23,32 @@ function idsSaoIguais(primeiroId, segundoId) {
 
 function copiarEvento(evento) {
   return { ...evento };
+}
+
+function normalizarTitulo(titulo) {
+  return typeof titulo === "string" ? titulo.trim().toLowerCase() : "";
+}
+
+function eventoEhDiaInteiro(evento) {
+  return evento?.tipo === "dia_inteiro" || evento?.diaInteiro === true;
+}
+
+function eventosSaoEquivalentes(eventoA, eventoB) {
+  const eventoADiaInteiro = eventoEhDiaInteiro(eventoA);
+  const eventoBDiaInteiro = eventoEhDiaInteiro(eventoB);
+
+  if (
+    normalizarTitulo(eventoA?.titulo) !== normalizarTitulo(eventoB?.titulo) ||
+    eventoA?.data !== eventoB?.data ||
+    eventoADiaInteiro !== eventoBDiaInteiro
+  ) return false;
+
+  if (eventoADiaInteiro) return true;
+
+  return (
+    (eventoA?.horarioInicio ?? null) === (eventoB?.horarioInicio ?? null) &&
+    (eventoA?.horarioFim ?? null) === (eventoB?.horarioFim ?? null)
+  );
 }
 
 function formatarDataLocal(data) {
@@ -160,6 +187,7 @@ function gerarOcorrencias(dadosEvento) {
       cor: dadosEvento.cor,
       recorrencia: dadosEvento.recorrencia,
       serieId,
+      usuarioId: usuarioAtual.id,
     });
     proximoId += 1;
     configuracao.avancar?.(dataOcorrencia);
@@ -190,9 +218,11 @@ function converterEventoParaCalendario(evento) {
 }
 
 export async function listarEventosDoUsuario() {
-  return eventosEmMemoria.map((evento) => ({
-    ...converterEventoParaCalendario(evento),
-  }));
+  return eventosEmMemoria
+    .filter((evento) => evento.usuarioId === usuarioAtual.id)
+    .map((evento) => ({
+      ...converterEventoParaCalendario(evento),
+    }));
 }
 
 export async function criarEvento(dadosEvento) {
@@ -207,9 +237,83 @@ export async function criarEvento(dadosEvento) {
 
 export async function obterEventoPorId(eventoId) {
   const evento = eventosEmMemoria.find((item) => idsSaoIguais(item.id, eventoId));
-  if (!evento) throw new Error("Evento não encontrado.");
+  if (!evento) {
+    const erro = new Error("Evento não encontrado.");
+    erro.codigo = "EVENTO_NAO_ENCONTRADO";
+    throw erro;
+  }
 
   return copiarEvento(evento);
+}
+
+export async function obterEventoDoUsuarioPorId(eventoId) {
+  const evento = await obterEventoPorId(eventoId);
+
+  if (evento.usuarioId !== usuarioAtual.id) {
+    const erro = new Error("Este evento não pertence ao usuário atual.");
+    erro.codigo = "EVENTO_NAO_PERTENCE_AO_USUARIO";
+    throw erro;
+  }
+
+  return copiarEvento(evento);
+}
+
+export async function encontrarEventoEquivalente(dadosEvento, usuarioId) {
+  const usuarioIdNormalizado = Number(usuarioId);
+  if (!Number.isInteger(usuarioIdNormalizado)) return null;
+
+  const evento = eventosEmMemoria.find(
+    (item) =>
+      item.usuarioId === usuarioIdNormalizado &&
+      eventosSaoEquivalentes(item, dadosEvento)
+  );
+
+  return evento ? copiarEvento(evento) : null;
+}
+
+export async function salvarEventoCompartilhado({
+  eventoOrigem,
+  publicacaoTurmaId,
+  usuarioId,
+}) {
+  const usuarioIdNormalizado = Number(usuarioId);
+  const publicacaoIdNormalizado = Number(publicacaoTurmaId);
+
+  if (!eventoOrigem || !Number.isInteger(Number(eventoOrigem.id))) {
+    throw new Error("Evento não encontrado.");
+  }
+
+  if (!Number.isInteger(usuarioIdNormalizado)) {
+    throw new Error("Usuário inválido.");
+  }
+
+  if (!Number.isInteger(publicacaoIdNormalizado)) {
+    throw new Error("Evento publicado não encontrado.");
+  }
+
+  const eventoExistente = await encontrarEventoEquivalente(
+    eventoOrigem,
+    usuarioIdNormalizado
+  );
+
+  if (eventoExistente) {
+    return { evento: copiarEvento(eventoExistente), criado: false };
+  }
+
+  const copiaPessoal = {
+    ...eventoOrigem,
+    id: proximoId,
+    usuarioId: usuarioIdNormalizado,
+    eventoOrigemId: eventoOrigem.id,
+    publicacaoTurmaId: publicacaoIdNormalizado,
+    serieId: null,
+    recorrencia: "Não se repete",
+  };
+
+  proximoId += 1;
+  eventosEmMemoria.push({ ...copiaPessoal });
+
+  return { evento: copiarEvento(copiaPessoal), criado: true };
 }
 
 export async function possuiOutrasOcorrenciasDaSerie(eventoId) {

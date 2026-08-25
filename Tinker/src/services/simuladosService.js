@@ -1,9 +1,10 @@
 import { simulados } from "../data/simulados";
+import { usuarioAtual } from "../data/usuario";
 import { buscarQuestoes, buscarQuestoesPorIds } from "./questoesService";
 
 const simuladosEmMemoria = simulados.map((simulado) => ({
   ...simulado,
-  questoesIds: [],
+  questoesIds: [...(simulado.questoesIds ?? [])],
 }));
 let proximoId =
   simuladosEmMemoria.reduce(
@@ -12,7 +13,9 @@ let proximoId =
   ) + 1;
 
 export async function listarSimuladosDoUsuario() {
-  return simuladosEmMemoria.map(criarResumoSimulado);
+  return simuladosEmMemoria
+    .filter((simulado) => simulado.proprietarioUsuarioId === usuarioAtual.id)
+    .map(criarResumoSimulado);
 }
 
 function criarResumoSimulado(simulado) {
@@ -36,17 +39,58 @@ function localizarSimulado(simuladoId) {
   return simulado;
 }
 
+function localizarSimuladoDoUsuario(simuladoId) {
+  const simulado = localizarSimulado(simuladoId);
+
+  if (simulado.proprietarioUsuarioId !== usuarioAtual.id) {
+    const erro = new Error("Simulado não encontrado.");
+    erro.codigo = "SIMULADO_NAO_ENCONTRADO";
+    throw erro;
+  }
+
+  return simulado;
+}
+
 export async function obterSimuladoPorId(simuladoId) {
+  return criarResumoSimulado(localizarSimuladoDoUsuario(simuladoId));
+}
+
+export async function obterSimuladoDoUsuarioPorId(simuladoId) {
+  return criarResumoSimulado(localizarSimuladoDoUsuario(simuladoId));
+}
+
+export async function obterSimuladoPublicadoPorId(simuladoId) {
   return criarResumoSimulado(localizarSimulado(simuladoId));
 }
 
+export async function encontrarSimuladoSalvoDoUsuario({
+  simuladoOrigemId,
+  publicacaoTurmaId,
+}) {
+  const origemIdNormalizado = Number(simuladoOrigemId);
+  const publicacaoIdNormalizado = Number(publicacaoTurmaId);
+
+  if (!Number.isInteger(origemIdNormalizado)) return null;
+
+  const simulado = simuladosEmMemoria.find(
+    (item) =>
+      item.proprietarioUsuarioId === usuarioAtual.id &&
+      (item.id === origemIdNormalizado ||
+        Number(item.simuladoOrigemId) === origemIdNormalizado ||
+        (Number.isInteger(publicacaoIdNormalizado) &&
+          Number(item.publicacaoTurmaId) === publicacaoIdNormalizado))
+  );
+
+  return simulado ? criarResumoSimulado(simulado) : null;
+}
+
 export async function listarQuestoesDoSimulado(simuladoId) {
-  const simulado = localizarSimulado(simuladoId);
+  const simulado = localizarSimuladoDoUsuario(simuladoId);
   return buscarQuestoesPorIds([...simulado.questoesIds]);
 }
 
 export async function renomearSimulado(simuladoId, { titulo }) {
-  const simulado = localizarSimulado(simuladoId);
+  const simulado = localizarSimuladoDoUsuario(simuladoId);
   const tituloNormalizado = typeof titulo === "string" ? titulo.trim() : "";
 
   if (!tituloNormalizado) {
@@ -58,7 +102,7 @@ export async function renomearSimulado(simuladoId, { titulo }) {
 }
 
 export async function excluirSimulado(simuladoId) {
-  const simulado = localizarSimulado(simuladoId);
+  const simulado = localizarSimuladoDoUsuario(simuladoId);
   const indiceSimulado = simuladosEmMemoria.indexOf(simulado);
 
   simuladosEmMemoria.splice(indiceSimulado, 1);
@@ -90,6 +134,7 @@ export async function criarSimulado({ titulo }) {
     acertos: 0,
     status: "nao_iniciado",
     questoesIds: [],
+    proprietarioUsuarioId: usuarioAtual.id,
   };
 
   proximoId += 1;
@@ -133,6 +178,7 @@ export async function gerarSimulado({ titulo, filtros, quantidadeQuestoes }) {
     acertos: 0,
     status: "nao_iniciado",
     questoesIds: resultadoBusca.itens.map((questao) => questao.id),
+    proprietarioUsuarioId: usuarioAtual.id,
   };
 
   proximoId += 1;
@@ -144,4 +190,57 @@ export async function atualizarQuestaoNosSimulados(questaoId, simuladosIds) {
   void questaoId;
 
   return simuladosIds;
+}
+
+export async function salvarSimuladoCompartilhado({
+  simuladoOrigemId,
+  publicacaoTurmaId,
+  usuarioId,
+}) {
+  const usuarioIdNormalizado = Number(usuarioId);
+  const publicacaoIdNormalizado = Number(publicacaoTurmaId);
+  const simuladoOrigem = localizarSimulado(simuladoOrigemId);
+
+  if (!Number.isInteger(usuarioIdNormalizado)) {
+    throw new Error("Usuário inválido.");
+  }
+
+  if (!Number.isInteger(publicacaoIdNormalizado)) {
+    throw new Error("Simulado publicado não encontrado.");
+  }
+
+  const copiaExistente = simuladosEmMemoria.find(
+    (simulado) =>
+      simulado.proprietarioUsuarioId === usuarioIdNormalizado &&
+      (simulado.publicacaoTurmaId === publicacaoIdNormalizado ||
+        simulado.simuladoOrigemId === simuladoOrigem.id)
+  );
+
+  if (copiaExistente) {
+    const erro = new Error("Este simulado já foi adicionado.");
+    erro.codigo = "SIMULADO_JA_ADICIONADO";
+    erro.simuladoPessoalId = copiaExistente.id;
+    throw erro;
+  }
+
+  const copiaPessoal = {
+    ...simuladoOrigem,
+    id: proximoId,
+    dataCriacao: obterDataAtual(),
+    respondidas: 0,
+    acertos: 0,
+    status: "nao_iniciado",
+    proprietarioUsuarioId: usuarioIdNormalizado,
+    simuladoOrigemId: simuladoOrigem.id,
+    publicacaoTurmaId: publicacaoIdNormalizado,
+    questoesIds: [...simuladoOrigem.questoesIds],
+  };
+
+  proximoId += 1;
+  simuladosEmMemoria.push({
+    ...copiaPessoal,
+    questoesIds: [...copiaPessoal.questoesIds],
+  });
+
+  return criarResumoSimulado(copiaPessoal);
 }

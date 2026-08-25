@@ -1,0 +1,135 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: var(--cor-sombra-overlay);
+}
+
+.modal {
+  width: min(100%, 540px);
+  max-height: min(720px, calc(100vh - 40px));
+  padding: 28px;
+  overflow-y: auto;
+  border-radius: 20px;
+  background: var(--cor-fundo-card);
+  box-shadow: 0 16px 48px var(--cor-sombra-modal);
+}
+
+.modal h2 {
+  margin: 0;
+  color: var(--cor-texto-principal);
+  font-size: 1.25rem;
+}
+
+.modal > p {
+  margin: 8px 0 20px;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.opcoes {
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.opcao {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 12px;
+  background: var(--cor-fundo-input-suave);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.opcao:hover,
+.opcao:focus-within,
+.opcaoSelecionada {
+  border-color: var(--cor-primaria-destaque);
+  background: var(--cor-primaria-destaque-fundo);
+}
+
+.opcao input {
+  accent-color: var(--cor-primaria-destaque);
+}
+
+.marcadorCor {
+  width: 10px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 999px;
+}
+
+.opcao span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.opcao strong {
+  overflow: hidden;
+  color: var(--cor-texto-principal);
+  font-size: 0.92rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.opcao small,
+.estado {
+  color: var(--cor-texto-secundario);
+  font-size: 0.82rem;
+}
+
+.estado {
+  padding: 16px 4px;
+}
+
+.erro {
+  color: var(--cor-alerta);
+  font-size: 0.85rem;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.acoes button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.acoes .publicar {
+  border-color: transparent;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+}
+
+.acoes button:disabled,
+.opcao:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
