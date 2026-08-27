@@ -8,8 +8,11 @@ import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.dto.simulado.SimuladoResumoDTO;
 import Tinker.demo.dto.simulado.GerarSimuladoDTO;
 import Tinker.demo.dto.simulado.SimuladoGeradoDTO;
+import Tinker.demo.dto.simulado.CorrigirQuestaoSimuladoDTO;
+import Tinker.demo.dto.simulado.CorrecaoQuestaoSimuladoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.exception.DadosInvalidosException;
+import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.model.Questao;
@@ -33,6 +36,7 @@ import Tinker.demo.specification.QuestaoSpecifications;
 import java.util.List;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Locale;
 
 @Service
 public class SimuladoService {
@@ -61,35 +65,23 @@ public class SimuladoService {
 
     @Transactional(readOnly = true)
     public List<SimuladoResumoDTO> listar(UsuarioAutenticado usuario) {
-        List<Simulado> simulados;
-        if (usuario.tipoUsuario() == TipoUsuario.ALUNO) {
-            simulados = simuladoRepository.findByEmailAlunoOrderByCodSimuladoAsc(usuario.email());
-        } else if (usuario.tipoUsuario() == TipoUsuario.PROFESSOR) {
-            simulados = simuladoRepository.findByEmailProfOrderByCodSimuladoAsc(usuario.email());
-        } else {
-            throw tipoNaoPermitido();
-        }
+        exigirProfessor(usuario);
+        List<Simulado> simulados =
+                simuladoRepository.findByEmailProfOrderByCodSimuladoAsc(usuario.email());
 
         return simulados.stream().map(this::resumo).toList();
     }
 
     @Transactional
     public SimuladoDetalheDTO criar(UsuarioAutenticado usuario, CriarSimuladoDTO dados) {
+        exigirProfessor(usuario);
         Simulado simulado = new Simulado();
         simulado.setNome(dados.getTitulo().trim());
         simulado.setDescricao(dados.getDescricao());
         simulado.setTempo(dados.getTempo());
         simulado.setConclusao(0);
 
-        if (usuario.tipoUsuario() == TipoUsuario.ALUNO) {
-            simulado.setEmailAluno(usuario.email());
-            simulado.setEmailProf(null);
-        } else if (usuario.tipoUsuario() == TipoUsuario.PROFESSOR) {
-            simulado.setEmailAluno(null);
-            simulado.setEmailProf(usuario.email());
-        } else {
-            throw tipoNaoPermitido();
-        }
+        preencherProprietarioProfessor(simulado, usuario);
 
         Simulado salvo = simuladoRepository.save(simulado);
         return detalhe(salvo, List.of());
@@ -97,7 +89,7 @@ public class SimuladoService {
 
     @Transactional
     public SimuladoGeradoDTO gerar(UsuarioAutenticado usuario, GerarSimuladoDTO dados) {
-        validarTipoUsuario(usuario);
+        exigirProfessor(usuario);
         validarQuantidade(dados.getQuantidadeQuestoes());
 
         Page<Questao> resultado = questaoRepository.findAll(
@@ -124,13 +116,7 @@ public class SimuladoService {
         simulado.setDescricao(dados.getDescricao());
         simulado.setTempo(dados.getTempo());
         simulado.setConclusao(0);
-        if (usuario.tipoUsuario() == TipoUsuario.ALUNO) {
-            simulado.setEmailAluno(usuario.email());
-            simulado.setEmailProf(null);
-        } else {
-            simulado.setEmailAluno(null);
-            simulado.setEmailProf(usuario.email());
-        }
+        preencherProprietarioProfessor(simulado, usuario);
 
         Simulado salvo = simuladoRepository.save(simulado);
         List<QuestaoSimu> associacoes = resultado.getContent().stream()
@@ -224,6 +210,45 @@ public class SimuladoService {
         questaoSimuRepository.deleteById(associacaoId);
     }
 
+    @Transactional(readOnly = true)
+    public CorrecaoQuestaoSimuladoDTO corrigirQuestao(
+            UsuarioAutenticado usuario,
+            Integer id,
+            CorrigirQuestaoSimuladoDTO dados) {
+        buscarDoUsuario(usuario, id);
+
+        if (dados == null || dados.getQuestaoId() == null) {
+            throw new DadosInvalidosException(
+                    "QUESTAO_OBRIGATORIA",
+                    "Informe a questao que sera corrigida.");
+        }
+
+        Integer questaoId = dados.getQuestaoId();
+        if (!questaoSimuRepository.existsById(new QuestaoSimuid(id, questaoId))) {
+            throw new RecursoNaoEncontradoException(
+                    "QUESTAO_NAO_PERTENCE_AO_SIMULADO",
+                    "A questao nao pertence ao simulado.");
+        }
+
+        Questao questao = questaoRepository.findById(questaoId)
+                .filter(encontrada -> Integer.valueOf(1).equals(encontrada.getAtivo()))
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "QUESTAO_NAO_ENCONTRADA",
+                        "A questao nao existe ou esta inativa."));
+
+        String alternativaId = normalizarAlternativa(dados.getAlternativaSelecionadaId());
+        String textoSelecionado = textoAlternativa(questao, alternativaId);
+        if (textoSelecionado == null || textoSelecionado.isBlank()) {
+            throw new DadosInvalidosException(
+                    "ALTERNATIVA_INEXISTENTE",
+                    "A alternativa selecionada nao existe nesta questao.");
+        }
+
+        return new CorrecaoQuestaoSimuladoDTO(
+                questaoId,
+                respostaCorreta(questao, alternativaId, textoSelecionado));
+    }
+
     @Transactional
     public SimuladoDetalheDTO atualizar(
             UsuarioAutenticado usuario,
@@ -261,24 +286,25 @@ public class SimuladoService {
         Simulado simulado = buscarDoUsuario(usuario, id);
 
         turmaSimuladoRepository.deleteByCodSimulado(id);
-        if (usuario.tipoUsuario() == TipoUsuario.ALUNO) {
-            relatorioSimuladoRepository.deleteByCodSimuladoAndEmailAluno(id, usuario.email());
-        }
         questaoSimuRepository.deleteByCodSimulado(id);
         simuladoRepository.delete(simulado);
     }
 
     private Simulado buscarDoUsuario(UsuarioAutenticado usuario, Integer id) {
+        exigirProfessor(usuario);
         Simulado simulado = simuladoRepository.findById(id).orElseThrow(this::naoEncontrado);
-        boolean pertence = usuario.tipoUsuario() == TipoUsuario.ALUNO
-                && usuario.email().equals(simulado.getEmailAluno());
-        pertence = pertence || usuario.tipoUsuario() == TipoUsuario.PROFESSOR
-                && usuario.email().equals(simulado.getEmailProf());
-
-        if (!pertence) {
+        if (!usuario.email().equals(simulado.getEmailProf())) {
             throw naoEncontrado();
         }
         return simulado;
+    }
+
+    private void preencherProprietarioProfessor(
+            Simulado simulado,
+            UsuarioAutenticado usuario) {
+        simulado.setEmailAluno(null);
+        simulado.setEmailProf(usuario.email());
+        simulado.setTipoUsu(Simulado.TIPO_USUARIO_PROFESSOR);
     }
 
     private SimuladoResumoDTO resumo(Simulado simulado) {
@@ -306,16 +332,11 @@ public class SimuladoService {
                 "O simulado nao foi encontrado.");
     }
 
-    private DadosInvalidosException tipoNaoPermitido() {
-        return new DadosInvalidosException(
-                "TIPO_USUARIO_INVALIDO",
-                "Simulados pessoais estao disponiveis apenas para aluno ou professor.");
-    }
-
-    private void validarTipoUsuario(UsuarioAutenticado usuario) {
-        if (usuario.tipoUsuario() != TipoUsuario.ALUNO
-                && usuario.tipoUsuario() != TipoUsuario.PROFESSOR) {
-            throw tipoNaoPermitido();
+    private void exigirProfessor(UsuarioAutenticado usuario) {
+        if (usuario.tipoUsuario() != TipoUsuario.PROFESSOR) {
+            throw new AcessoNegadoException(
+                    "ACESSO_NEGADO",
+                    "Esta operacao de simulado e permitida somente para professor.");
         }
     }
 
@@ -325,5 +346,48 @@ public class SimuladoService {
                     "QUANTIDADE_QUESTOES_INVALIDA",
                     "A quantidade de questoes deve estar entre 1 e 50.");
         }
+    }
+
+    private String normalizarAlternativa(String alternativaId) {
+        if (alternativaId == null) {
+            throw alternativaInvalida();
+        }
+        String normalizada = alternativaId.trim().toUpperCase(Locale.ROOT);
+        if (!Set.of("A", "B", "C", "D", "E").contains(normalizada)) {
+            throw alternativaInvalida();
+        }
+        return normalizada;
+    }
+
+    private DadosInvalidosException alternativaInvalida() {
+        return new DadosInvalidosException(
+                "ALTERNATIVA_INVALIDA",
+                "A alternativa deve ser A, B, C, D ou E.");
+    }
+
+    private String textoAlternativa(Questao questao, String alternativaId) {
+        return switch (alternativaId) {
+            case "A" -> questao.getAlternativaA();
+            case "B" -> questao.getAlternativaB();
+            case "C" -> questao.getAlternativaC();
+            case "D" -> questao.getAlternativaD();
+            case "E" -> questao.getAlternativaE();
+            default -> null;
+        };
+    }
+
+    private boolean respostaCorreta(
+            Questao questao,
+            String alternativaId,
+            String textoSelecionado) {
+        String resposta = questao.getResposta();
+        if (resposta == null) {
+            return false;
+        }
+        String respostaNormalizada = resposta.trim();
+        if (respostaNormalizada.matches("(?i)[A-E]")) {
+            return alternativaId.equals(respostaNormalizada.toUpperCase(Locale.ROOT));
+        }
+        return textoSelecionado.trim().equals(respostaNormalizada);
     }
 }

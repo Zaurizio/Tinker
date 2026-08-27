@@ -19,6 +19,9 @@ public class Relatorio {
     @Column(name = "acertou/errou", nullable = false)
     private Integer acertouErrou;
 
+    @Column(name = "tipo_usu", length = 8, nullable = false)
+    private String tipoUsu;
+
     public Relatorio() {
     }
 
@@ -50,6 +53,14 @@ public class Relatorio {
 
     public void setAcertouErrou(Integer acertouErrou) {
         this.acertouErrou = acertouErrou;
+    }
+
+    public String getTipoUsu() {
+        return tipoUsu;
+    }
+
+    public void setTipoUsu(String tipoUsu) {
+        this.tipoUsu = tipoUsu;
     }
 
     @Override

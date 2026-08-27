@@ -5,6 +5,7 @@ import Tinker.demo.dto.simulado.CriarSimuladoDTO;
 import Tinker.demo.dto.simulado.SimuladoDetalheDTO;
 import Tinker.demo.dto.simulado.SimuladoResumoDTO;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
+import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.repository.QuestaoSimuRepository;
 import Tinker.demo.repository.QuestaoRepository;
@@ -69,16 +70,12 @@ class SimuladoServiceTest {
     }
 
     @Test
-    void alunoListaSomenteSeusSimulados() {
-        Simulado proprio = simuladoAluno(1, EMAIL_ALUNO);
-        when(simuladoRepository.findByEmailAlunoOrderByCodSimuladoAsc(EMAIL_ALUNO))
-                .thenReturn(List.of(proprio));
-        when(questaoSimuRepository.countByCodSimulado(1)).thenReturn(2L);
+    void alunoNaoListaSimuladosProprios() {
+        AcessoNegadoException erro = assertThrows(
+                AcessoNegadoException.class,
+                () -> simuladoService.listar(usuarioAluno()));
 
-        List<SimuladoResumoDTO> resposta = simuladoService.listar(usuarioAluno());
-
-        assertEquals(List.of(1), resposta.stream().map(SimuladoResumoDTO::id).toList());
-        assertEquals(2, resposta.get(0).quantidadeQuestoes());
+        assertEquals(403, erro.getStatus().value());
         verify(simuladoRepository, never()).findByEmailProfOrderByCodSimuladoAsc(any());
     }
 
@@ -91,35 +88,38 @@ class SimuladoServiceTest {
         List<SimuladoResumoDTO> resposta = simuladoService.listar(usuarioProfessor());
 
         assertEquals(List.of(2), resposta.stream().map(SimuladoResumoDTO::id).toList());
-        verify(simuladoRepository, never()).findByEmailAlunoOrderByCodSimuladoAsc(any());
     }
 
     @Test
-    void criacaoPreencheSomenteDonoCorreto() {
-        SimuladoDetalheDTO criadoAluno = simuladoService.criar(usuarioAluno(), criar());
-        Simulado alunoSalvo = capturarUltimoSimuladoSalvo();
+    void criacaoPreencheProfessorTipoECompatibilidade() {
+        SimuladoDetalheDTO criado = simuladoService.criar(usuarioProfessor(), criar());
+        Simulado professorSalvo = capturarUltimoSimuladoSalvo();
 
-        assertEquals(EMAIL_ALUNO, alunoSalvo.getEmailAluno());
-        assertNull(alunoSalvo.getEmailProf());
-        assertEquals(0, alunoSalvo.getConclusao());
-        assertEquals(0, criadoAluno.quantidadeQuestoes());
-
-        simuladoService.criar(usuarioProfessor(), criar());
-        var captor = org.mockito.ArgumentCaptor.forClass(Simulado.class);
-        verify(simuladoRepository, org.mockito.Mockito.times(2)).save(captor.capture());
-        Simulado professorSalvo = captor.getAllValues().get(1);
         assertNull(professorSalvo.getEmailAluno());
         assertEquals(EMAIL_PROFESSOR, professorSalvo.getEmailProf());
+        assertEquals(Simulado.TIPO_USUARIO_PROFESSOR, professorSalvo.getTipoUsu());
+        assertEquals(0, professorSalvo.getConclusao());
+        assertEquals(0, criado.quantidadeQuestoes());
+    }
+
+    @Test
+    void alunoNaoCriaSimulado() {
+        AcessoNegadoException erro = assertThrows(
+                AcessoNegadoException.class,
+                () -> simuladoService.criar(usuarioAluno(), criar()));
+
+        assertEquals(403, erro.getStatus().value());
+        verify(simuladoRepository, never()).save(any());
     }
 
     @Test
     void usuarioNaoAcessaSimuladoDeOutraConta() {
         when(simuladoRepository.findById(1))
-                .thenReturn(Optional.of(simuladoAluno(1, "outro@tinker.com")));
+                .thenReturn(Optional.of(simuladoProfessor(1, "outro@tinker.com")));
 
         RecursoNaoEncontradoException erro = assertThrows(
                 RecursoNaoEncontradoException.class,
-                () -> simuladoService.detalhar(usuarioAluno(), 1));
+                () -> simuladoService.detalhar(usuarioProfessor(), 1));
 
         assertEquals(404, erro.getStatus().value());
         assertEquals("SIMULADO_NAO_ENCONTRADO", erro.getCodigo());
@@ -128,7 +128,7 @@ class SimuladoServiceTest {
 
     @Test
     void criacaoVaziaNaoAssociaQuestoes() {
-        SimuladoDetalheDTO resposta = simuladoService.criar(usuarioAluno(), criar());
+        SimuladoDetalheDTO resposta = simuladoService.criar(usuarioProfessor(), criar());
 
         assertEquals(0, resposta.quantidadeQuestoes());
         assertEquals(List.of(), resposta.questoesIds());
@@ -138,7 +138,7 @@ class SimuladoServiceTest {
 
     @Test
     void renameAlteraSomenteCamposPermitidos() {
-        Simulado existente = simuladoAluno(1, EMAIL_ALUNO);
+        Simulado existente = simuladoProfessor(1, EMAIL_PROFESSOR);
         existente.setConclusao(1);
         when(simuladoRepository.findById(1)).thenReturn(Optional.of(existente));
         when(questaoSimuRepository.findCodQuestoesByCodSimulado(1)).thenReturn(List.of(3, 4));
@@ -147,23 +147,23 @@ class SimuladoServiceTest {
         dados.setDescricao("Nova descricao");
         dados.setTempo(25F);
 
-        SimuladoDetalheDTO resposta = simuladoService.atualizar(usuarioAluno(), 1, dados);
+        SimuladoDetalheDTO resposta = simuladoService.atualizar(usuarioProfessor(), 1, dados);
 
         assertEquals("Novo titulo", existente.getNome());
         assertEquals("Nova descricao", existente.getDescricao());
         assertEquals(25F, existente.getTempo());
         assertEquals(1, existente.getConclusao());
-        assertEquals(EMAIL_ALUNO, existente.getEmailAluno());
-        assertNull(existente.getEmailProf());
+        assertNull(existente.getEmailAluno());
+        assertEquals(EMAIL_PROFESSOR, existente.getEmailProf());
         assertEquals(List.of(3, 4), resposta.questoesIds());
     }
 
     @Test
     void exclusaoRemoveDependenciasSemApagarQuestoes() {
-        Simulado existente = simuladoAluno(1, EMAIL_ALUNO);
+        Simulado existente = simuladoProfessor(1, EMAIL_PROFESSOR);
         when(simuladoRepository.findById(1)).thenReturn(Optional.of(existente));
 
-        simuladoService.excluir(usuarioAluno(), 1);
+        simuladoService.excluir(usuarioProfessor(), 1);
 
         var ordem = inOrder(
                 turmaSimuladoRepository,
@@ -171,13 +171,25 @@ class SimuladoServiceTest {
                 questaoSimuRepository,
                 simuladoRepository);
         ordem.verify(turmaSimuladoRepository).deleteByCodSimulado(1);
-        ordem.verify(relatorioSimuladoRepository)
-                .deleteByCodSimuladoAndEmailAluno(1, EMAIL_ALUNO);
         ordem.verify(questaoSimuRepository).deleteByCodSimulado(1);
         ordem.verify(simuladoRepository).delete(existente);
 
         verify(questaoRepository, never()).delete(any(Tinker.demo.model.Questao.class));
         verify(questaoRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void alunoNaoEditaNemExcluiSimulado() {
+        AtualizarSimuladoDTO dados = new AtualizarSimuladoDTO();
+        dados.setTitulo("Negado");
+
+        assertThrows(AcessoNegadoException.class,
+                () -> simuladoService.atualizar(usuarioAluno(), 1, dados));
+        assertThrows(AcessoNegadoException.class,
+                () -> simuladoService.excluir(usuarioAluno(), 1));
+
+        verify(simuladoRepository, never()).findById(any());
+        verify(simuladoRepository, never()).delete(any());
     }
 
     @Test
@@ -213,15 +225,11 @@ class SimuladoServiceTest {
         return new UsuarioAutenticado(EMAIL_PROFESSOR, TipoUsuario.PROFESSOR);
     }
 
-    private Simulado simuladoAluno(Integer id, String email) {
-        Simulado simulado = base(id);
-        simulado.setEmailAluno(email);
-        return simulado;
-    }
-
     private Simulado simuladoProfessor(Integer id, String email) {
         Simulado simulado = base(id);
         simulado.setEmailProf(email);
+        simulado.setEmailAluno(null);
+        simulado.setTipoUsu(Simulado.TIPO_USUARIO_PROFESSOR);
         return simulado;
     }
 

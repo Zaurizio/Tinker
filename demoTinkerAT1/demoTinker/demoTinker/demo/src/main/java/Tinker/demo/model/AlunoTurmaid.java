@@ -6,19 +6,19 @@ import java.util.Objects;
 
 public class AlunoTurmaid implements Serializable {
     private String emailAluno;
-    private Integer codTurma;
+    private String codTurma;
 
     public AlunoTurmaid() {}
 
-    public AlunoTurmaid(String emailAluno, Integer codTurma) {
+    public AlunoTurmaid(String emailAluno, String codTurma) {
         this.emailAluno = emailAluno;
         this.codTurma = codTurma;
     }
 
     public String getEmailAluno() { return emailAluno; }
     public void setEmailAluno(String emailAluno) { this.emailAluno = emailAluno; }
-    public Integer getCodTurma() { return codTurma; }
-    public void setCodTurma(Integer codTurma) { this.codTurma = codTurma; }
+    public String getCodTurma() { return codTurma; }
+    public void setCodTurma(String codTurma) { this.codTurma = codTurma; }
 
     @Override
     public boolean equals(Object o) {

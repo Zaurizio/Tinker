@@ -5,6 +5,7 @@ import Tinker.demo.dto.simulado.QuantidadeQuestoesSimuladoDTO;
 import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.exception.DadosInvalidosException;
+import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
 import Tinker.demo.model.QuestaoSimu;
@@ -38,7 +39,7 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unchecked")
 class SimuladoQuestoesServiceTest {
 
-    private static final String EMAIL = "aluno@tinker.com";
+    private static final String EMAIL = "professor@tinker.com";
 
     private SimuladoRepository simuladoRepository;
     private QuestaoSimuRepository questaoSimuRepository;
@@ -75,7 +76,7 @@ class SimuladoQuestoesServiceTest {
 
     @Test
     void outroUsuarioNaoConsegueAcessarOuModificar() {
-        UsuarioAutenticado outro = new UsuarioAutenticado("outro@tinker.com", TipoUsuario.ALUNO);
+        UsuarioAutenticado outro = new UsuarioAutenticado("outro@tinker.com", TipoUsuario.PROFESSOR);
 
         assertThrows(RecursoNaoEncontradoException.class,
                 () -> simuladoService.listarQuestoes(outro, 10));
@@ -88,6 +89,20 @@ class SimuladoQuestoesServiceTest {
                 .findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(any(), any());
         verify(questaoSimuRepository, never()).saveAll(any());
         verify(questaoSimuRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void alunoNaoListaAdicionaOuRemoveQuestoes() {
+        UsuarioAutenticado aluno = new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO);
+
+        assertThrows(AcessoNegadoException.class,
+                () -> simuladoService.listarQuestoes(aluno, 10));
+        assertThrows(AcessoNegadoException.class,
+                () -> simuladoService.adicionarQuestoes(aluno, 10, ids(1)));
+        assertThrows(AcessoNegadoException.class,
+                () -> simuladoService.removerQuestao(aluno, 10, 1));
+
+        verify(simuladoRepository, never()).findById(any());
     }
 
     @Test
@@ -216,13 +231,15 @@ class SimuladoQuestoesServiceTest {
     }
 
     private UsuarioAutenticado usuario() {
-        return new UsuarioAutenticado(EMAIL, TipoUsuario.ALUNO);
+        return new UsuarioAutenticado(EMAIL, TipoUsuario.PROFESSOR);
     }
 
     private Simulado simuladoDoDono() {
         Simulado simulado = new Simulado();
         simulado.setCodSimulado(10);
-        simulado.setEmailAluno(EMAIL);
+        simulado.setEmailAluno(null);
+        simulado.setEmailProf(EMAIL);
+        simulado.setTipoUsu(Simulado.TIPO_USUARIO_PROFESSOR);
         simulado.setNome("Simulado");
         simulado.setConclusao(0);
         return simulado;

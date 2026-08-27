@@ -1,68 +1,93 @@
 package Tinker.demo.controller;
 
-import Tinker.demo.model.Turma;
-import Tinker.demo.repository.TurmaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import Tinker.demo.dto.turma.CriarTurmaDTO;
+import Tinker.demo.dto.turma.EntrarTurmaDTO;
+import Tinker.demo.dto.turma.MembroTurmaDTO;
+import Tinker.demo.dto.turma.TurmaDTO;
+import Tinker.demo.security.UsuarioAutenticado;
+import Tinker.demo.service.TurmaService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
+@Validated
 @RestController
-@RequestMapping("/api/turma")
+@RequestMapping("/api/turmas")
 public class TurmaController {
 
-    @Autowired
-    private TurmaRepository turmaRepository;
+    private static final String CODIGO_VALIDO = "^[0-9]{8}$";
+    private final TurmaService turmaService;
 
-    // 1. GET - Listar todas as turmas
+    public TurmaController(TurmaService turmaService) {
+        this.turmaService = turmaService;
+    }
+
     @GetMapping
-    public List<Turma> listarTodos() {
-        return turmaRepository.findAll();
+    public List<TurmaDTO> listar(@AuthenticationPrincipal UsuarioAutenticado usuario) {
+        return turmaService.listar(usuario);
     }
 
-    // 2. GET - Buscar uma turma pelo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Turma> buscarPorId(@PathVariable String id) {
-        Optional<Turma> turma = turmaRepository.findById(id);
-        return turma.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
-    // 3. POST - Criar uma nova turma
     @PostMapping
-    public ResponseEntity<Turma> criar(@RequestBody Turma turma) {
-        if (turma.getCodTurma() != null && turmaRepository.existsById(turma.getCodTurma())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 - ID já existe
-        }
-        Turma saved = turmaRepository.save(turma);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<TurmaDTO> criar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @Valid @RequestBody CriarTurmaDTO dados) {
+        return ResponseEntity.status(201).body(turmaService.criar(usuario, dados));
     }
 
-    // 4. PUT - Atualizar uma turma
-    @PutMapping("/{id}")
-    public ResponseEntity<Turma> atualizar(@PathVariable String id, @RequestBody Turma turmaAtualizada) {
-        return turmaRepository.findById(id)
-                .map(turmaExistente -> {
-                    turmaExistente.setNomeTurma(turmaAtualizada.getNomeTurma());
-                    turmaExistente.setEmailProf(turmaAtualizada.getEmailProf());
-                    turmaExistente.setAtivo(turmaAtualizada.getAtivo());
-
-                    Turma saved = turmaRepository.save(turmaExistente);
-                    return ResponseEntity.ok(saved);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PostMapping("/entradas")
+    public TurmaDTO entrar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @Valid @RequestBody EntrarTurmaDTO dados) {
+        return turmaService.entrar(usuario, dados);
     }
 
-    // 5. DELETE - Remover uma turma pelo ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable String id) {
-        if (turmaRepository.existsById(id)) {
-            turmaRepository.deleteById(id);
-            return ResponseEntity.noContent().build(); // 204 - Deletado com sucesso
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{codigo}")
+    public TurmaDTO detalhar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo) {
+        return turmaService.detalhar(usuario, codigo);
+    }
+
+    @GetMapping("/{codigo}/membros")
+    public List<MembroTurmaDTO> listarMembros(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo) {
+        return turmaService.listarMembros(usuario, codigo);
+    }
+
+    @DeleteMapping("/{codigo}/membros/me")
+    public ResponseEntity<Void> sair(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo) {
+        turmaService.sair(usuario, codigo);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{codigo}/membros/{emailAluno}")
+    public ResponseEntity<Void> removerMembro(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
+            @PathVariable String emailAluno) {
+        turmaService.removerMembro(usuario, codigo, emailAluno);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{codigo}")
+    public ResponseEntity<Void> desativar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo) {
+        turmaService.desativar(usuario, codigo);
+        return ResponseEntity.noContent().build();
     }
 }

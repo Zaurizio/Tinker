@@ -32,6 +32,16 @@ CREATE TABLE `Administrador` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Administrador`
+--
+
+LOCK TABLES `Administrador` WRITE;
+/*!40000 ALTER TABLE `Administrador` DISABLE KEYS */;
+INSERT INTO `Administrador` VALUES ('rafa',123);
+/*!40000 ALTER TABLE `Administrador` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Aluno`
 --
 
@@ -51,6 +61,16 @@ CREATE TABLE `Aluno` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Aluno`
+--
+
+LOCK TABLES `Aluno` WRITE;
+/*!40000 ALTER TABLE `Aluno` DISABLE KEYS */;
+INSERT INTO `Aluno` VALUES ('a','a','','a','a','1952-11-30',0),('aa','aa','','11','aa','1999-11-11',0),('adfdfd@','asfddafad','','sadadfda','afadfadf','1951-11-11',0),('afd@s','asdd',NULL,'sfghf','fdghf','2001-09-11',1),('asdaf@','dafdf','','dafffd1','adfdf1','2001-11-11',0),('asdsda','sada','','dfadf','dfdaf','2001-11-11',0),('c@','asdfdaf','','adfagd','adgagf','2013-12-31',1),('cc@c','c','','caco','c','1990-11-11',1),('dfdsfdfd@','asdfadf','','adfadfd','adfdfd','1987-11-11',1),('dfsgdgdg','sdfggg','','sdghgh','gdshgdh','1900-11-11',1),('fafa@fa','1234',NULL,'rfafa','faff','2001-09-11',1),('faffa@a','1234',NULL,'rafael','graco','2001-09-11',1),('g@gmail.com','123456',NULL,'Gustavo','Zaurizio','2001-09-11',1),('gabi@g','1234',NULL,'gabi','graca','2001-09-11',1),('gu@gz','123',NULL,'gu','gz','2001-09-11',1),('gustavozau@d','123',NULL,'gustavo','zau','2001-09-11',1),('lucas@gg','zdasddf',NULL,'lucas','asad','2001-09-11',1),('lucasg@gmail.com','123456',NULL,'Lucas ','Gabriela','2001-09-11',1),('priscila@gmail','123456',NULL,'Tânia','Basso','2001-09-11',1),('rafa@f','123',NULL,'rafa','fadfafd','2001-09-11',1),('rafaafa@a','1234',NULL,'xgdhf','dfsfsf','2001-09-11',1),('saddadd@','sadada','','dafdf','dfdaf','2014-11-11',1),('saddfdf@','sadafdaf','','dafadfd','adffdaf','2001-11-11',0),('sadfadfdaf@','adfdfd','','dfafdfad','dfadfdaf','1950-02-28',0),('sadfdf@','adfdf','','adfdff','dafdafad','2001-11-11',0),('sdfsgsgss@ad','adasdffs',NULL,'asfd','fsgs','2001-09-11',1),('sffsgfs','sfgfsgsf','','fsgfsgsf','fsgfsg','1960-11-11',1),('vcfoigoiabado@gmail','sdafadf','','adfdfdaf','adfdafdaf','2001-09-11',1);
+/*!40000 ALTER TABLE `Aluno` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Aluno_Turma`
 --
 
@@ -59,11 +79,21 @@ DROP TABLE IF EXISTS `Aluno_Turma`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Aluno_Turma` (
   `email_aluno` varchar(45) NOT NULL,
-  `cod_turma` int NOT NULL,
+  `cod_turma` varchar(8) NOT NULL,
   `ativo` int DEFAULT '1',
   PRIMARY KEY (`email_aluno`,`cod_turma`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Aluno_Turma`
+--
+
+LOCK TABLES `Aluno_Turma` WRITE;
+/*!40000 ALTER TABLE `Aluno_Turma` DISABLE KEYS */;
+INSERT INTO `Aluno_Turma` VALUES ('c@','6',1),('cc','4',0),('cc','6',0),('g@gmail.com','11',1),('g@gmail.com','12',1),('vcfoigoiabado@gmail','1',0),('vcfoigoiabado@gmail','3',0),('vcfoigoiabado@gmail','4',1);
+/*!40000 ALTER TABLE `Aluno_Turma` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Conteudo_Quest`
@@ -81,6 +111,15 @@ CREATE TABLE `Conteudo_Quest` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Conteudo_Quest`
+--
+
+LOCK TABLES `Conteudo_Quest` WRITE;
+/*!40000 ALTER TABLE `Conteudo_Quest` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Conteudo_Quest` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Cronograma`
 --
 
@@ -96,6 +135,15 @@ CREATE TABLE `Cronograma` (
   KEY `cod_simulado_idx` (`cod_simulado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Cronograma`
+--
+
+LOCK TABLES `Cronograma` WRITE;
+/*!40000 ALTER TABLE `Cronograma` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Cronograma` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Estudio_Aluno`
@@ -123,6 +171,16 @@ CREATE TABLE `Estudio_Aluno` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Estudio_Aluno`
+--
+
+LOCK TABLES `Estudio_Aluno` WRITE;
+/*!40000 ALTER TABLE `Estudio_Aluno` DISABLE KEYS */;
+INSERT INTO `Estudio_Aluno` VALUES ('111,111,111-11','aa','aaaaa','1','aeda','2qasas','111,1111-1111','adasf','sdadfa','(11)11111-1111','1adfasdgsr',NULL,1),('111,222,222-22','asdafa','asdffe','11','3adf','asdav','676,7676-7679','afdf','dcdaf','(69)69696-9696','cscvsfbgdnhfjmgd',NULL,0),('492,305,285-96','Shrek Sensual','Rua das sapecagens','69','sensualidades e seduções','67','384,5238-5766','Seduções','SP','(90)48577-3858','OmaisSensualGostoso@gmail.com',_binary 'System.Byte[]',0),('999,999,999-99','Gil Goiaba','Rua das Goiabas','6769','Árvores','casa 12','676,7676-7767','Pomares','Goiás','(69)69696-9696','pegounagoiaba@gmail.com',_binary 'System.Byte[]',0);
+/*!40000 ALTER TABLE `Estudio_Aluno` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Estudio_Aluno_Turma`
 --
 
@@ -139,6 +197,16 @@ CREATE TABLE `Estudio_Aluno_Turma` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Estudio_Aluno_Turma`
+--
+
+LOCK TABLES `Estudio_Aluno_Turma` WRITE;
+/*!40000 ALTER TABLE `Estudio_Aluno_Turma` DISABLE KEYS */;
+INSERT INTO `Estudio_Aluno_Turma` VALUES (1,'111,111,111-11',2,0),(2,'111,111,111-11',1,1),(3,'999,999,999-99',1,1),(4,'111,222,222-22',2,1),(5,'111,222,222-22',2,1),(6,'999,999,999-99',2,0),(7,'492,305,285-96',1,0);
+/*!40000 ALTER TABLE `Estudio_Aluno_Turma` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Estudio_Login`
 --
 
@@ -152,6 +220,16 @@ CREATE TABLE `Estudio_Login` (
   PRIMARY KEY (`usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Estudio_Login`
+--
+
+LOCK TABLES `Estudio_Login` WRITE;
+/*!40000 ALTER TABLE `Estudio_Login` DISABLE KEYS */;
+INSERT INTO `Estudio_Login` VALUES ('','',0),('lucas','123',1),('rafa','123',2),('teste','123',1);
+/*!40000 ALTER TABLE `Estudio_Login` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Estudio_Modalidade`
@@ -170,6 +248,16 @@ CREATE TABLE `Estudio_Modalidade` (
   PRIMARY KEY (`idEstudio_Modalidade`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Estudio_Modalidade`
+--
+
+LOCK TABLES `Estudio_Modalidade` WRITE;
+/*!40000 ALTER TABLE `Estudio_Modalidade` DISABLE KEYS */;
+INSERT INTO `Estudio_Modalidade` VALUES (1,'Pilates',50,12,2,0),(2,'Zumba',64,22,13,1),(3,'Box',75,21,4,0),(4,'Ballet',120,10,2,0),(5,'Teste222',150,10,2,1);
+/*!40000 ALTER TABLE `Estudio_Modalidade` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Estudio_Turma`
@@ -191,6 +279,16 @@ CREATE TABLE `Estudio_Turma` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Estudio_Turma`
+--
+
+LOCK TABLES `Estudio_Turma` WRITE;
+/*!40000 ALTER TABLE `Estudio_Turma` DISABLE KEYS */;
+INSERT INTO `Estudio_Turma` VALUES (1,3,'Lucas','Quinta-feira','12:05',1,0),(2,3,'Rafael','Quinta-feira','13:00',2,0),(3,4,'Priscila','qua','19:30',0,1);
+/*!40000 ALTER TABLE `Estudio_Turma` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `HorarioMult`
 --
 
@@ -208,9 +306,19 @@ CREATE TABLE `HorarioMult` (
   `titulo` varchar(45) NOT NULL,
   `dia_inteiro` tinyint DEFAULT NULL,
   `cor` varchar(45) DEFAULT NULL,
+  `serie` int DEFAULT NULL,
   PRIMARY KEY (`email`,`data`,`horario_inicio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `HorarioMult`
+--
+
+LOCK TABLES `HorarioMult` WRITE;
+/*!40000 ALTER TABLE `HorarioMult` DISABLE KEYS */;
+/*!40000 ALTER TABLE `HorarioMult` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Professor`
@@ -231,6 +339,16 @@ CREATE TABLE `Professor` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Professor`
+--
+
+LOCK TABLES `Professor` WRITE;
+/*!40000 ALTER TABLE `Professor` DISABLE KEYS */;
+INSERT INTO `Professor` VALUES ('000000000000000000','0','7',0,'',NULL),('11111111111','1111111111113','1111111111112222',0,'',NULL),('a','a','a',1,'aa',''),('affa','affa','affa',1,'affa',''),('asfdfd@','asdafdf','sdfdfda',1,'saasds',''),('asffad','131431','31434',0,'',NULL),('bb','bb','bb',1,'bb',''),('daagdhagd','fgadhgd','gdhgdhgdh',1,'adfdf',''),('dfdssgf','sfagf','fssgdhgd',1,'dghgdghgd',''),('gilgoiaba@gamil.com','vcfoigoiabado','Gil',1,'Goiaba',''),('goiaba@gmail','wddew','wfwfwr',1,'wrfrwfrwr',''),('qererwrw','werwrwr','rwtrtert',1,'wtrtrwrtrwtrw',''),('safdff@','afdfdf','dafadf',1,'adfafffa',''),('sdfsfg','sfgfsg','fsgsfgs',1,'gfsgfg','');
+/*!40000 ALTER TABLE `Professor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Quest_Simu`
 --
 
@@ -243,6 +361,15 @@ CREATE TABLE `Quest_Simu` (
   PRIMARY KEY (`cod_simulado`,`cod_quest`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Quest_Simu`
+--
+
+LOCK TABLES `Quest_Simu` WRITE;
+/*!40000 ALTER TABLE `Quest_Simu` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Quest_Simu` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Questao`
@@ -272,6 +399,16 @@ CREATE TABLE `Questao` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Questao`
+--
+
+LOCK TABLES `Questao` WRITE;
+/*!40000 ALTER TABLE `Questao` DISABLE KEYS */;
+INSERT INTO `Questao` VALUES (1,'teste',1999,'1','teste','','teste',NULL,NULL,NULL,NULL,NULL,NULL,'teste',0),(2,'asf',1967,'Primeira Fase','asf','asf','asf','','asf','asf','asf','asf','asf','B',1),(3,'UniTrivial',1967,'Segundo Dia','Matemática','Função Seno','asdad',_binary 'System.Byte[]','addad','asdad','asdad','asdasd','asdd','D',1),(4,'adfadf',1967,'Segundo Dia','adfda','dffdaa','afafdafdaa','','adfadfafdaff','adfdadfa','fdaffafdaadfd','adadfaf','dfdafddaff','C',0),(5,'UniTrivial',1967,'Segundo Dia','Português','Análise Sintática','adfghj',_binary 'System.Byte[]','','','','','','dsfghj',1);
+/*!40000 ALTER TABLE `Questao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Relatorio_Questao`
 --
 
@@ -282,9 +419,20 @@ CREATE TABLE `Relatorio_Questao` (
   `cod_quest` int NOT NULL,
   `email` varchar(45) NOT NULL,
   `acertou/errou` int NOT NULL,
+  `tipo_usu` varchar(8) NOT NULL,
   PRIMARY KEY (`cod_quest`,`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Relatorio_Questao`
+--
+
+LOCK TABLES `Relatorio_Questao` WRITE;
+/*!40000 ALTER TABLE `Relatorio_Questao` DISABLE KEYS */;
+INSERT INTO `Relatorio_Questao` VALUES (2,'g@gmail.com',1,''),(3,'g@gmail.com',0,'');
+/*!40000 ALTER TABLE `Relatorio_Questao` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Relatorio_Simulado`
@@ -303,6 +451,15 @@ CREATE TABLE `Relatorio_Simulado` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Relatorio_Simulado`
+--
+
+LOCK TABLES `Relatorio_Simulado` WRITE;
+/*!40000 ALTER TABLE `Relatorio_Simulado` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Relatorio_Simulado` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Simulado`
 --
 
@@ -317,9 +474,19 @@ CREATE TABLE `Simulado` (
   `tempo` float DEFAULT NULL,
   `email_aluno` varchar(45) DEFAULT NULL,
   `email_prof` varchar(45) DEFAULT NULL,
+  `tipo_usu` varchar(8) NOT NULL,
   PRIMARY KEY (`cod_simulado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Simulado`
+--
+
+LOCK TABLES `Simulado` WRITE;
+/*!40000 ALTER TABLE `Simulado` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Simulado` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Turma`
@@ -336,6 +503,16 @@ CREATE TABLE `Turma` (
   PRIMARY KEY (`cod_turma`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Turma`
+--
+
+LOCK TABLES `Turma` WRITE;
+/*!40000 ALTER TABLE `Turma` DISABLE KEYS */;
+INSERT INTO `Turma` VALUES ('10','afggdhh','goiaba@gmail',1),('11','bolas','g@gmail.com',1),('12','Matematica-Fuvest','g@gmail.com',1),('4','Turma da Goiaba','goiaba@gmail',1),('5','a','a',0),('6','dc','bb',0),('7','abc','a',0),('8','adfddaf','goiaba@gmail',1),('9','afggdhhfj','goiaba@gmail',1);
+/*!40000 ALTER TABLE `Turma` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `Turma_Simulado`
@@ -355,6 +532,15 @@ CREATE TABLE `Turma_Simulado` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `Turma_Simulado`
+--
+
+LOCK TABLES `Turma_Simulado` WRITE;
+/*!40000 ALTER TABLE `Turma_Simulado` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Turma_Simulado` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping events for database 'cl204179'
 --
 
@@ -371,4 +557,4 @@ CREATE TABLE `Turma_Simulado` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-26 21:33:54
+-- Dump completed on 2026-08-27 17:08:15

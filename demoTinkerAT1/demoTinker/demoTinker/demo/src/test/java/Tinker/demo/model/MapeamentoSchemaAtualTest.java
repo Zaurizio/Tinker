@@ -1,6 +1,7 @@
 package Tinker.demo.model;
 
 import Tinker.demo.repository.TurmaRepository;
+import Tinker.demo.repository.AlunoTurmaRepository;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -27,6 +28,37 @@ class MapeamentoSchemaAtualTest {
 
         ParameterizedType repository = (ParameterizedType) TurmaRepository.class.getGenericInterfaces()[0];
         assertEquals(String.class, repository.getActualTypeArguments()[1]);
+    }
+
+    @Test
+    void alunoTurmaPreservaCodigoTextualComZeroAEsquerda() throws Exception {
+        Field campoEntidade = AlunoTurma.class.getDeclaredField("codTurma");
+        Field campoId = AlunoTurmaid.class.getDeclaredField("codTurma");
+        AlunoTurma alunoTurma = new AlunoTurma();
+        alunoTurma.setCodTurma("00182745");
+
+        assertEquals(String.class, campoEntidade.getType());
+        assertEquals(String.class, campoId.getType());
+        assertEquals(8, campoEntidade.getAnnotation(Column.class).length());
+        assertEquals("00182745", alunoTurma.getCodTurma());
+
+        ParameterizedType repository =
+                (ParameterizedType) AlunoTurmaRepository.class.getGenericInterfaces()[0];
+        assertEquals(AlunoTurmaid.class, repository.getActualTypeArguments()[1]);
+    }
+
+    @Test
+    void colunasTipoUsuarioSaoMapeadasComoVarcharOito() throws Exception {
+        Field tipoSimulado = Simulado.class.getDeclaredField("tipoUsu");
+        Field tipoRelatorio = Relatorio.class.getDeclaredField("tipoUsu");
+
+        assertEquals("tipo_usu", tipoSimulado.getAnnotation(Column.class).name());
+        assertEquals(8, tipoSimulado.getAnnotation(Column.class).length());
+        assertFalse(tipoSimulado.getAnnotation(Column.class).nullable());
+        assertEquals("tipo_usu", tipoRelatorio.getAnnotation(Column.class).name());
+        assertEquals(8, tipoRelatorio.getAnnotation(Column.class).length());
+        assertFalse(tipoRelatorio.getAnnotation(Column.class).nullable());
+        assertEquals("PROF", Simulado.TIPO_USUARIO_PROFESSOR);
     }
 
     @Test

@@ -7,6 +7,8 @@ import java.util.Objects;
 @Table(name = "Simulado")
 public class Simulado {
 
+    public static final String TIPO_USUARIO_PROFESSOR = "PROF";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
     @Column(name = "cod_simulado")
@@ -29,6 +31,9 @@ public class Simulado {
 
     @Column(name = "email_prof", length = 45)
     private String emailProf;
+
+    @Column(name = "tipo_usu", length = 8, nullable = false)
+    private String tipoUsu;
 
     // Construtor vazio (obrigatório JPA)
     public Simulado() {
@@ -99,6 +104,14 @@ public class Simulado {
 
     public void setEmailProf(String emailProf) {
         this.emailProf = emailProf;
+    }
+
+    public String getTipoUsu() {
+        return tipoUsu;
+    }
+
+    public void setTipoUsu(String tipoUsu) {
+        this.tipoUsu = tipoUsu;
     }
 
     // equals e hashCode baseados na PK (codSimulado)

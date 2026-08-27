@@ -3,6 +3,7 @@ package Tinker.demo.service;
 import Tinker.demo.dto.simulado.GerarSimuladoDTO;
 import Tinker.demo.dto.simulado.SimuladoGeradoDTO;
 import Tinker.demo.exception.DadosInvalidosException;
+import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
 import Tinker.demo.model.QuestaoSimu;
@@ -72,17 +73,15 @@ class SimuladoGeracaoServiceTest {
     }
 
     @Test
-    void alunoConsegueGerarSimuladoComSomenteSeuDono() {
-        prepararQuestoes(3);
+    void alunoNaoGeraSimulado() {
+        AcessoNegadoException erro = assertThrows(
+                AcessoNegadoException.class,
+                () -> simuladoService.gerar(
+                        new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO), dados(3)));
 
-        SimuladoGeradoDTO resposta = simuladoService.gerar(
-                new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO), dados(3));
-
-        Simulado salvo = capturarSimulado();
-        assertEquals("aluno@tinker.com", salvo.getEmailAluno());
-        assertNull(salvo.getEmailProf());
-        assertEquals(0, salvo.getConclusao());
-        assertEquals(3, resposta.quantidadeQuestoes());
+        assertEquals(403, erro.getStatus().value());
+        verify(questaoRepository, never()).findAll(any(Specification.class), any(Pageable.class));
+        verify(simuladoRepository, never()).save(any());
     }
 
     @Test
@@ -95,6 +94,8 @@ class SimuladoGeracaoServiceTest {
         Simulado salvo = capturarSimulado();
         assertNull(salvo.getEmailAluno());
         assertEquals("prof@tinker.com", salvo.getEmailProf());
+        assertEquals(Simulado.TIPO_USUARIO_PROFESSOR, salvo.getTipoUsu());
+        assertEquals(0, salvo.getConclusao());
     }
 
     @Test
@@ -102,11 +103,11 @@ class SimuladoGeracaoServiceTest {
         UsuarioAutenticado administrador =
                 new UsuarioAutenticado("adm@tinker.com", TipoUsuario.ADMINISTRADOR);
 
-        DadosInvalidosException erro = assertThrows(
-                DadosInvalidosException.class,
+        AcessoNegadoException erro = assertThrows(
+                AcessoNegadoException.class,
                 () -> simuladoService.gerar(administrador, dados(2)));
 
-        assertEquals("TIPO_USUARIO_INVALIDO", erro.getCodigo());
+        assertEquals(403, erro.getStatus().value());
         verify(questaoRepository, never()).findAll(any(Specification.class), any(Pageable.class));
         verify(simuladoRepository, never()).save(any());
     }
@@ -120,7 +121,7 @@ class SimuladoGeracaoServiceTest {
         dados.setAnos(List.of(2024));
         prepararQuestoes(1);
 
-        simuladoService.gerar(usuarioAluno(), dados);
+        simuladoService.gerar(usuarioProfessor(), dados);
 
         var specificationCaptor = org.mockito.ArgumentCaptor.forClass(Specification.class);
         verify(questaoRepository).findAll(specificationCaptor.capture(), any(Pageable.class));
@@ -154,7 +155,7 @@ class SimuladoGeracaoServiceTest {
         dados.setVestibulares(List.of());
         prepararQuestoes(1);
 
-        simuladoService.gerar(usuarioAluno(), dados);
+        simuladoService.gerar(usuarioProfessor(), dados);
 
         var specificationCaptor = org.mockito.ArgumentCaptor.forClass(Specification.class);
         verify(questaoRepository).findAll(specificationCaptor.capture(), any(Pageable.class));
@@ -178,7 +179,7 @@ class SimuladoGeracaoServiceTest {
     void consultaConsideraAtivasQuantidadeEOrdemCrescente() {
         prepararQuestoes(4);
 
-        simuladoService.gerar(usuarioAluno(), dados(4));
+        simuladoService.gerar(usuarioProfessor(), dados(4));
 
         var pageableCaptor = org.mockito.ArgumentCaptor.forClass(Pageable.class);
         verify(questaoRepository).findAll(any(Specification.class), pageableCaptor.capture());
@@ -199,10 +200,10 @@ class SimuladoGeracaoServiceTest {
     void quantidadeForaDoIntervaloEhRejeitada() {
         DadosInvalidosException menor = assertThrows(
                 DadosInvalidosException.class,
-                () -> simuladoService.gerar(usuarioAluno(), dados(0)));
+                () -> simuladoService.gerar(usuarioProfessor(), dados(0)));
         DadosInvalidosException maior = assertThrows(
                 DadosInvalidosException.class,
-                () -> simuladoService.gerar(usuarioAluno(), dados(51)));
+                () -> simuladoService.gerar(usuarioProfessor(), dados(51)));
 
         assertEquals("QUANTIDADE_QUESTOES_INVALIDA", menor.getCodigo());
         assertEquals("QUANTIDADE_QUESTOES_INVALIDA", maior.getCodigo());
@@ -220,7 +221,7 @@ class SimuladoGeracaoServiceTest {
 
         DadosInvalidosException erro = assertThrows(
                 DadosInvalidosException.class,
-                () -> simuladoService.gerar(usuarioAluno(), dados));
+                () -> simuladoService.gerar(usuarioProfessor(), dados));
 
         assertEquals("QUESTOES_INSUFICIENTES", erro.getCodigo());
         assertEquals(400, erro.getStatus().value());
@@ -235,7 +236,7 @@ class SimuladoGeracaoServiceTest {
                 .when(questaoSimuRepository).saveAll(any());
 
         assertThrows(RuntimeException.class,
-                () -> simuladoService.gerar(usuarioAluno(), dados(2)));
+                () -> simuladoService.gerar(usuarioProfessor(), dados(2)));
 
         Transactional transacao = SimuladoService.class
                 .getMethod("gerar", UsuarioAutenticado.class, GerarSimuladoDTO.class)
@@ -249,7 +250,7 @@ class SimuladoGeracaoServiceTest {
     void respostaNaoExpoeQuestoesOuGabarito() {
         prepararQuestoes(1);
 
-        SimuladoGeradoDTO resposta = simuladoService.gerar(usuarioAluno(), dados(1));
+        SimuladoGeradoDTO resposta = simuladoService.gerar(usuarioProfessor(), dados(1));
         List<String> campos = java.util.Arrays.stream(SimuladoGeradoDTO.class.getRecordComponents())
                 .map(componente -> componente.getName())
                 .toList();
@@ -275,8 +276,8 @@ class SimuladoGeracaoServiceTest {
         return captor.getValue();
     }
 
-    private UsuarioAutenticado usuarioAluno() {
-        return new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO);
+    private UsuarioAutenticado usuarioProfessor() {
+        return new UsuarioAutenticado("prof@tinker.com", TipoUsuario.PROFESSOR);
     }
 
     private GerarSimuladoDTO dados(int quantidade) {
