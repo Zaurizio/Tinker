@@ -1,42 +1,31 @@
 package Tinker.demo.controller;
 
+import Tinker.demo.dto.auth.CadastroRequestDTO;
+import Tinker.demo.dto.auth.CadastroResponseDTO;
 import Tinker.demo.dto.auth.LoginRequestDTO;
 import Tinker.demo.dto.auth.LoginResponseDTO;
-import Tinker.demo.exception.CredenciaisInvalidasException;
-import Tinker.demo.mapper.LoginMapper;
-import Tinker.demo.model.Aluno;
-import Tinker.demo.repository.AlunoRepository;
+import Tinker.demo.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/api/auth")
 public class LoginController {
 
-    @Autowired
-    private AlunoRepository alunoRepository;
+    private final AuthService authService;
 
-    @Autowired
-    private LoginMapper loginMapper;
+    public LoginController(AuthService authService) {
+        this.authService = authService;
+    }
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO dados) {
-        Optional<Aluno> alunoOpt = alunoRepository.findById(dados.getEmail());
+        return ResponseEntity.ok(authService.login(dados));
+    }
 
-        if (alunoOpt.isEmpty()) {
-            throw new CredenciaisInvalidasException();
-        }
-
-        Aluno aluno = alunoOpt.get();
-
-        if (aluno.getSenha() == null || !aluno.getSenha().equals(dados.getSenha())) {
-            throw new CredenciaisInvalidasException();
-        }
-
-        return ResponseEntity.ok(loginMapper.paraResposta(aluno));
+    @PostMapping("/cadastros")
+    public ResponseEntity<CadastroResponseDTO> cadastrar(@Valid @RequestBody CadastroRequestDTO dados) {
+        return ResponseEntity.status(201).body(authService.cadastrar(dados));
     }
 }

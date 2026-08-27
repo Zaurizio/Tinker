@@ -15,6 +15,11 @@ class SecurityTestController {
         return Map.of("status", "publica");
     }
 
+    @PostMapping("/api/auth/cadastros")
+    Map<String, String> rotaCadastroPublica() {
+        return Map.of("status", "publica");
+    }
+
     @GetMapping("/teste/protegido")
     Map<String, String> rotaProtegida(@AuthenticationPrincipal UsuarioAutenticado usuario) {
         return Map.of("email", usuario.email(), "tipoUsuario", usuario.tipoUsuario().name());

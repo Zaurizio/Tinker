@@ -1,5 +1,6 @@
 package Tinker.demo.dto.auth;
 
+import Tinker.demo.security.TipoUsuario;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,10 +32,18 @@ class LoginRequestDTOTest {
         assertEquals(2, validator.validate(dto).size());
     }
 
+    @Test
+    void rejeitaEmailComMaisDeCinquentaCaracteres() {
+        LoginRequestDTO dto = criar("a".repeat(39) + "@example.com", "senha");
+
+        assertEquals(1, validator.validate(dto).size());
+    }
+
     private LoginRequestDTO criar(String email, String senha) {
         LoginRequestDTO dto = new LoginRequestDTO();
         dto.setEmail(email);
         dto.setSenha(senha);
+        dto.setTipoUsuario(TipoUsuario.ALUNO);
         return dto;
     }
 }

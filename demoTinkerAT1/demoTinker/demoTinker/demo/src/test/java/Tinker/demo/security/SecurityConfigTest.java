@@ -35,6 +35,12 @@ class SecurityConfigTest {
     }
 
     @Test
+    void cadastroTipadoTambemEhPublico() throws Exception {
+        mockMvc.perform(post("/api/auth/cadastros").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void rotaProtegidaRejeitaAcessoSemToken() throws Exception {
         mockMvc.perform(get("/teste/protegido"))
                 .andExpect(status().isUnauthorized())
