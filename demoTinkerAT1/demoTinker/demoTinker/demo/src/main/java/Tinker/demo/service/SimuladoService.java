@@ -3,10 +3,18 @@ package Tinker.demo.service;
 import Tinker.demo.dto.simulado.AtualizarSimuladoDTO;
 import Tinker.demo.dto.simulado.CriarSimuladoDTO;
 import Tinker.demo.dto.simulado.SimuladoDetalheDTO;
+import Tinker.demo.dto.simulado.QuantidadeQuestoesSimuladoDTO;
+import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.dto.simulado.SimuladoResumoDTO;
+import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.Simulado;
+import Tinker.demo.model.Questao;
+import Tinker.demo.model.QuestaoSimu;
+import Tinker.demo.model.QuestaoSimuid;
+import Tinker.demo.mapper.QuestaoMapper;
+import Tinker.demo.repository.QuestaoRepository;
 import Tinker.demo.repository.QuestaoSimuRepository;
 import Tinker.demo.repository.RelatorioSimuladoRepository;
 import Tinker.demo.repository.SimuladoRepository;
@@ -17,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Service
 public class SimuladoService {
@@ -25,16 +35,22 @@ public class SimuladoService {
     private final QuestaoSimuRepository questaoSimuRepository;
     private final RelatorioSimuladoRepository relatorioSimuladoRepository;
     private final TurmaSimuladoRepository turmaSimuladoRepository;
+    private final QuestaoRepository questaoRepository;
+    private final QuestaoMapper questaoMapper;
 
     public SimuladoService(
             SimuladoRepository simuladoRepository,
             QuestaoSimuRepository questaoSimuRepository,
             RelatorioSimuladoRepository relatorioSimuladoRepository,
-            TurmaSimuladoRepository turmaSimuladoRepository) {
+            TurmaSimuladoRepository turmaSimuladoRepository,
+            QuestaoRepository questaoRepository,
+            QuestaoMapper questaoMapper) {
         this.simuladoRepository = simuladoRepository;
         this.questaoSimuRepository = questaoSimuRepository;
         this.relatorioSimuladoRepository = relatorioSimuladoRepository;
         this.turmaSimuladoRepository = turmaSimuladoRepository;
+        this.questaoRepository = questaoRepository;
+        this.questaoMapper = questaoMapper;
     }
 
     @Transactional(readOnly = true)
@@ -78,6 +94,79 @@ public class SimuladoService {
         Simulado simulado = buscarDoUsuario(usuario, id);
         List<Integer> questoesIds = questaoSimuRepository.findCodQuestoesByCodSimulado(id);
         return detalhe(simulado, questoesIds);
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuestaoDTO> listarQuestoes(UsuarioAutenticado usuario, Integer id) {
+        buscarDoUsuario(usuario, id);
+        List<Integer> questoesIds = questaoSimuRepository.findCodQuestoesByCodSimulado(id);
+        if (questoesIds.isEmpty()) {
+            return List.of();
+        }
+        return questaoRepository
+                .findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(questoesIds, 1)
+                .stream()
+                .map(questaoMapper::paraDTO)
+                .toList();
+    }
+
+    @Transactional
+    public QuantidadeQuestoesSimuladoDTO adicionarQuestoes(
+            UsuarioAutenticado usuario,
+            Integer id,
+            QuestoesIdsDTO dados) {
+        buscarDoUsuario(usuario, id);
+        if (dados == null || dados.getQuestoesIds() == null || dados.getQuestoesIds().isEmpty()) {
+            throw new DadosInvalidosException(
+                    "QUESTOES_OBRIGATORIAS",
+                    "Informe ao menos uma questao.");
+        }
+
+        Set<Integer> idsUnicos = new LinkedHashSet<>(dados.getQuestoesIds());
+        if (idsUnicos.contains(null)) {
+            throw new DadosInvalidosException(
+                    "QUESTAO_INVALIDA",
+                    "Os IDs das questoes devem ser informados.");
+        }
+
+        List<Questao> questoesAtivas = questaoRepository
+                .findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(idsUnicos, 1);
+        Set<Integer> idsEncontrados = questoesAtivas.stream()
+                .map(Questao::getCodQuestao)
+                .collect(java.util.stream.Collectors.toSet());
+        if (!idsEncontrados.equals(idsUnicos)) {
+            throw new RecursoNaoEncontradoException(
+                    "QUESTAO_NAO_ENCONTRADA",
+                    "Uma ou mais questoes nao existem ou estao inativas.");
+        }
+
+        Set<Integer> idsAssociados = new LinkedHashSet<>(
+                questaoSimuRepository.findCodQuestoesByCodSimulado(id));
+        List<QuestaoSimu> novasAssociacoes = idsUnicos.stream()
+                .filter(questaoId -> !idsAssociados.contains(questaoId))
+                .map(questaoId -> new QuestaoSimu(id, questaoId))
+                .toList();
+        if (!novasAssociacoes.isEmpty()) {
+            questaoSimuRepository.saveAll(novasAssociacoes);
+        }
+
+        return new QuantidadeQuestoesSimuladoDTO(
+                questaoSimuRepository.countByCodSimulado(id));
+    }
+
+    @Transactional
+    public void removerQuestao(
+            UsuarioAutenticado usuario,
+            Integer id,
+            Integer questaoId) {
+        buscarDoUsuario(usuario, id);
+        QuestaoSimuid associacaoId = new QuestaoSimuid(id, questaoId);
+        if (!questaoSimuRepository.existsById(associacaoId)) {
+            throw new RecursoNaoEncontradoException(
+                    "ASSOCIACAO_NAO_ENCONTRADA",
+                    "A questao nao esta associada ao simulado.");
+        }
+        questaoSimuRepository.deleteById(associacaoId);
     }
 
     @Transactional

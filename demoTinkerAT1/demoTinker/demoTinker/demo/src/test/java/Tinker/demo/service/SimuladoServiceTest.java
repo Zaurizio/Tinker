@@ -7,6 +7,8 @@ import Tinker.demo.dto.simulado.SimuladoResumoDTO;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.repository.QuestaoSimuRepository;
+import Tinker.demo.repository.QuestaoRepository;
+import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.repository.RelatorioSimuladoRepository;
 import Tinker.demo.repository.SimuladoRepository;
 import Tinker.demo.repository.TurmaSimuladoRepository;
@@ -40,6 +42,7 @@ class SimuladoServiceTest {
     private RelatorioSimuladoRepository relatorioSimuladoRepository;
     private TurmaSimuladoRepository turmaSimuladoRepository;
     private SimuladoService simuladoService;
+    private QuestaoRepository questaoRepository;
 
     @BeforeEach
     void configurar() {
@@ -47,11 +50,14 @@ class SimuladoServiceTest {
         questaoSimuRepository = mock(QuestaoSimuRepository.class);
         relatorioSimuladoRepository = mock(RelatorioSimuladoRepository.class);
         turmaSimuladoRepository = mock(TurmaSimuladoRepository.class);
+        questaoRepository = mock(QuestaoRepository.class);
         simuladoService = new SimuladoService(
                 simuladoRepository,
                 questaoSimuRepository,
                 relatorioSimuladoRepository,
-                turmaSimuladoRepository);
+                turmaSimuladoRepository,
+                questaoRepository,
+                new QuestaoMapper());
 
         when(simuladoRepository.save(any(Simulado.class))).thenAnswer(invocacao -> {
             Simulado simulado = invocacao.getArgument(0);
@@ -170,8 +176,8 @@ class SimuladoServiceTest {
         ordem.verify(questaoSimuRepository).deleteByCodSimulado(1);
         ordem.verify(simuladoRepository).delete(existente);
 
-        assertFalse(Arrays.stream(SimuladoService.class.getDeclaredFields())
-                .anyMatch(campo -> campo.getType().getSimpleName().equals("QuestaoRepository")));
+        verify(questaoRepository, never()).delete(any(Tinker.demo.model.Questao.class));
+        verify(questaoRepository, never()).deleteById(any());
     }
 
     @Test
