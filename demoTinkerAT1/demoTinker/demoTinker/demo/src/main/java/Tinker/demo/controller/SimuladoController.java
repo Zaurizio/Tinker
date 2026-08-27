@@ -1,73 +1,67 @@
 package Tinker.demo.controller;
 
-import Tinker.demo.model.Simulado;
-import Tinker.demo.repository.SimuladoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import Tinker.demo.dto.simulado.AtualizarSimuladoDTO;
+import Tinker.demo.dto.simulado.CriarSimuladoDTO;
+import Tinker.demo.dto.simulado.SimuladoDetalheDTO;
+import Tinker.demo.dto.simulado.SimuladoResumoDTO;
+import Tinker.demo.security.UsuarioAutenticado;
+import Tinker.demo.service.SimuladoService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/simulado")
+@RequestMapping("/api/simulados")
 public class SimuladoController {
 
-    @Autowired
-    private SimuladoRepository simuladoRepository;
+    private final SimuladoService simuladoService;
 
-    // 1. GET - Listar todos os simulados
+    public SimuladoController(SimuladoService simuladoService) {
+        this.simuladoService = simuladoService;
+    }
+
     @GetMapping
-    public List<Simulado> listarTodos() {
-        return simuladoRepository.findAll();
+    public List<SimuladoResumoDTO> listar(@AuthenticationPrincipal UsuarioAutenticado usuario) {
+        return simuladoService.listar(usuario);
     }
 
-    // 2. GET - Buscar um simulado pelo ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Simulado> buscarPorId(@PathVariable Integer id) {
-        Optional<Simulado> simulado = simuladoRepository.findById(id);
-        return simulado.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
-    // 3. POST - Criar um novo simulado
     @PostMapping
-    public ResponseEntity<Simulado> criar(@RequestBody Simulado simulado) {
-        // Como o ID é auto-incremento, normalmente não precisamos verificar existsById antes de salvar,
-        // mas se você tiver uma regra de negócio que impeça duplicidade, mantenha.
-        if (simulado.getCodSimulado() != null && simuladoRepository.existsById(simulado.getCodSimulado())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
-        }
-        Simulado saved = simuladoRepository.save(simulado);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    public ResponseEntity<SimuladoDetalheDTO> criar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @Valid @RequestBody CriarSimuladoDTO dados) {
+        return ResponseEntity.status(201).body(simuladoService.criar(usuario, dados));
     }
 
-    // 4. PUT - Atualizar um simulado existente
-    @PutMapping("/{id}")
-    public ResponseEntity<Simulado> atualizar(@PathVariable Integer id, @RequestBody Simulado simuladoAtualizado) {
-        return simuladoRepository.findById(id)
-                .map(simuladoExistente -> {
-                    simuladoExistente.setNome(simuladoAtualizado.getNome());
-                    simuladoExistente.setDescricao(simuladoAtualizado.getDescricao());
-                    simuladoExistente.setConclusao(simuladoAtualizado.getConclusao());
-                    simuladoExistente.setTempo(simuladoAtualizado.getTempo());
-                    simuladoExistente.setEmailAluno(simuladoAtualizado.getEmailAluno());
-                    simuladoExistente.setEmailProf(simuladoAtualizado.getEmailProf());
-
-                    Simulado saved = simuladoRepository.save(simuladoExistente);
-                    return ResponseEntity.ok(saved);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/{id}")
+    public SimuladoDetalheDTO detalhar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable Integer id) {
+        return simuladoService.detalhar(usuario, id);
     }
 
-    // 5. DELETE - Remover um simulado pelo ID
+    @PatchMapping("/{id}")
+    public SimuladoDetalheDTO atualizar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable Integer id,
+            @Valid @RequestBody AtualizarSimuladoDTO dados) {
+        return simuladoService.atualizar(usuario, id, dados);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
-        if (simuladoRepository.existsById(id)) {
-            simuladoRepository.deleteById(id);
-            return ResponseEntity.noContent().build(); // 204
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> excluir(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable Integer id) {
+        simuladoService.excluir(usuario, id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TurmaSimuladoRepository extends JpaRepository<TurmaSimulado, String> {
+    long deleteByCodSimulado(Integer codSimulado);
 }
