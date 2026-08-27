@@ -1,657 +1,324 @@
 # Especificação da API e do banco — Tinker
 
-## 1. Objetivo e fontes
+## 1. Objetivo
 
-Este documento consolida as regras atuais do Tinker, o estado real do banco e a menor estrutura final recomendada para API, banco e integração web.
+Este documento consolida as regras definitivas do Tinker, o estado atual do banco e a estrutura mínima necessária para a API. Como o projeto é um TCC de curso técnico, validações simples devem permanecer na API quando não exigirem mudança estrutural.
 
-- `schema.sql` é referência histórica.
-- `schema-atual.sql` é o dump mais recente, mas ainda não é o schema final.
-- **Atual** significa que a estrutura já aparece no dump recente.
-- **Obrigatória** significa que uma migration futura será necessária.
-- **API** significa que a garantia pode permanecer na aplicação enquanto ela for o único escritor.
-- **Adiável** significa melhoria não bloqueante para a primeira integração.
-- Este documento não executa SQL nem cria migrations.
+- `schema.sql` é referência histórica; `schema-atual.sql` é o dump mais recente.
+- **Atual** significa que a estrutura já existe.
+- **Mudança futura obrigatória** significa uma das cinco alterações da seção 5.
+- **API** significa que a regra pode ser garantida pela aplicação.
+- Este documento não cria migrations nem executa SQL.
 
 ## 2. Regras confirmadas
 
-### 2.1 Contas, cadastro e login
+### 2.1 Contas
 
-- `Aluno` e `Professor` continuam como tabelas separadas; não será criada uma tabela central `Usuario`.
-- Cadastro público exige `tipoUsuario` e aceita `ALUNO` ou `PROFESSOR`.
-- O mesmo e-mail pode existir uma vez em `Aluno` e uma vez em `Professor`.
-- Não existe unicidade global entre tipos. Repetição dentro da mesma tabela continua proibida.
-- Login exige `email`, `senha` e `tipoUsuario`; a API consulta somente a tabela do tipo escolhido.
-- JWT e principal autenticado identificam a conta por `email + tipoUsuario`.
-- Senhas de aluno e professor usam BCrypt. Nenhuma resposta, DTO ou log expõe senha ou hash.
-- Conta com `ativo = 0` não autentica.
-- A regra de criação de professor somente por administrador está revogada.
-- `Administrador` permanece separado apenas nas funções administrativas ainda necessárias e não recebe automaticamente administração de turmas.
-- Somente conta `PROFESSOR` cria turma ou publica/despublica simulados.
+- `Aluno` e `Professor` permanecem separados. Cadastro, login e JWT identificam `email + tipoUsuario`.
+- O mesmo e-mail pode existir uma vez em cada tipo de conta.
+- Senhas usam BCrypt; conta inativa não autentica; senha e hash nunca são expostos.
 
-### 2.2 Questões avulsas
-
-- Aluno ou professor ativo responde diretamente uma questão uma única vez.
-- A identidade da resposta é `email + tipoUsuario + questão`.
-- A resposta avulsa é definitiva, bloqueia nova resposta no mesmo contexto e entra no desempenho.
-- A API recebe a alternativa, consulta o gabarito e calcula o resultado. O cliente não envia `acertou` confiável.
-- Resposta avulsa não se confunde com marcação temporária em simulado.
-
-### 2.3 Resolução de simulados
-
-- Marcar uma alternativa produz correção imediata para o usuário.
-- Enquanto faltar qualquer questão, respostas, acertos e erros são temporários e não são persistidos.
-- A correção temporária não cria relatório, tentativa ou progresso.
-- Sair antes da conclusão descarta propositalmente o estado. Ao voltar, tudo aparece desmarcado e zerado.
-- Somente depois de marcar todas as questões o frontend envia a resolução completa.
-- O payload contém as alternativas escolhidas, não acertos, erros ou totais confiáveis.
-- A API revalida acesso, questões, completude e alternativas; recalcula respostas e totais.
-- Cada conta possui somente um resultado definitivo por simulado: sempre a conclusão mais recente.
-- Na primeira conclusão, resultado, respostas e totais são criados em uma única transação.
-- Ao concluir novamente, a API substitui cabeçalho e respostas anteriores na mesma transação. Se qualquer etapa falhar, rollback preserva integralmente o resultado anterior.
-- Resoluções abandonadas não entram no desempenho e não alteram o resultado definitivo anterior.
-- Simulado sem conclusão exibe somente quantidade de questões e estado não concluído.
-- Simulado concluído exibe `Completo`, total, acertos e botão `Recomeçar`.
-- `Recomeçar` inicia resolução local desmarcada e zerada; não reaproveita respostas anteriores.
-
-### 2.4 Recomeçar — decisão definitiva
-
-- Não haverá histórico de várias tentativas.
-- O resultado definitivo é sempre a conclusão mais recente.
-- Ao clicar em `Recomeçar`, alternativas e contadores ficam somente no frontend.
-- Enquanto a nova resolução estiver incompleta, o resultado anterior permanece salvo e continua alimentando card e desempenho.
-- Sair antes de concluir descarta apenas a resolução temporária.
-- A nova conclusão substitui atomicamente o cabeçalho e todas as respostas anteriores.
-- Card e desempenho consultam somente esse resultado definitivo atual.
-
-### 2.5 Turmas
+### 2.2 Turmas e membros
 
 - Somente professor ativo cria turma.
-- Apenas o professor criador administra membros e publica/despublica simulados.
-- Alunos e professores participam como membros.
-- Professor visitante é membro comum.
-- O código público possui exatamente oito dígitos, é texto e preserva zeros à esquerda, por exemplo `00182745`.
-- A API gera o código, verifica colisão no banco e tenta novamente.
-- Turma possui somente membros e simulados publicados.
-- Não existe publicação, salvamento, cópia ou associação de evento com turma.
-- Membro não resolve diretamente o simulado original publicado. O card oferece `Adicionar a meus simulados`.
-- Ao adicionar, a API cria um `Simulado` pessoal, copia suas associações `Quest_Simu` e registra o salvamento na mesma transação.
-- A cópia é independente: alterações, exclusão ou despublicação do original não a modificam.
-- Cada conta salva uma publicação uma vez enquanto a cópia existir. Excluir a cópia remove o controle e permite salvar novamente se a publicação continuar ativa.
+- `Turma.email_prof` identifica o professor criador, que é o único professor relacionado à turma.
+- Professores não entram em turmas criadas por outros professores. Somente alunos entram pelo código.
+- `Aluno_Turma` continua sendo usada para alunos membros. Não criar `Turma_Membro` nem adicionar `tipo_usuario` a `Aluno_Turma`.
+- O código é texto com exatamente oito dígitos numéricos e preserva zeros à esquerda, por exemplo `00182745`. A API gera, valida `^[0-9]{8}$`, verifica colisão e tenta novamente.
+- Somente o criador administra alunos e publica/despublica simulados.
+- Turmas contêm apenas alunos membros e simulados. Não existem eventos em turma.
 
-### 2.6 Calendário pessoal
+### 2.3 Questões avulsas
 
-- Aluno e professor possuem calendários independentes, identificados por `email + tipoUsuario`.
-- Eventos não possuem relação com turma.
-- Título e data são obrigatórios; cor usa `#RRGGBB`.
-- Dia inteiro exige horários nulos; evento com horário exige início e fim, com fim posterior ao início.
-- Criação no passado permanece proibida; ocorrências já passadas podem continuar armazenadas.
-- Recorrência: `NAO_REPETE`, `DIARIA`, `SEMANAL`, `MENSAL` ou `ANUAL`.
-- Limites por criação, incluindo a primeira ocorrência: 365 diárias, 52 semanais, 12 mensais ou 5 anuais.
-- É possível remover uma ocorrência ou uma série, sempre conferindo o dono autenticado.
+- Aluno e professor podem responder questões avulsas.
+- A resposta é definitiva, não pode ser repetida e entra no desempenho por disciplina.
+- A API recebe a alternativa, consulta o gabarito e calcula o acerto.
+- `Relatorio_Questao` precisará diferenciar `ALUNO` e `PROFESSOR`, pois o e-mail pode existir nos dois tipos.
+- `alternativa_selecionada` é opcional: necessária apenas se a interface precisar recuperar depois qual alternativa foi marcada; não é necessária só para bloquear repetição e calcular acerto.
 
-## 3. Estado real do banco atualizado
+### 2.4 Resolução e resultado de simulados
 
-### 3.1 Mudanças em relação ao schema histórico
+- Somente alunos possuem resultado persistido de simulado.
+- Durante a resolução, alternativas, acertos e erros permanecem no frontend. Sair antes de responder tudo descarta o progresso.
+- A correção temporária informa somente se acertou ou errou, sem persistir e sem revelar a alternativa correta.
+- Depois de responder tudo, o frontend envia todas as alternativas. A API valida a completude e recalcula os totais.
+- `Relatorio_Simulado` guarda somente `cod_simulado`, `email_aluno`, `acertos` e `erros`.
+- Não criar `Resposta_Simulado`, não guardar respostas individuais e não guardar histórico de tentativas.
+- Cada aluno possui um resultado por simulado. Nova conclusão atualiza a mesma linha.
+- Durante recomeço incompleto ou abandono, o resultado anterior permanece salvo.
+- O card concluído mostra `Completo`, total de questões, acertos e `Recomeçar`.
 
-| Estrutura | Histórico | Dump atual |
-|---|---|---|
-| `Aluno.senha` | `varchar(20)` | `varchar(100)` |
-| `Professor.senha` | `varchar(20)` | `varchar(100)` |
-| `HorarioMult` | sem título, dia inteiro e cor | adiciona `titulo varchar(45) NOT NULL`, `dia_inteiro tinyint NULL`, `cor varchar(45) NULL` |
-| resposta de questão | `Relatorio` | substituição nominal por `Relatorio_Questao`, mantendo as três colunas antigas |
-| resultado de simulado | inexistente | nova `Relatorio_Simulado` |
-| `Turma.cod_turma` | `int AUTO_INCREMENT` | `varchar(8)` sem geração automática |
-| PK de `Turma` | (`cod_turma`,`nome_turma`,`email_prof`) | somente (`cod_turma`) |
-| publicação de simulado | inexistente | nova `Turma_Simulado` |
+### 2.5 Desempenho
 
-As demais tabelas do dump histórico permanecem estruturalmente iguais.
+- O desempenho por disciplina usa exclusivamente respostas avulsas de `Relatorio_Questao`.
+- Resultados de simulados não são distribuídos por disciplina e não exigem respostas individuais.
+- `Relatorio_Simulado` pode fornecer apenas métricas gerais, como simulados concluídos e acertos em simulados, se necessário.
 
-### 3.2 Avaliação das estruturas atuais
+### 2.6 Simulados publicados e salvos
 
-| Tabela | Aproveitamento | Problema conhecido |
-|---|---|---|
-| `Aluno`, `Professor` | contas separadas e senhas ampliadas | e-mail ainda limitado a 50; regras ficam na API |
-| `Administrador` | conta administrativa legada | `login varchar(10)` e `senha int NULL` não atendem hash moderno |
-| `Questao` | catálogo e gabarito | `resposta mediumtext`; faltam checks A–E |
-| `Simulado` | definição de simulado | ownership sem check; `conclusao` mistura definição com resultado; `tempo float` |
-| `Quest_Simu` | associação das questões | sem FKs explícitas |
-| `Relatorio_Questao` | ponto de partida para resposta avulsa | não diferencia tipo nem guarda alternativa |
-| `Relatorio_Simulado` | agregado provisório | não aceita professor nem possui respostas detalhadas; sua unicidade atual não inclui o tipo |
-| `Turma` | código textual e PK simples | não garante oito dígitos nem FK do criador |
-| `Aluno_Turma` | vínculo legado de aluno | `cod_turma int` incompatível; não aceita professor |
-| `Turma_Simulado` | publicação básica | tipos frágeis, sem FKs/unique, data textual e sem controle de salvamento |
-| `HorarioMult` | candidato a evento pessoal | PK/horários inadequados; sem tipo, série ou recorrência |
-| `Cronograma` | agendamento simples por data | sobrepõe calendário e também não diferencia tipo |
-| `Conteudo_Quest`, `Estudio_*` | legado fora do contrato | uso deve ser auditado antes de remoção |
+- O botão `Adicionar a meus simulados` cria uma cópia pessoal independente e copia as associações de `Quest_Simu`.
+- Mudanças ou exclusão do original não alteram a cópia.
+- `Simulado_Salvo` é necessária para manter `salvoPeloUsuario`, impedir duplicatas e permitir salvar novamente após excluir a cópia.
+- Nome, descrição ou lista de questões nunca identificam cópias.
+- Criar cópia, copiar `Quest_Simu` e registrar `Simulado_Salvo` é uma transação. Excluir a cópia remove também esse controle.
 
-### 3.3 Bloqueios atuais
+### 2.7 Calendário
 
-- `Aluno_Turma.cod_turma int` é incompatível com `Turma.cod_turma varchar(8)`.
-- `Aluno_Turma` não representa professor membro.
-- `varchar(8)` limita o máximo, mas não garante exatamente oito dígitos.
-- `Relatorio_Questao` colide aluno e professor homônimos e não registra alternativa.
-- `Relatorio_Simulado` já limita uma linha por simulado/aluno, coerente com resultado único, mas não aceita professor, não inclui o tipo na chave e não possui respostas detalhadas.
-- `HorarioMult` e `Cronograma` colidem contas de tipos distintos com o mesmo e-mail.
-- `Turma_Simulado.id_publicacao` é texto, `data_publicacao` é texto, `ativo` aceita nulo e faltam FKs e `UNIQUE(cod_turma,cod_simulado)`.
-- E-mails variam entre 45 e 50 caracteres nos vínculos.
-- Faltam FKs centrais.
-- Entidades JPA e repositories ainda refletem o schema histórico.
+- O calendário é pessoal para aluno e professor e identifica `email + tipoUsuario`.
+- A API gera as ocorrências diárias, semanais, mensais ou anuais.
+- `id_serie` só é obrigatória se `Excluir todos` permanecer. Com apenas exclusão individual, pode ser dispensada.
+- Não criar tabela separada para séries nem relacionar eventos a turmas.
 
-## 4. Estrutura mínima final recomendada
+## 3. Estado atual do banco
 
-### 4.1 Contas
-
-Manter `Aluno` e `Professor` separadas:
-
-| Coluna | Alvo mínimo |
+| Estrutura | Aproveitamento e limitação |
 |---|---|
-| `email` | `varchar(254) NOT NULL`, PK/unique dentro da própria tabela |
-| `senha` | `varchar(100) NOT NULL` |
-| `nome`, `sobrenome` | obrigatórios |
-| `nascimento` | obrigatório somente para aluno enquanto o schema exigir |
-| `foto` | opcional |
-| `ativo` | `tinyint(1) NOT NULL DEFAULT 1` |
+| `Aluno`, `Professor` | contas separadas; senhas já comportam BCrypt |
+| `Questao` | catálogo e gabarito; formato da resposta pode ser validado na API |
+| `Simulado`, `Quest_Simu` | definição e associação das questões |
+| `Relatorio_Questao` | base das respostas avulsas; ainda não diferencia o tipo da conta |
+| `Relatorio_Simulado` | pode ser reaproveitada para o último total de cada aluno por simulado |
+| `Turma` | `cod_turma` já é `varchar(8)`; `email_prof` identifica o criador |
+| `Aluno_Turma` | associação correta dos alunos; `cod_turma int` ainda é incompatível |
+| `Turma_Simulado` | base da publicação; falta controle permanente de cópia salva |
+| `HorarioMult` / `Cronograma` | bases legadas do calendário; ainda não distinguem o tipo da conta |
 
-Não criar índice, trigger ou validação de unicidade entre as duas tabelas. `Administrador` pode permanecer separado; antes de autenticação administrativa real, precisa de identificador compatível com e-mail e senha textual para hash.
+Limitações que realmente exigem mudança futura:
+
+1. incompatibilidade de tipo entre `Aluno_Turma.cod_turma` e `Turma.cod_turma`;
+2. colisão de aluno e professor homônimos em `Relatorio_Questao`;
+3. ausência de `Simulado_Salvo`;
+4. colisão de tipos de conta no calendário;
+5. ausência de identificador de série, relevante somente se houver `Excluir todos`.
+
+Não são bloqueios e podem ficar na API: ampliar todos os e-mails para 254 caracteres; criar `CHECK` do código; transformar `Questao.resposta` em `char(1)`; transformar `Simulado.tempo`; e adicionar FKs/checks que a API consegue validar enquanto for o único escritor.
+
+## 4. Estrutura mínima futura
+
+### 4.1 Turmas
+
+Manter `Turma` e `Aluno_Turma`. Alterar somente `Aluno_Turma.cod_turma` para o mesmo tipo textual de oito posições de `Turma.cod_turma`. O professor é identificado exclusivamente por `Turma.email_prof` e não recebe linha de membro.
 
 ### 4.2 Respostas avulsas
 
-Remodelar `Relatorio_Questao` como registro definitivo exclusivamente avulso:
+Manter `Relatorio_Questao` e acrescentar distinção de tipo, para que a identidade lógica seja `email + tipoUsuario + cod_quest`. A alternativa marcada continua opcional conforme a necessidade da interface.
 
-| Coluna | Alvo mínimo |
-|---|---|
-| `id_resposta` | `bigint AUTO_INCREMENT`, PK |
-| `email_usuario` | `varchar(254) NOT NULL` |
-| `tipo_usuario` | `enum('ALUNO','PROFESSOR') NOT NULL` |
-| `cod_quest` | `int NOT NULL`, FK para `Questao` |
-| `alternativa_selecionada` | `char(1) NOT NULL`, A–E |
-| `acertou` | `tinyint(1) NOT NULL` |
-| `respondida_em` | data/hora obrigatória |
+### 4.3 Resultado de simulado
 
-Obrigatório: `UNIQUE(email_usuario,tipo_usuario,cod_quest)`. Não gravar aqui respostas de simulado.
+Reaproveitar `Relatorio_Simulado` com seus quatro campos atuais. A chave deve garantir um único resultado por aluno e simulado; `acertos` e `erros` são sobrescritos na nova conclusão. O total é obtido de `Quest_Simu`. Nenhuma tabela de resposta ou tentativa é necessária.
 
-### 4.3 Resultado definitivo do simulado
+### 4.4 Simulados salvos
 
-Remodelar `Relatorio_Simulado` como o único resultado concluído atual da conta naquele simulado:
+Criar `Simulado_Salvo` com referências inequívocas para publicação, conta que salvou e simulado pessoal copiado. A estrutura deve sustentar `salvoPeloUsuario`, impedir segunda cópia enquanto a primeira existir e permitir novo salvamento depois da exclusão.
 
-| Coluna | Alvo mínimo |
-|---|---|
-| `cod_simulado` | `int NOT NULL`, FK para `Simulado` |
-| `email_usuario` | `varchar(254) NOT NULL` |
-| `tipo_usuario` | `enum('ALUNO','PROFESSOR') NOT NULL` |
-| `total_questoes` | `int NOT NULL` positivo |
-| `acertos`, `erros` | `int NOT NULL` não negativos |
-| `concluida_em` | data/hora obrigatória |
-| `tempo_segundos` | opcional e não negativo, se a duração for mantida |
+### 4.5 Calendário
 
-PK recomendada: (`email_usuario`,`tipo_usuario`,`cod_simulado`). Ela garante exatamente um resultado definitivo por conta/simulado. Check: `acertos + erros = total_questoes`. A existência da linha significa conclusão; não existe resultado parcial.
+Evoluir a estrutura escolhida de evento para identificar o dono por `email + tipoUsuario`. Cada ocorrência é uma linha gerada pela API. Adicionar `id_serie` somente se a exclusão conjunta continuar; não criar tabela de séries.
 
-### 4.4 Respostas do resultado atual
+## 5. Lista mínima de mudanças futuras no banco
 
-Criar `Resposta_Simulado`, representando somente as respostas do resultado definitivo atual:
+1. Mudar `Aluno_Turma.cod_turma` para o mesmo tipo textual de oito posições de `Turma.cod_turma`.
+2. Diferenciar aluno e professor em `Relatorio_Questao`.
+3. Criar `Simulado_Salvo`.
+4. Diferenciar aluno e professor no calendário.
+5. Adicionar `id_serie` ao calendário somente se `Excluir todos` permanecer.
 
-| Coluna | Alvo mínimo |
-|---|---|
-| `email_usuario` | parte da PK/FK composta do resultado |
-| `tipo_usuario` | parte da PK/FK composta do resultado |
-| `cod_simulado` | parte da PK/FK composta do resultado |
-| `cod_quest` | FK para `Questao`, parte da PK |
-| `alternativa_selecionada` | `char(1) NOT NULL`, A–E |
-| `acertou` | `tinyint(1) NOT NULL` |
+Nenhuma outra mudança de banco é obrigatória no escopo confirmado.
 
-PK (`email_usuario`,`tipo_usuario`,`cod_simulado`,`cod_quest`) e FK composta para `Relatorio_Simulado`. Na primeira conclusão, cabeçalho e respostas são inseridos juntos. Na reconclusão, a API bloqueia/localiza o resultado atual e substitui cabeçalho e conjunto de respostas dentro de uma única transação; rollback mantém o conjunto anterior intacto.
+## 6. Entidades e repositories esperados
 
-### 4.5 Turma e membros
+Antes das mudanças futuras:
 
-`Turma`:
+- entidades `Aluno`, `Professor`, `Questao`, `Simulado`, `QuestaoSimu`, `Turma`, `AlunoTurma`, `TurmaSimulado` e o resultado agregado de `Relatorio_Simulado`;
+- `Turma.codTurma` e `TurmaRepository` usam `String`, sem `IDENTITY`;
+- repositories de conta por tipo, turma, alunos da turma, publicação e resultado agregado;
+- a entidade de resultado possui somente os quatro campos existentes e é restrita a aluno.
 
-| Coluna | Alvo mínimo |
-|---|---|
-| `cod_turma` | `char(8) NOT NULL`, PK, check `^[0-9]{8}$` |
-| `nome_turma` | `varchar(45) NOT NULL` inicialmente |
-| `email_prof` | `varchar(254) NOT NULL`, FK para `Professor` |
-| `ativo` | `tinyint(1) NOT NULL DEFAULT 1` |
+Depois de cada mudança correspondente:
 
-O próprio código é a identidade da turma; não é necessário adicionar ID numérico interno.
+- `AlunoTurma` e seu ID composto passam a usar código textual;
+- `RespostaAvulsa` mapeia `Relatorio_Questao` com identidade tipada;
+- `SimuladoSalvo` consulta por publicação, conta e cópia;
+- evento pessoal consulta pelo dono tipado e, opcionalmente, pela série.
 
-Substituir `Aluno_Turma` por `Turma_Membro`:
+Não criar entidades/repositories de membro genérico, resposta de simulado, tentativa ou evento de turma.
 
-| Coluna | Alvo mínimo |
-|---|---|
-| `cod_turma` | `char(8) NOT NULL`, FK |
-| `email_membro` | `varchar(254) NOT NULL` |
-| `tipo_usuario` | `enum('ALUNO','PROFESSOR') NOT NULL` |
-| `papel` | `enum('CRIADOR','MEMBRO') NOT NULL DEFAULT 'MEMBRO'` |
-| `ativo` | `tinyint(1) NOT NULL DEFAULT 1` |
-| `entrou_em` | data/hora opcional |
-
-PK (`cod_turma`,`email_membro`,`tipo_usuario`). Turma e associação `CRIADOR` são criadas na mesma transação.
-
-### 4.6 Publicação de simulados
-
-Corrigir `Turma_Simulado`:
-
-| Coluna | Alvo mínimo |
-|---|---|
-| `id_publicacao` | `bigint AUTO_INCREMENT`, PK |
-| `cod_turma` | `char(8) NOT NULL`, FK |
-| `cod_simulado` | `int NOT NULL`, FK |
-| `data_publicacao` | `datetime NOT NULL` |
-| `ativo` | `tinyint(1) NOT NULL DEFAULT 1` |
-
-Obrigatório: `UNIQUE(cod_turma,cod_simulado)`. Republicar reativa a linha. Título ou texto nunca são usados como identidade.
-
-Criar `Simulado_Salvo` como controle da cópia pessoal:
-
-| Coluna | Alvo mínimo |
-|---|---|
-| `id_publicacao` | FK para `Turma_Simulado`, parte da PK |
-| `email_usuario` | `varchar(254) NOT NULL`, parte da PK |
-| `tipo_usuario` | `enum('ALUNO','PROFESSOR') NOT NULL`, parte da PK |
-| `cod_simulado_pessoal` | `int NOT NULL`, FK e `UNIQUE` para a cópia criada |
-| `data_salvamento` | `datetime NOT NULL` |
-
-PK (`id_publicacao`,`email_usuario`,`tipo_usuario`) impede salvar a mesma publicação novamente enquanto a cópia existir. A transação de salvamento cria o novo `Simulado` com dono correspondente, copia todas as linhas de `Quest_Simu` e então cria `Simulado_Salvo`; falha em qualquer etapa desfaz tudo. Excluir a cópia pessoal remove também o controle na mesma transação. O original e a cópia não mantêm propagação de alterações.
-
-Não criar `Turma_Evento`, `Evento_Salvo` ou qualquer associação/cópia de evento.
-
-### 4.7 Calendário pessoal
-
-`HorarioMult` e `Cronograma` se sobrepõem: ambas guardam itens por data/e-mail, mas apenas `HorarioMult` recebeu parte dos campos visuais. Não devem permanecer como duas fontes gerais do mesmo calendário.
-
-Recomendação mínima: evoluir `HorarioMult` para evento pessoal, com possível renomeação futura para `Evento`, e manter `Cronograma` como legado até confirmar se possui uso exclusivo para agendamento de simulado. Não removê-lo sem auditoria de uso/dados.
-
-| Coluna do evento pessoal | Alvo mínimo |
-|---|---|
-| `id_evento` | `bigint AUTO_INCREMENT`, PK |
-| `email_usuario` | `varchar(254) NOT NULL` |
-| `tipo_usuario` | `enum('ALUNO','PROFESSOR') NOT NULL` |
-| `titulo` | `varchar(150) NOT NULL` |
-| `data` | `date NOT NULL` |
-| `horario_inicio`, `horario_fim` | `time NULL` |
-| `dia_inteiro` | `tinyint(1) NOT NULL DEFAULT 0` |
-| `cor` | `char(7) NOT NULL` |
-| `id_serie` | `char(36) NULL` |
-| `recorrencia` | enum dos cinco valores confirmados |
-| `ativo` | `tinyint(1) NOT NULL DEFAULT 1` |
-
-Uma ocorrência é uma linha; séries compartilham `id_serie`. Não é necessária `Evento_Serie`. Não existe `cod_turma` nem origem publicada.
-
-## 5. Mudanças obrigatórias no banco
-
-1. Uniformizar e-mails em até 254 caracteres sem unicidade global.
-2. Preservar capacidade BCrypt e adequar `Administrador` antes de autenticação moderna.
-3. Garantir oito dígitos em `Turma` e criar FK do professor criador.
-4. Substituir `Aluno_Turma` por membership tipado.
-5. Remodelar `Relatorio_Questao` para resposta avulsa tipada.
-6. Remodelar `Relatorio_Simulado` como resultado definitivo único e criar `Resposta_Simulado`.
-7. Corrigir `Turma_Simulado` e criar `Simulado_Salvo` com as constraints de publicação, conta e cópia.
-8. Corrigir o calendário para dono tipado, PK própria, tipos de horário, recorrência e remoção lógica.
-9. Decidir o papel residual de `Cronograma` depois de auditoria, sem mantê-lo como segunda fonte geral.
-10. Criar índices de consulta por dono, turma, simulado, tentativa, data e ativo.
-
-## 6. Validações que podem permanecer na API
-
-- Normalização e formato de e-mail.
-- Seleção do repository pelo `tipoUsuario`.
-- BCrypt, JWT e ocultação de dados sensíveis/gabarito.
-- Existência de usuário em relações polimórficas por e-mail/tipo.
-- Geração segura do código e repetição em colisão; banco garante formato e unicidade.
-- Somente professor cria turma e somente criador administra/publica.
-- Professor visitante permanece membro.
-- Ownership e estado de questão/simulado/turma.
-- Correção temporária sem chamar repositories de relatório.
-- Completude, ausência de duplicatas, cálculo dos resultados e substituição atômica do resultado atual.
-- Cópia transacional do simulado publicado, de `Quest_Simu` e do controle `Simulado_Salvo`.
-- Limites de recorrência e validações de data, hora e cor.
-
-## 7. Alterações opcionais ou adiáveis
-
-- `Administrador.ativo` e ampliação do perfil administrativo.
-- Padronizar indicadores `ativo` como boolean/check.
-- Ampliar nomes de turma/simulado se o produto exigir.
-- Imagem/cor de turma e `Simulado.data_criacao`/exclusão lógica.
-- Metadados adicionais do resultado concluído.
-- Triggers de integridade polimórfica se surgirem escritores externos.
-- Remoção de `Estudio_*`, `Conteudo_Quest` e `Cronograma` somente após auditoria própria.
-
-## 8. Entidades e repositories esperados
-
-### Divergências JPA atuais
-
-- `Turma.codTurma` e `TurmaRepository` usam `Integer`/`IDENTITY`; o dump usa texto não autogerado.
-- `AlunoTurma` e seu ID composto ainda usam código inteiro.
-- `Relatorio` aponta para a tabela inexistente `Relatorio`, não `Relatorio_Questao`.
-- Faltam entidades/repositories para `Relatorio_Simulado`, suas respostas, `Turma_Simulado` e o controle de salvamento.
-- `HorarioMult` não mapeia `titulo`, `dia_inteiro` e `cor`.
-- Login consulta somente aluno, não recebe tipo e compara senha em texto.
-- Controllers CRUD expõem entities e não aplicam a matriz final de autorização.
-
-### Alvo da API
-
-- Entidades: `Aluno`, `Professor`, `Adm` se mantido, `Questao`, `Simulado`, `QuestaoSimu`, `RespostaAvulsa`, `ResultadoSimulado`, `RespostaSimulado`, `Turma`, `TurmaMembro`, `TurmaSimulado`, `SimuladoSalvo` e `Evento` pessoal.
-- `TurmaRepository<Turma,String>`.
-- Repositories de conta por e-mail dentro do próprio tipo.
-- Repositories de resposta avulsa, resultado/respostas atuais, membro, publicação, salvamento e evento com consultas por conta tipada/ownership.
-
-Não criar entidades apenas para cristalizar os formatos insuficientes atuais de `Relatorio_Simulado` e `Aluno_Turma`; esses mapeamentos finais dependem das migrations.
-
-## 9. DTOs finais esperados
+## 7. DTOs esperados
 
 ```text
 LoginRequestDTO { email, senha, tipoUsuario: "ALUNO"|"PROFESSOR" }
-AuthResponseDTO {
-  token, tipo: "Bearer", expiraEm,
-  usuario: { email, nome, sobrenome, tipoUsuario }
-}
-CadastroUsuarioRequestDTO {
-  nome, sobrenome, email, senha, tipoUsuario,
-  nascimento? // obrigatório para ALUNO enquanto o schema exigir
-}
+CadastroUsuarioRequestDTO { nome, sobrenome, email, senha, tipoUsuario, nascimento? }
+AuthResponseDTO { token, tipo: "Bearer", expiraEm, usuario }
 UsuarioResumoDTO { email, nome, sobrenome, tipoUsuario }
-UsuarioPerfilDTO { email, nome, sobrenome, nascimento?, fotoUrl?, tipoUsuario, ativo }
-AtualizarPerfilDTO { nome, sobrenome, nascimento?, foto? }
-AlterarSenhaDTO { senhaAtual, novaSenha }
 
-QuestaoDTO {
-  id, vestibular, instituicao?, ano, fase?, disciplina, conteudo,
-  enunciado, imagemUrl?, alternativas: [{ id: "A"|...|"E", texto }],
-  respondidaAvulsa?, alternativaSelecionadaAvulsaId?
-}
-PaginaQuestaoDTO { itens, temMais, total, pagina, tamanho }
+QuestaoDTO { id, disciplina, conteudo, enunciado, alternativas, respondidaAvulsa? }
 RespostaAvulsaRequestDTO { alternativaSelecionadaId }
-RespostaResultadoDTO {
-  questaoId, alternativaSelecionadaId, alternativaCorretaId, correta, bloqueada
+RespostaAvulsaDTO { questaoId, correta, bloqueada, alternativaSelecionadaId? }
+
+SimuladoResumoDTO {
+  id, titulo, quantidadeQuestoes, status: "nao_concluido"|"completo",
+  resultado?: { acertos, erros }
 }
 CorrecaoTemporariaRequestDTO { questaoId, alternativaSelecionadaId }
-CorrecaoTemporariaDTO {
-  questaoId, alternativaSelecionadaId, correta, persistida: false
-}
-
-CriarSimuladoDTO { titulo, descricao?, tempoMinutos? }
-GerarSimuladoDTO { titulo, descricao?, tempoMinutos?, filtros, quantidadeQuestoes }
-QuestaoIdsDTO { questoesIds: [integer] }
-SimuladoResumoDTO {
-  id, titulo, descricao?, dataCriacao?, quantidadeQuestoes,
-  status: "nao_concluido"|"completo",
-  resultadoDefinitivo?: { acertos, erros, totalQuestoes, concluidaEm }
-}
-SimuladoDetalheDTO { ...SimuladoResumoDTO, tempoMinutos?, questoes }
-ConcluirSimuladoDTO {
-  respostas: [{ questaoId, alternativaSelecionadaId }]
-}
-ResultadoSimuladoDTO {
-  simuladoId, totalQuestoes, acertos, erros, concluidaEm,
-  respostas: [{ questaoId, alternativaSelecionadaId, alternativaCorretaId, correta }]
-}
+CorrecaoTemporariaDTO { questaoId, correta, persistida: false }
+ConcluirSimuladoDTO { respostas: [{ questaoId, alternativaSelecionadaId }] }
+ResultadoSimuladoDTO { simuladoId, totalQuestoes, acertos, erros }
 
 CriarTurmaDTO { nome }
 EntrarTurmaDTO { codigo }
-TurmaResumoDTO { codigo, nome, criador, quantidadeMembros, imagem?, cor? }
-TurmaDetalheDTO { ...TurmaResumoDTO, papelUsuario: "CRIADOR"|"MEMBRO" }
-MembroTurmaDTO { email, nome, tipoUsuario, papel, fotoPerfil?, ativo }
+TurmaResumoDTO { codigo, nome, professorCriador, quantidadeAlunos }
+AlunoTurmaDTO { email, nome, fotoPerfil?, ativo }
 PublicarSimuladoDTO { simuladoId }
 PublicacaoSimuladoDTO {
-  idPublicacao, simuladoId, titulo, dataPublicacao, quantidadeQuestoes,
-  ativo, salvoPeloUsuario
+  idPublicacao, simuladoId, titulo, quantidadeQuestoes, ativo, salvoPeloUsuario
 }
 SalvarSimuladoDTO { sucesso, simuladoPessoalId, jaAdicionado }
 
-CriarEventoDTO {
-  titulo, data, horarioInicio?, horarioFim?, diaInteiro, cor,
-  recorrencia: "NAO_REPETE"|"DIARIA"|"SEMANAL"|"MENSAL"|"ANUAL"
-}
-EventoCalendarioDTO {
-  id, title, start, end?, allDay, color,
-  extendedProps: { serieId?, recorrencia, data, horarioInicio?, horarioFim? }
-}
-
+CriarEventoDTO { titulo, data, horarioInicio?, horarioFim?, diaInteiro, cor, recorrencia }
+EventoCalendarioDTO { id, title, start, end?, allDay, color, serieId? }
 DesempenhoResumoDTO {
-  taxaAcertosGeral, questoesRespondidas,
-  questoesAvulsasRespondidas, questoesEmSimuladosConcluidos,
-  simuladosConcluidos,
-  disciplinas: [{ nome, porcentagemAcertos, acertos, questoesFeitas, possuiRespostas }]
+  questoesAvulsasRespondidas, taxaAcertosGeral,
+  disciplinas: [{ nome, porcentagemAcertos, acertos, questoesFeitas }],
+  simuladosConcluidos?, acertosEmSimulados?
 }
 ErroDTO { codigo, mensagem, campos? }
 ```
 
-`QuestaoDTO` não expõe gabarito. A correção temporária informa apenas `correta`; `alternativaCorretaId` e o gabarito completo aparecem somente após resposta avulsa definitiva ou conclusão definitiva do simulado. Não existem DTOs de evento em turma.
+`QuestaoDTO` não expõe gabarito e a correção temporária não revela a alternativa correta. Não existem DTOs de respostas persistidas de simulado, tentativas, professor membro ou evento em turma.
 
-## 10. Endpoints necessários
+## 8. Endpoints
 
-### Autenticação e perfil
+### Autenticação, perfil e questões
 
 | Rota | Acesso | Função |
 |---|---|---|
-| `POST /api/auth/cadastros` | público | cria aluno ou professor conforme tipo |
-| `POST /api/auth/login` | público | autentica somente no tipo informado |
+| `POST /api/auth/cadastros` | público | cria conta do tipo informado |
+| `POST /api/auth/login` | público | autentica no tipo informado |
 | `GET /api/me` | aluno/professor | perfil próprio |
 | `PUT /api/me` | aluno/professor | atualiza perfil próprio |
 | `PUT /api/me/senha` | aluno/professor | troca senha |
-| `DELETE /api/me` | aluno/professor | inativa conta |
-
-### Questões e desempenho
-
-| Rota | Acesso | Função |
-|---|---|---|
-| `GET /api/questoes` | autenticado | filtros/paginação sem gabarito |
+| `GET /api/questoes` | autenticado | lista sem gabarito |
 | `GET /api/questoes/{id}` | autenticado | detalhe sem gabarito |
 | `POST /api/questoes/{id}/resposta` | aluno/professor | resposta avulsa definitiva |
-| `GET /api/me/desempenho` | aluno/professor | agrega somente dados definitivos |
+| `GET /api/me/desempenho` | aluno/professor | desempenho por disciplina com `Relatorio_Questao` |
 
-### Simulados e resultado definitivo
+### Simulados
 
 | Rota | Acesso | Função |
 |---|---|---|
-| `GET /api/simulados` | aluno/professor | lista acessíveis |
+| `GET /api/simulados` | aluno/professor | lista pessoais |
 | `POST /api/simulados` | aluno/professor | cria pessoal |
-| `POST /api/simulados/gerar` | aluno/professor | gera por filtros |
-| `GET /api/simulados/{id}` | dono da instância pessoal | detalhe; durante recomeço, resultado anterior continua apenas como resumo definitivo |
-| `PATCH /api/simulados/{id}` | dono | altera campos permitidos |
-| `DELETE /api/simulados/{id}` | dono | exclui conforme política |
-| `POST /api/simulados/{id}/correcoes` | usuário com acesso | corrige temporariamente sem escrita |
-| `PUT /api/simulados/{id}/resultado` | dono da instância pessoal | cria o resultado se ausente ou substitui cabeçalho/respostas atomicamente |
-| `GET /api/simulados/{id}/resultado` | dono da instância pessoal | retorna somente o resultado definitivo atual |
+| `GET /api/simulados/{id}` | dono | detalhe e último total, se houver |
+| `POST /api/simulados/{id}/correcoes` | dono | correção temporária sem escrita/gabarito |
+| `PUT /api/simulados/{id}/resultado` | aluno dono | recalcula e cria/atualiza o único total |
+| `GET /api/simulados/{id}/resultado` | aluno dono | último total agregado |
 
-Não existe endpoint para salvar progresso parcial nem listar resultados anteriores. `Recomeçar` limpa o estado local; a nova conclusão usa `PUT .../resultado`. O simulado original publicado não pode ser resolvido diretamente: primeiro deve ser copiado para a conta do membro.
+Não existe endpoint para progresso parcial, respostas persistidas ou histórico.
 
-### Turmas
+### Turmas e publicações
 
 | Rota | Acesso | Função |
 |---|---|---|
-| `GET /api/turmas` | autenticado | lista associações da conta tipada |
-| `POST /api/turmas` | professor | cria turma e membro criador |
-| `POST /api/turmas/entradas` | aluno/professor | entra pelo código de oito dígitos |
-| `GET /api/turmas/{codigo}` | membro | detalhe/papel |
+| `GET /api/turmas` | aluno/professor | lista turmas do aluno ou criadas pelo professor |
+| `POST /api/turmas` | professor | cria turma |
+| `POST /api/turmas/entradas` | aluno | entra pelo código |
+| `GET /api/turmas/{codigo}` | criador/aluno membro | detalhe |
 | `DELETE /api/turmas/{codigo}` | criador | inativa turma |
-| `GET /api/turmas/{codigo}/membros` | membro | lista membros |
-| `DELETE /api/turmas/{codigo}/membros/me` | membro comum | sai |
-| `DELETE /api/turmas/{codigo}/membros/{tipo}/{email}` | criador | remove membro |
-| `GET /api/turmas/{codigo}/simulados` | membro | lista publicações |
-| `POST /api/turmas/{codigo}/simulados` | criador | publica simulado |
+| `GET /api/turmas/{codigo}/alunos` | criador/aluno membro | lista alunos |
+| `DELETE /api/turmas/{codigo}/alunos/me` | aluno membro | sai |
+| `DELETE /api/turmas/{codigo}/alunos/{email}` | criador | remove aluno |
+| `GET /api/turmas/{codigo}/simulados` | criador/aluno membro | lista publicações |
+| `POST /api/turmas/{codigo}/simulados` | criador | publica |
 | `DELETE /api/turmas/{codigo}/simulados/{publicacaoId}` | criador | despublica |
-| `POST /api/publicacoes-simulado/{publicacaoId}/salvamentos` | membro | cria cópia pessoal, copia questões e registra controle atomicamente |
+| `POST /api/publicacoes-simulado/{publicacaoId}/salvamentos` | aluno membro | cria cópia e controle |
 
-Não existem endpoints de evento em turma.
+Não existem rotas de professor entrar, membro genérico ou evento em turma.
 
 ### Calendário pessoal
 
 | Rota | Acesso | Função |
 |---|---|---|
-| `GET /api/eventos?inicio=&fim=` | aluno/professor | lista eventos pessoais ativos |
-| `POST /api/eventos` | aluno/professor | cria ocorrência/série |
-| `GET /api/eventos/{id}` | dono | detalhe |
-| `DELETE /api/eventos/{id}` | dono | remove ocorrência |
-| `DELETE /api/eventos/series/{idSerie}` | dono | remove série |
+| `GET /api/eventos?inicio=&fim=` | aluno/professor | lista eventos pessoais |
+| `POST /api/eventos` | aluno/professor | API cria ocorrência(s) |
+| `DELETE /api/eventos/{id}` | dono | exclui uma ocorrência |
+| `DELETE /api/eventos/series/{idSerie}` | dono | exclui série, somente se a opção existir |
 
-## 11. Matriz de permissões
+## 9. Permissões
 
-| Operação | Aluno | Professor membro | Professor criador | Administrador |
+| Operação | Aluno | Professor criador | Outro professor | Administrador |
 |---|---:|---:|---:|---:|
-| Cadastro público | sim | sim | sim | não se aplica |
-| Responder questão/simulado | sim | sim | sim | não |
+| Responder questão avulsa | sim | sim | sim | não |
+| Persistir resultado de simulado | sim | não | não | não |
 | Criar simulado pessoal | sim | sim | sim | não |
-| Criar turma | não | sim | sim | não automaticamente |
-| Entrar em turma | sim | sim | já é criador | não automaticamente |
-| Ver membros/publicações | sim | sim | sim | não automaticamente |
-| Administrar membros | não | não | sim | não automaticamente |
-| Publicar/despublicar simulado | não | não | sim | não automaticamente |
-| Adicionar publicação aos próprios simulados | sim | sim | sim | não automaticamente |
+| Criar turma | não | sim | sim, em outra turma | não automaticamente |
+| Entrar em turma | sim | já é criador | não | não |
+| Administrar alunos | não | sim | não | não automaticamente |
+| Publicar/despublicar | não | sim | não | não automaticamente |
+| Adicionar publicação | sim | não | não | não |
 | Gerir calendário pessoal | sim | sim | sim | não |
 | Publicar evento em turma | não existe | não existe | não existe | não existe |
 
-## 12. Validações essenciais
+## 10. Validações na API
 
-### Contas
+- Selecionar conta pelo tipo no cadastro/login e incluir `email + tipoUsuario` no JWT.
+- Normalizar e validar e-mail; impedir duplicidade somente dentro do tipo.
+- Gerar código textual de oito dígitos e verificar colisão.
+- Autorizar criação/administração por `Turma.email_prof`; permitir entrada somente a aluno.
+- Validar membership, publicação ativa e ownership.
+- Corrigir resposta avulsa no servidor e bloquear repetição pela identidade tipada.
+- Correção temporária retorna apenas `correta` e não usa repository de relatório.
+- Conclusão exige uma resposta para cada `Quest_Simu`, recalcula totais e faz upsert do único `Relatorio_Simulado` do aluno.
+- Cópia, `Quest_Simu` e `Simulado_Salvo` são criados atomicamente.
+- Calendário valida dono tipado, datas, horários, cor e recorrência.
 
-- Tipo obrigatório e limitado a aluno/professor no cadastro/login.
-- E-mail normalizado, válido e com até 254 caracteres.
-- Duplicidade verificada somente na tabela escolhida.
-- Nascimento obrigatório para aluno enquanto `Aluno.nascimento` for `NOT NULL`.
-- BCrypt antes da gravação e verificador apropriado no login.
+Usar `400` para formato, `401` para autenticação, `403` para permissão, `404` para recurso inacessível e `409` para duplicidade/estado conflitante.
 
-### Questões e resultado de simulado
+## 11. Ordem de implementação da API
 
-- Questão existente/ativa e alternativa existente.
-- Gabarito A–E aponta para alternativa preenchida.
-- Resposta avulsa repetida retorna `409 RESPOSTA_JA_REGISTRADA`.
-- A conclusão contém exatamente uma resposta para cada `Quest_Simu`, sem ausentes, extras ou duplicadas.
-- API recalcula tudo e cria ou substitui cabeçalho/respostas em uma transação.
-- A substituição bloqueia/localiza o resultado atual; rollback preserva o cabeçalho e as respostas anteriores.
-- Correção temporária informa apenas `correta`, não devolve `alternativaCorretaId` e não usa repository de resultado/resposta.
+### Antes da próxima mudança no banco
 
-### Turmas e calendário
+1. DTOs de cadastro/login tipado, repositories corretos, BCrypt e JWT.
+2. DTOs de saída seguros, serviços e erros uniformes.
+3. Catálogo de questões e simulados sem gabarito.
+4. Correção temporária sem persistência.
+5. Validação da conclusão e reaproveitamento de `Relatorio_Simulado` para o último total.
+6. Criação de turma, código textual e autorização pelo `email_prof`.
+7. Publicação/despublicação básica conforme o schema atual.
+8. Calendário pessoal básico apenas onde não houver ambiguidade de conta.
+9. Testes de contrato, autorização e ausência de persistência parcial.
 
-- Código segue `^[0-9]{8}$` e permanece texto.
-- Somente professor cria; somente criador administra/publica.
-- Entrada cria ou reativa membro em turma ativa.
-- Criador não remove a si mesmo enquanto a turma existir.
-- Salvar publicação exige membro e publicação ativos; a transação cria cópia, questões e controle juntos.
-- O unique de `Simulado_Salvo` torna repetição idempotente/conflitante. Excluir a cópia remove o controle na mesma transação.
-- Dono do evento sempre vem do JWT.
-- Dia inteiro exige horários nulos; caso contrário ambos são obrigatórios e fim é posterior.
-- Cor segue `^#[0-9A-Fa-f]{6}$`.
+### Depois da mudança correspondente
 
-Erros: `400` formato, `401` autenticação, `403` papel, `404` recurso inexistente/inacessível e `409` duplicidade/estado conflitante.
+10. Entrada/gestão de alunos após alinhar `Aluno_Turma.cod_turma`.
+11. Resposta avulsa para os dois tipos após diferenciar `Relatorio_Questao`.
+12. `Adicionar a meus simulados` permanente após criar `Simulado_Salvo`.
+13. Calendário seguro para e-mails iguais após diferenciar o tipo.
+14. `Excluir todos` somente após adicionar `id_serie`, se a opção continuar.
 
-## 13. Exclusão e inativação
+## 12. Ordem futura de integração do frontend
 
-| Estrutura | Comportamento |
-|---|---|
-| `Aluno`, `Professor`, `Questao` | `ativo = 0`; preservar histórico |
-| `Turma` | `ativo = 0`; associações/publicações ficam invisíveis |
-| `Turma_Membro` | `ativo = 0`; reentrada reativa |
-| `Turma_Simulado` | `ativo = 0`; republicação reativa |
-| evento pessoal | `ativo = 0` por ocorrência ou série |
-| resposta avulsa | definitiva, sem PUT/DELETE comum |
-| resultado/respostas de simulado | substituíveis somente por nova conclusão completa e atômica |
-| `Simulado_Salvo` | removido junto com a cópia pessoal; permite salvar novamente se a publicação estiver ativa |
-| progresso incompleto | nunca existe no banco |
-
-## 14. Ordem das futuras correções do banco
-
-1. Backup/plano de reversão e identificação de dados provisórios.
-2. Uniformizar contas, e-mails e senhas sem unicidade global.
-3. Corrigir `Turma` para `char(8)`, check numérico, FK e índices.
-4. Criar `Turma_Membro` e aposentar `Aluno_Turma` após tratar dados provisórios.
-5. Remodelar `Relatorio_Questao`.
-6. Remodelar `Relatorio_Simulado` como resultado único e criar `Resposta_Simulado` com FK/PK composta.
-7. Corrigir `Turma_Simulado` e criar `Simulado_Salvo`.
-8. Corrigir evento pessoal e separar o papel residual de `Cronograma`.
-9. Aplicar índices/constraints e validar em teste.
-10. Só então avaliar limpeza legada e itens adiáveis.
-
-Nenhuma migration de evento de turma deve ser criada.
-
-## 15. Ordem de implementação da API
-
-### Antes da próxima alteração do banco
-
-1. DTOs e validações de cadastro/login com `tipoUsuario`.
-2. Seleção explícita de `AlunoRepository`/`ProfessorRepository`, BCrypt e JWT com e-mail/tipo.
-3. DTOs de saída e bloqueio da serialização de senha/hash.
-4. Camada de serviço, erros uniformes e autorização básica.
-5. Testes de contrato para contas, tipo, ausência de persistência parcial e permissões.
-6. Corrigir somente mapeamentos inequívocos do dump atual, como ID textual de `Turma`; não criar entidades finais sobre tabelas insuficientes.
-
-### Depois das migrations obrigatórias
-
-7. Alinhar entities/repositories de respostas, resultado atual, membros, publicações, salvamentos e eventos.
-8. Questões seguras e resposta avulsa definitiva.
-9. Simulados e `Quest_Simu` com ownership.
-10. Correção temporária sem gabarito/escrita e criação ou substituição transacional do resultado.
-11. Desempenho apenas com respostas definitivas.
-12. Turmas, membros e publicação/despublicação.
-13. Calendário exclusivamente pessoal.
-14. Desabilitar CRUDs inseguros e completar testes de autorização/concorrência.
-
-## 16. Ordem posterior de integração do frontend
-
-1. Cliente HTTP comum, JWT, `401` e erros padronizados.
-2. Login/cadastro com tipo; remover PHP e simulação de autenticação.
+1. Cliente HTTP, JWT e erros padronizados.
+2. Cadastro/login tipado; remover autenticação simulada/PHP.
 3. Perfil e senha sem trânsito de hash.
-4. Questões com resposta avulsa definitiva.
-5. Simulados com estado local temporário, descarte ao sair e envio único da resolução completa.
+4. Questões avulsas definitivas.
+5. Simulados com estado local, descarte ao sair e envio único ao completar.
 6. Cards com `Completo`, total, acertos e `Recomeçar`.
-7. Desempenho somente de persistência definitiva.
-8. Turmas: criação apenas para professor e código de oito dígitos.
-9. Detalhe da turma somente com `Simulados` e `Membros`; remover aba/componentes/serviços/dados de eventos em turma.
-10. Publicação/despublicação somente pelo criador e `Adicionar a meus simulados` para membros.
-11. Cópias pessoais independentes e indicação `salvoPeloUsuario` no card publicado.
-12. Calendário pessoal ligado à sessão tipada.
-13. Remover dados simulados e backend PHP legado ao final.
+7. Desempenho por disciplina só com respostas avulsas; métricas gerais de simulados separadas.
+8. Turmas: professor cria, aluno entra, código com oito dígitos.
+9. Detalhe apenas com alunos e simulados; remover eventos e professor membro.
+10. Publicação pelo criador e `Adicionar a meus simulados` pelo aluno membro.
+11. Cópias independentes e `salvoPeloUsuario` via `Simulado_Salvo`.
+12. Calendário pessoal tipado; `Excluir todos` apenas com `id_serie`.
+13. Remover dados simulados e PHP legado ao final.
 
-## 17. Relação com o frontend atual
+## 13. Consolidação
 
-O frontend é referência visual, não fonte final das regras:
+- O professor criador é o único professor da turma; `Aluno_Turma` contém somente alunos.
+- O código da turma é texto com oito dígitos e pode ser validado na API.
+- Simulados persistem apenas o último total agregado de cada aluno, sem alternativas ou tentativas.
+- Desempenho por disciplina usa apenas `Relatorio_Questao`.
+- `Adicionar a meus simulados` cria cópia independente e exige `Simulado_Salvo`.
+- Calendário é pessoal e tipado; não há tabela de séries nem eventos em turma.
+- As únicas mudanças futuras obrigatórias são as cinco da seção 5.
 
-- autenticação simulada usa apenas e-mail/senha e duplicidade global;
-- cadastro ainda chama PHP e não seleciona tipo nem coleta nascimento;
-- questões já ocultam gabarito na listagem e simulam correção;
-- detalhe do simulado mantém respostas localmente, compatível com descarte, mas não envia criação/substituição atômica do resultado;
-- cards mantêm `respondidas`, `acertos` e `em_andamento`, que não podem representar progresso incompleto persistido;
-- turmas usam IDs numéricos e códigos alfanuméricos de seis caracteres simulados;
-- ainda existem aba, componentes, serviços e dados de eventos em turma, todos obsoletos;
-- calendário já representa dia inteiro, horários, cor e recorrência, mas usa `usuarioId` simulado e ainda copia eventos de turma.
-- o serviço simulado já esboça cópia pessoal de publicação; a integração real deve fazê-la junto com `Quest_Simu` e `Simulado_Salvo` em uma transação.
-
-## 18. Consolidação final
-
-### Decisões confirmadas
-
-- Cadastro/login tipados; e-mail pode repetir entre aluno/professor.
-- JWT identifica e-mail/tipo; senhas usam BCrypt.
-- Resposta avulsa é definitiva.
-- Respostas de simulado são temporárias até conclusão total; sair descarta.
-- Existe um único resultado definitivo por conta/simulado; nova conclusão o substitui atomicamente e rollback preserva o anterior.
-- Somente professor cria turma; somente criador administra/publica.
-- Código tem oito dígitos e é texto.
-- Turmas possuem apenas membros e simulados.
-- Simulado publicado precisa ser adicionado como cópia pessoal independente antes de ser resolvido; salvamento é único e transacional enquanto a cópia existir.
-- Calendário é exclusivamente pessoal e tipado.
-
-### Decisões de recomeço e salvamento
-
-Não resta decisão aberta: `Recomeçar` substitui somente após nova conclusão completa, sem histórico; `Adicionar a meus simulados` cria cópia pessoal independente e controle de salvamento transacional.
-
-### Problemas bloqueantes
-
-- Tipo incompatível em `Aluno_Turma`; membership sem professor.
-- Código sem check de oito dígitos.
-- Resposta avulsa sem tipo.
-- Resultado de simulado sem tipo de usuário e respostas atuais detalhadas.
-- Publicação sem integridade ou controle de salvamento adequado.
-- Calendário sem tipo e com estruturas sobrepostas.
-- JPA divergente do dump.
-
-### Mudanças mínimas obrigatórias
-
-- Uniformizar identidades/e-mails, criar membership tipado, remodelar respostas/resultados, corrigir publicação/salvamento, calendário e código da turma.
-
-### Primeira etapa da API que pode continuar agora
-
-Implementar o contrato de conta tipada: DTOs de cadastro/login, seleção do repository correspondente, BCrypt, JWT com `email + tipoUsuario`, DTOs de saída e testes. Isso usa as tabelas separadas já existentes.
-
-### Ponto exato da próxima alteração do banco
-
-Antes de implementar persistência definitiva de resposta avulsa, substituição do resultado de simulado, professor membro, publicação/salvamento íntegros ou calendário de contas com o mesmo e-mail. A API não deve consolidar entities/repositories finais desses recursos sobre as tabelas atuais insuficientes.
+Antes delas, podem avançar autenticação tipada, BCrypt/JWT, DTOs seguros, catálogo, correção temporária, validação da conclusão, resultado agregado atual, criação/autorização de turmas, publicação básica, calendário não ambíguo e testes. Cada recurso bloqueado aguarda somente sua mudança correspondente, não uma remodelagem geral do banco.
