@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Locale;
+import Tinker.demo.specification.QuestaoSpecifications;
 
 @Service
 public class QuestaoService {
@@ -45,7 +45,8 @@ public class QuestaoService {
                 tamanho,
                 Sort.by(Sort.Direction.ASC, "codQuestao"));
         Page<Questao> resultado = questaoRepository.findAll(
-                criarEspecificacao(disciplinas, conteudos, vestibulares, anos, trecho),
+                QuestaoSpecifications.comFiltros(
+                        disciplinas, conteudos, vestibulares, anos, trecho),
                 pageable);
         List<QuestaoDTO> itens = resultado.getContent().stream()
                 .map(questaoMapper::paraDTO)
@@ -67,40 +68,6 @@ public class QuestaoService {
                         "QUESTAO_NAO_ENCONTRADA",
                         "A questao nao foi encontrada."));
         return questaoMapper.paraDTO(questao);
-    }
-
-    Specification<Questao> criarEspecificacao(
-            List<String> disciplinas,
-            List<String> conteudos,
-            List<String> vestibulares,
-            List<Integer> anos,
-            String trecho) {
-        Specification<Questao> especificacao = (root, query, builder) ->
-                builder.equal(root.get("ativo"), 1);
-
-        if (disciplinas != null && !disciplinas.isEmpty()) {
-            especificacao = especificacao.and((root, query, builder) ->
-                    root.get("disciplina").in(disciplinas));
-        }
-        if (conteudos != null && !conteudos.isEmpty()) {
-            especificacao = especificacao.and((root, query, builder) ->
-                    root.get("conteudo").in(conteudos));
-        }
-        if (vestibulares != null && !vestibulares.isEmpty()) {
-            especificacao = especificacao.and((root, query, builder) ->
-                    root.get("vestibular").in(vestibulares));
-        }
-        if (anos != null && !anos.isEmpty()) {
-            especificacao = especificacao.and((root, query, builder) ->
-                    root.get("ano").in(anos));
-        }
-        if (trecho != null && !trecho.isBlank()) {
-            String pesquisa = "%" + trecho.trim().toLowerCase(Locale.ROOT) + "%";
-            especificacao = especificacao.and((root, query, builder) ->
-                    builder.like(builder.lower(root.get("enunciado")), pesquisa));
-        }
-
-        return especificacao;
     }
 
     private void validarPagina(int pagina, int tamanho) {

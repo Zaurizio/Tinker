@@ -5,6 +5,7 @@ import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
 import Tinker.demo.repository.QuestaoRepository;
+import Tinker.demo.specification.QuestaoSpecifications;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
@@ -108,7 +109,7 @@ class QuestaoServiceTest {
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     void encaminhaTodosOsFiltrosParaSpecification() {
-        Specification<Questao> specification = questaoService.criarEspecificacao(
+        Specification<Questao> specification = QuestaoSpecifications.comFiltros(
                 List.of("Matematica", "Fisica"),
                 List.of("Algebra"),
                 List.of("ENEM"),

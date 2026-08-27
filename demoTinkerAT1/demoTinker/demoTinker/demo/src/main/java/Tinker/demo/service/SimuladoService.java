@@ -6,6 +6,8 @@ import Tinker.demo.dto.simulado.SimuladoDetalheDTO;
 import Tinker.demo.dto.simulado.QuantidadeQuestoesSimuladoDTO;
 import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.dto.simulado.SimuladoResumoDTO;
+import Tinker.demo.dto.simulado.GerarSimuladoDTO;
+import Tinker.demo.dto.simulado.SimuladoGeradoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
@@ -23,6 +25,10 @@ import Tinker.demo.security.TipoUsuario;
 import Tinker.demo.security.UsuarioAutenticado;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import Tinker.demo.specification.QuestaoSpecifications;
 
 import java.util.List;
 import java.util.LinkedHashSet;
@@ -87,6 +93,55 @@ public class SimuladoService {
 
         Simulado salvo = simuladoRepository.save(simulado);
         return detalhe(salvo, List.of());
+    }
+
+    @Transactional
+    public SimuladoGeradoDTO gerar(UsuarioAutenticado usuario, GerarSimuladoDTO dados) {
+        validarTipoUsuario(usuario);
+        validarQuantidade(dados.getQuantidadeQuestoes());
+
+        Page<Questao> resultado = questaoRepository.findAll(
+                QuestaoSpecifications.comFiltros(
+                        dados.getDisciplinas(),
+                        dados.getConteudos(),
+                        dados.getVestibulares(),
+                        dados.getAnos(),
+                        null),
+                PageRequest.of(
+                        0,
+                        dados.getQuantidadeQuestoes(),
+                        Sort.by(Sort.Direction.ASC, "codQuestao")));
+
+        if (resultado.getNumberOfElements() < dados.getQuantidadeQuestoes()) {
+            throw new DadosInvalidosException(
+                    "QUESTOES_INSUFICIENTES",
+                    "Foram encontradas apenas " + resultado.getTotalElements()
+                            + " questoes para os filtros informados.");
+        }
+
+        Simulado simulado = new Simulado();
+        simulado.setNome(dados.getTitulo().trim());
+        simulado.setDescricao(dados.getDescricao());
+        simulado.setTempo(dados.getTempo());
+        simulado.setConclusao(0);
+        if (usuario.tipoUsuario() == TipoUsuario.ALUNO) {
+            simulado.setEmailAluno(usuario.email());
+            simulado.setEmailProf(null);
+        } else {
+            simulado.setEmailAluno(null);
+            simulado.setEmailProf(usuario.email());
+        }
+
+        Simulado salvo = simuladoRepository.save(simulado);
+        List<QuestaoSimu> associacoes = resultado.getContent().stream()
+                .map(questao -> new QuestaoSimu(salvo.getCodSimulado(), questao.getCodQuestao()))
+                .toList();
+        questaoSimuRepository.saveAll(associacoes);
+
+        return new SimuladoGeradoDTO(
+                salvo.getCodSimulado(),
+                salvo.getNome(),
+                associacoes.size());
     }
 
     @Transactional(readOnly = true)
@@ -255,5 +310,20 @@ public class SimuladoService {
         return new DadosInvalidosException(
                 "TIPO_USUARIO_INVALIDO",
                 "Simulados pessoais estao disponiveis apenas para aluno ou professor.");
+    }
+
+    private void validarTipoUsuario(UsuarioAutenticado usuario) {
+        if (usuario.tipoUsuario() != TipoUsuario.ALUNO
+                && usuario.tipoUsuario() != TipoUsuario.PROFESSOR) {
+            throw tipoNaoPermitido();
+        }
+    }
+
+    private void validarQuantidade(Integer quantidade) {
+        if (quantidade == null || quantidade < 1 || quantidade > 50) {
+            throw new DadosInvalidosException(
+                    "QUANTIDADE_QUESTOES_INVALIDA",
+                    "A quantidade de questoes deve estar entre 1 e 50.");
+        }
     }
 }

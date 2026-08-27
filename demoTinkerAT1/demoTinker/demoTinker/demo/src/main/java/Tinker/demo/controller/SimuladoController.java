@@ -7,6 +7,8 @@ import Tinker.demo.dto.simulado.SimuladoResumoDTO;
 import Tinker.demo.dto.simulado.QuantidadeQuestoesSimuladoDTO;
 import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
+import Tinker.demo.dto.simulado.GerarSimuladoDTO;
+import Tinker.demo.dto.simulado.SimuladoGeradoDTO;
 import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.SimuladoService;
 import jakarta.validation.Valid;
@@ -43,6 +45,13 @@ public class SimuladoController {
             @AuthenticationPrincipal UsuarioAutenticado usuario,
             @Valid @RequestBody CriarSimuladoDTO dados) {
         return ResponseEntity.status(201).body(simuladoService.criar(usuario, dados));
+    }
+
+    @PostMapping("/geracoes")
+    public ResponseEntity<SimuladoGeradoDTO> gerar(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @Valid @RequestBody GerarSimuladoDTO dados) {
+        return ResponseEntity.status(201).body(simuladoService.gerar(usuario, dados));
     }
 
     @GetMapping("/{id}")
