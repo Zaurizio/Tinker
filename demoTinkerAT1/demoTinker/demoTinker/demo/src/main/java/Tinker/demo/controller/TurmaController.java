@@ -25,7 +25,7 @@ public class TurmaController {
 
     // 2. GET - Buscar uma turma pelo ID
     @GetMapping("/{id}")
-    public ResponseEntity<Turma> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Turma> buscarPorId(@PathVariable String id) {
         Optional<Turma> turma = turmaRepository.findById(id);
         return turma.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
@@ -42,7 +42,7 @@ public class TurmaController {
 
     // 4. PUT - Atualizar uma turma
     @PutMapping("/{id}")
-    public ResponseEntity<Turma> atualizar(@PathVariable Integer id, @RequestBody Turma turmaAtualizada) {
+    public ResponseEntity<Turma> atualizar(@PathVariable String id, @RequestBody Turma turmaAtualizada) {
         return turmaRepository.findById(id)
                 .map(turmaExistente -> {
                     turmaExistente.setNomeTurma(turmaAtualizada.getNomeTurma());
@@ -57,7 +57,7 @@ public class TurmaController {
 
     // 5. DELETE - Remover uma turma pelo ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
+    public ResponseEntity<Void> deletar(@PathVariable String id) {
         if (turmaRepository.existsById(id)) {
             turmaRepository.deleteById(id);
             return ResponseEntity.noContent().build(); // 204 - Deletado com sucesso

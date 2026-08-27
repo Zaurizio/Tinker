@@ -36,6 +36,15 @@ public class HorarioMult {
     @Column(name = "descricao")
     private String descricao;
 
+    @Column(name = "titulo", length = 45, nullable = false)
+    private String titulo;
+
+    @Column(name = "dia_inteiro")
+    private Integer diaInteiro;
+
+    @Column(name = "cor", length = 45)
+    private String cor;
+
     public HorarioMult() {
     }
 
@@ -59,4 +68,13 @@ public class HorarioMult {
 
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+
+    public Integer getDiaInteiro() { return diaInteiro; }
+    public void setDiaInteiro(Integer diaInteiro) { this.diaInteiro = diaInteiro; }
+
+    public String getCor() { return cor; }
+    public void setCor(String cor) { this.cor = cor; }
 }

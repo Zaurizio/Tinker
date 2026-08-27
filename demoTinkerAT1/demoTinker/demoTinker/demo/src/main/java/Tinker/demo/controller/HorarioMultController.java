@@ -70,6 +70,9 @@ public class HorarioMultController {
                     registroExistente.setDisciplina(atualizado.getDisciplina());
                     registroExistente.setConteudo(atualizado.getConteudo());
                     registroExistente.setDescricao(atualizado.getDescricao());
+                    registroExistente.setTitulo(atualizado.getTitulo());
+                    registroExistente.setDiaInteiro(atualizado.getDiaInteiro());
+                    registroExistente.setCor(atualizado.getCor());
 
                     HorarioMult saved = horarioMultRepository.save(registroExistente);
                     return ResponseEntity.ok(saved);

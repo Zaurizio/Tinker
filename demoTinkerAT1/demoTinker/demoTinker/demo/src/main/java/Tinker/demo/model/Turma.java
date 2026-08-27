@@ -8,9 +8,8 @@ import java.util.Objects;
 public class Turma {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
-    @Column(name = "cod_turma")
-    private Integer codTurma;
+    @Column(name = "cod_turma", length = 8)
+    private String codTurma;
 
     @Column(name = "nome_turma", length = 45, nullable = false)
     private String nomeTurma;
@@ -33,11 +32,11 @@ public class Turma {
     }
 
     // Getters e Setters
-    public Integer getCodTurma() {
+    public String getCodTurma() {
         return codTurma;
     }
 
-    public void setCodTurma(Integer codTurma) {
+    public void setCodTurma(String codTurma) {
         this.codTurma = codTurma;
     }
 
