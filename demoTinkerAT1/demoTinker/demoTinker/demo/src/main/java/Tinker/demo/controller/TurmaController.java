@@ -6,6 +6,7 @@ import Tinker.demo.dto.turma.MembroTurmaDTO;
 import Tinker.demo.dto.turma.TurmaDTO;
 import Tinker.demo.dto.turma.PublicacaoSimuladoDTO;
 import Tinker.demo.dto.turma.PublicarSimuladoDTO;
+import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.TurmaService;
 import Tinker.demo.service.TurmaSimuladoService;
@@ -86,6 +87,14 @@ public class TurmaController {
         TurmaSimuladoService.ResultadoPublicacao resultado =
                 turmaSimuladoService.publicar(usuario, codigo, dados);
         return ResponseEntity.status(resultado.nova() ? 201 : 200).body(resultado.publicacao());
+    }
+
+    @GetMapping("/{codigo}/simulados/{idPublicacao}/questoes")
+    public List<QuestaoDTO> listarQuestoesSimuladoPublicado(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
+            @PathVariable String idPublicacao) {
+        return turmaSimuladoService.listarQuestoes(usuario, codigo, idPublicacao);
     }
 
     @DeleteMapping("/{codigo}/simulados/{idPublicacao}")

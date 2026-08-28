@@ -5,9 +5,12 @@ import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.ConflitoDominioException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.Simulado;
+import Tinker.demo.model.Questao;
 import Tinker.demo.model.Turma;
 import Tinker.demo.model.TurmaSimulado;
 import Tinker.demo.repository.QuestaoSimuRepository;
+import Tinker.demo.repository.QuestaoRepository;
+import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.repository.SimuladoRepository;
 import Tinker.demo.repository.TurmaSimuladoRepository;
 import Tinker.demo.security.TipoUsuario;
@@ -40,6 +43,7 @@ class TurmaSimuladoServiceTest {
     private TurmaSimuladoRepository publicacaoRepository;
     private SimuladoRepository simuladoRepository;
     private QuestaoSimuRepository questaoSimuRepository;
+    private QuestaoRepository questaoRepository;
     private TurmaSimuladoService service;
 
     @BeforeEach
@@ -48,8 +52,14 @@ class TurmaSimuladoServiceTest {
         publicacaoRepository = mock(TurmaSimuladoRepository.class);
         simuladoRepository = mock(SimuladoRepository.class);
         questaoSimuRepository = mock(QuestaoSimuRepository.class);
+        questaoRepository = mock(QuestaoRepository.class);
         service = new TurmaSimuladoService(
-                turmaService, publicacaoRepository, simuladoRepository, questaoSimuRepository);
+                turmaService,
+                publicacaoRepository,
+                simuladoRepository,
+                questaoSimuRepository,
+                questaoRepository,
+                new QuestaoMapper());
         when(turmaService.buscarAtiva(CODIGO)).thenReturn(turma());
         when(simuladoRepository.findById(15)).thenReturn(Optional.of(simulado()));
         when(questaoSimuRepository.countByCodSimulado(15)).thenReturn(10L);
@@ -206,6 +216,124 @@ class TurmaSimuladoServiceTest {
         verify(publicacaoRepository, never()).save(any());
     }
 
+    @Test
+    void professorCriadorEAlunoMembroAtivoAbremQuestoes() {
+        prepararAberturaValida();
+
+        assertEquals(List.of(2, 7), service.listarQuestoes(
+                professor(), CODIGO, "publicacao").stream().map(dto -> dto.id()).toList());
+        assertEquals(List.of(2, 7), service.listarQuestoes(
+                aluno(), CODIGO, "publicacao").stream().map(dto -> dto.id()).toList());
+
+        verify(turmaService, org.mockito.Mockito.times(2)).exigirAcesso(any(), any());
+        verify(questaoRepository, org.mockito.Mockito.times(2))
+                .findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(List.of(2, 7, 11), 1);
+    }
+
+    @Test
+    void alunoNaoMembroRecebe404AoAbrir() {
+        negarAcessoATurma();
+
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(
+                        usuario("nao-membro@tinker.com", TipoUsuario.ALUNO), CODIGO, "publicacao"));
+        verify(publicacaoRepository, never()).findById(any());
+    }
+
+    @Test
+    void membershipInativoRecebe404AoAbrir() {
+        negarAcessoATurma();
+
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(aluno(), CODIGO, "publicacao"));
+        verify(questaoSimuRepository, never()).findCodQuestoesByCodSimulado(any());
+    }
+
+    @Test
+    void outroProfessorEAdministradorRecebem404AoAbrir() {
+        negarAcessoATurma();
+
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(
+                        usuario("outro@tinker.com", TipoUsuario.PROFESSOR), CODIGO, "publicacao"));
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(
+                        usuario("adm@tinker.com", TipoUsuario.ADMINISTRADOR), CODIGO, "publicacao"));
+    }
+
+    @Test
+    void turmaInativaRecebe404AoAbrir() {
+        when(turmaService.buscarAtiva(CODIGO)).thenThrow(
+                new RecursoNaoEncontradoException("TURMA_NAO_ENCONTRADA", "nao"));
+
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(aluno(), CODIGO, "publicacao"));
+        verify(publicacaoRepository, never()).findById(any());
+    }
+
+    @Test
+    void publicacaoInativaInexistenteOuDeOutraTurmaRecebe404() {
+        when(publicacaoRepository.findByIdPublicacaoAndCodTurmaAndAtivo("inativa", CODIGO, 1))
+                .thenReturn(Optional.empty());
+        when(publicacaoRepository.findByIdPublicacaoAndCodTurmaAndAtivo("inexistente", CODIGO, 1))
+                .thenReturn(Optional.empty());
+        when(publicacaoRepository.findByIdPublicacaoAndCodTurmaAndAtivo("outra-turma", CODIGO, 1))
+                .thenReturn(Optional.empty());
+
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(aluno(), CODIGO, "inativa"));
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(aluno(), CODIGO, "inexistente"));
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.listarQuestoes(aluno(), CODIGO, "outra-turma"));
+        verify(simuladoRepository, never()).save(any());
+    }
+
+    @Test
+    void questoesInexistentesEInativasSaoIgnoradasEmBuscaUnicaEOrdenada() {
+        prepararAberturaValida();
+
+        var resposta = service.listarQuestoes(aluno(), CODIGO, "publicacao");
+
+        assertEquals(List.of(2, 7), resposta.stream().map(dto -> dto.id()).toList());
+        verify(questaoRepository).findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(
+                List.of(2, 7, 11), 1);
+        verify(questaoRepository, never()).findById(any());
+    }
+
+    @Test
+    void dtoNaoExpoeRespostaCorretaENenhumEstadoEhGravadoNaAbertura() {
+        prepararAberturaValida();
+
+        var resposta = service.listarQuestoes(aluno(), CODIGO, "publicacao");
+        List<String> campos = java.util.Arrays.stream(
+                        resposta.get(0).getClass().getRecordComponents())
+                .map(java.lang.reflect.RecordComponent::getName)
+                .toList();
+
+        assertTrue(!campos.contains("resposta"));
+        assertTrue(!campos.contains("gabarito"));
+        verify(publicacaoRepository, never()).save(any());
+        verify(simuladoRepository, never()).save(any());
+        verify(questaoSimuRepository, never()).save(any());
+        verify(questaoRepository, never()).save(any());
+    }
+
+    private void prepararAberturaValida() {
+        when(publicacaoRepository.findByIdPublicacaoAndCodTurmaAndAtivo("publicacao", CODIGO, 1))
+                .thenReturn(Optional.of(publicacao("publicacao", 1)));
+        when(questaoSimuRepository.findCodQuestoesByCodSimulado(15))
+                .thenReturn(List.of(2, 7, 11));
+        when(questaoRepository.findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(
+                List.of(2, 7, 11), 1)).thenReturn(List.of(questao(2), questao(7)));
+    }
+
+    private void negarAcessoATurma() {
+        org.mockito.Mockito.doThrow(
+                        new RecursoNaoEncontradoException("TURMA_NAO_ENCONTRADA", "nao"))
+                .when(turmaService).exigirAcesso(any(), any());
+    }
+
     private PublicarSimuladoDTO dados() {
         PublicarSimuladoDTO dados = new PublicarSimuladoDTO();
         dados.setSimuladoId(15);
@@ -227,6 +355,22 @@ class TurmaSimuladoServiceTest {
         simulado.setDescricao("Questoes de matematica");
         simulado.setEmailProf(EMAIL_PROF);
         return simulado;
+    }
+
+    private Questao questao(int id) {
+        Questao questao = new Questao();
+        questao.setCodQuestao(id);
+        questao.setVestibular("ENEM");
+        questao.setAno(2026);
+        questao.setFase("Unica");
+        questao.setDisciplina("Matematica");
+        questao.setConteudo("Algebra");
+        questao.setEnunciado("Enunciado " + id);
+        questao.setAlternativaA("Alternativa A");
+        questao.setAlternativaB("Alternativa B");
+        questao.setResposta("A");
+        questao.setAtivo(1);
+        return questao;
     }
 
     private TurmaSimulado publicacao(int ativo) {

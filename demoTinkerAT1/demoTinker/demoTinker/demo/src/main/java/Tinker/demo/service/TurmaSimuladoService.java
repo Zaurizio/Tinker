@@ -2,11 +2,14 @@ package Tinker.demo.service;
 
 import Tinker.demo.dto.turma.PublicacaoSimuladoDTO;
 import Tinker.demo.dto.turma.PublicarSimuladoDTO;
+import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.exception.ConflitoDominioException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.model.Turma;
 import Tinker.demo.model.TurmaSimulado;
+import Tinker.demo.mapper.QuestaoMapper;
+import Tinker.demo.repository.QuestaoRepository;
 import Tinker.demo.repository.QuestaoSimuRepository;
 import Tinker.demo.repository.SimuladoRepository;
 import Tinker.demo.repository.TurmaSimuladoRepository;
@@ -31,16 +34,22 @@ public class TurmaSimuladoService {
     private final TurmaSimuladoRepository turmaSimuladoRepository;
     private final SimuladoRepository simuladoRepository;
     private final QuestaoSimuRepository questaoSimuRepository;
+    private final QuestaoRepository questaoRepository;
+    private final QuestaoMapper questaoMapper;
 
     public TurmaSimuladoService(
             TurmaService turmaService,
             TurmaSimuladoRepository turmaSimuladoRepository,
             SimuladoRepository simuladoRepository,
-            QuestaoSimuRepository questaoSimuRepository) {
+            QuestaoSimuRepository questaoSimuRepository,
+            QuestaoRepository questaoRepository,
+            QuestaoMapper questaoMapper) {
         this.turmaService = turmaService;
         this.turmaSimuladoRepository = turmaSimuladoRepository;
         this.simuladoRepository = simuladoRepository;
         this.questaoSimuRepository = questaoSimuRepository;
+        this.questaoRepository = questaoRepository;
+        this.questaoMapper = questaoMapper;
     }
 
     @Transactional(readOnly = true)
@@ -55,6 +64,33 @@ public class TurmaSimuladoService {
                 .map(publicacao -> simuladoRepository.findById(publicacao.getCodSimulado())
                         .map(simulado -> paraDTO(publicacao, simulado)))
                 .flatMap(java.util.Optional::stream)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuestaoDTO> listarQuestoes(
+            UsuarioAutenticado usuario,
+            String codigo,
+            String idPublicacao) {
+        turmaService.validarCodigo(codigo);
+        Turma turma = turmaService.buscarAtiva(codigo);
+        turmaService.exigirAcesso(usuario, turma);
+
+        TurmaSimulado publicacao = turmaSimuladoRepository
+                .findByIdPublicacaoAndCodTurmaAndAtivo(idPublicacao, codigo, ATIVO)
+                .orElseThrow(this::publicacaoNaoEncontrada);
+        Simulado simulado = simuladoRepository.findById(publicacao.getCodSimulado())
+                .orElseThrow(this::publicacaoNaoEncontrada);
+
+        List<Integer> questoesIds = questaoSimuRepository
+                .findCodQuestoesByCodSimulado(simulado.getCodSimulado());
+        if (questoesIds.isEmpty()) {
+            return List.of();
+        }
+        return questaoRepository
+                .findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(questoesIds, ATIVO)
+                .stream()
+                .map(questaoMapper::paraDTO)
                 .toList();
     }
 
