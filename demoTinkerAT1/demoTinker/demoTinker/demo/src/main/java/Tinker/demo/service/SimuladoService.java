@@ -36,7 +36,6 @@ import Tinker.demo.specification.QuestaoSpecifications;
 import java.util.List;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.Locale;
 
 @Service
 public class SimuladoService {
@@ -236,17 +235,9 @@ public class SimuladoService {
                         "QUESTAO_NAO_ENCONTRADA",
                         "A questao nao existe ou esta inativa."));
 
-        String alternativaId = normalizarAlternativa(dados.getAlternativaSelecionadaId());
-        String textoSelecionado = textoAlternativa(questao, alternativaId);
-        if (textoSelecionado == null || textoSelecionado.isBlank()) {
-            throw new DadosInvalidosException(
-                    "ALTERNATIVA_INEXISTENTE",
-                    "A alternativa selecionada nao existe nesta questao.");
-        }
-
         return new CorrecaoQuestaoSimuladoDTO(
                 questaoId,
-                respostaCorreta(questao, alternativaId, textoSelecionado));
+                CorretorQuestao.corrigir(questao, dados.getAlternativaSelecionadaId()));
     }
 
     @Transactional
@@ -348,46 +339,4 @@ public class SimuladoService {
         }
     }
 
-    private String normalizarAlternativa(String alternativaId) {
-        if (alternativaId == null) {
-            throw alternativaInvalida();
-        }
-        String normalizada = alternativaId.trim().toUpperCase(Locale.ROOT);
-        if (!Set.of("A", "B", "C", "D", "E").contains(normalizada)) {
-            throw alternativaInvalida();
-        }
-        return normalizada;
-    }
-
-    private DadosInvalidosException alternativaInvalida() {
-        return new DadosInvalidosException(
-                "ALTERNATIVA_INVALIDA",
-                "A alternativa deve ser A, B, C, D ou E.");
-    }
-
-    private String textoAlternativa(Questao questao, String alternativaId) {
-        return switch (alternativaId) {
-            case "A" -> questao.getAlternativaA();
-            case "B" -> questao.getAlternativaB();
-            case "C" -> questao.getAlternativaC();
-            case "D" -> questao.getAlternativaD();
-            case "E" -> questao.getAlternativaE();
-            default -> null;
-        };
-    }
-
-    private boolean respostaCorreta(
-            Questao questao,
-            String alternativaId,
-            String textoSelecionado) {
-        String resposta = questao.getResposta();
-        if (resposta == null) {
-            return false;
-        }
-        String respostaNormalizada = resposta.trim();
-        if (respostaNormalizada.matches("(?i)[A-E]")) {
-            return alternativaId.equals(respostaNormalizada.toUpperCase(Locale.ROOT));
-        }
-        return textoSelecionado.trim().equals(respostaNormalizada);
-    }
 }

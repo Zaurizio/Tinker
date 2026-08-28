@@ -10,6 +10,7 @@ import Tinker.demo.model.Turma;
 import Tinker.demo.model.TurmaSimulado;
 import Tinker.demo.repository.QuestaoSimuRepository;
 import Tinker.demo.repository.QuestaoRepository;
+import Tinker.demo.repository.RelatorioRepository;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.repository.SimuladoRepository;
 import Tinker.demo.repository.TurmaSimuladoRepository;
@@ -59,7 +60,8 @@ class TurmaSimuladoServiceTest {
                 simuladoRepository,
                 questaoSimuRepository,
                 questaoRepository,
-                new QuestaoMapper());
+                new QuestaoMapper(),
+                mock(RelatorioRepository.class));
         when(turmaService.buscarAtiva(CODIGO)).thenReturn(turma());
         when(simuladoRepository.findById(15)).thenReturn(Optional.of(simulado()));
         when(questaoSimuRepository.countByCodSimulado(15)).thenReturn(10L);

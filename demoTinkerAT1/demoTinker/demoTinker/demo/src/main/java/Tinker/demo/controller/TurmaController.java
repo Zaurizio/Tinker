@@ -7,6 +7,8 @@ import Tinker.demo.dto.turma.TurmaDTO;
 import Tinker.demo.dto.turma.PublicacaoSimuladoDTO;
 import Tinker.demo.dto.turma.PublicarSimuladoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
+import Tinker.demo.dto.simulado.CorrecaoQuestaoSimuladoDTO;
+import Tinker.demo.dto.turma.CorrigirQuestaoPublicadaDTO;
 import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.TurmaService;
 import Tinker.demo.service.TurmaSimuladoService;
@@ -95,6 +97,21 @@ public class TurmaController {
             @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
             @PathVariable String idPublicacao) {
         return turmaSimuladoService.listarQuestoes(usuario, codigo, idPublicacao);
+    }
+
+    @PostMapping("/{codigo}/simulados/{idPublicacao}/questoes/{questaoId}/correcoes")
+    public CorrecaoQuestaoSimuladoDTO corrigirQuestaoSimuladoPublicado(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
+            @PathVariable String idPublicacao,
+            @PathVariable Integer questaoId,
+            @Valid @RequestBody CorrigirQuestaoPublicadaDTO dados) {
+        return turmaSimuladoService.corrigirQuestao(
+                usuario,
+                codigo,
+                idPublicacao,
+                questaoId,
+                dados);
     }
 
     @DeleteMapping("/{codigo}/simulados/{idPublicacao}")

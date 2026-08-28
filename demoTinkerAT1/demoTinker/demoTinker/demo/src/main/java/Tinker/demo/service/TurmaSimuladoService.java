@@ -3,17 +3,26 @@ package Tinker.demo.service;
 import Tinker.demo.dto.turma.PublicacaoSimuladoDTO;
 import Tinker.demo.dto.turma.PublicarSimuladoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
+import Tinker.demo.dto.simulado.CorrecaoQuestaoSimuladoDTO;
+import Tinker.demo.dto.turma.CorrigirQuestaoPublicadaDTO;
+import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.ConflitoDominioException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.model.Turma;
 import Tinker.demo.model.TurmaSimulado;
+import Tinker.demo.model.Questao;
+import Tinker.demo.model.QuestaoSimuid;
+import Tinker.demo.model.Relatorio;
+import Tinker.demo.model.Relatorioid;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.repository.QuestaoRepository;
+import Tinker.demo.repository.RelatorioRepository;
 import Tinker.demo.repository.QuestaoSimuRepository;
 import Tinker.demo.repository.SimuladoRepository;
 import Tinker.demo.repository.TurmaSimuladoRepository;
 import Tinker.demo.security.UsuarioAutenticado;
+import Tinker.demo.security.TipoUsuario;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +45,7 @@ public class TurmaSimuladoService {
     private final QuestaoSimuRepository questaoSimuRepository;
     private final QuestaoRepository questaoRepository;
     private final QuestaoMapper questaoMapper;
+    private final RelatorioRepository relatorioRepository;
 
     public TurmaSimuladoService(
             TurmaService turmaService,
@@ -43,13 +53,15 @@ public class TurmaSimuladoService {
             SimuladoRepository simuladoRepository,
             QuestaoSimuRepository questaoSimuRepository,
             QuestaoRepository questaoRepository,
-            QuestaoMapper questaoMapper) {
+            QuestaoMapper questaoMapper,
+            RelatorioRepository relatorioRepository) {
         this.turmaService = turmaService;
         this.turmaSimuladoRepository = turmaSimuladoRepository;
         this.simuladoRepository = simuladoRepository;
         this.questaoSimuRepository = questaoSimuRepository;
         this.questaoRepository = questaoRepository;
         this.questaoMapper = questaoMapper;
+        this.relatorioRepository = relatorioRepository;
     }
 
     @Transactional(readOnly = true)
@@ -92,6 +104,46 @@ public class TurmaSimuladoService {
                 .stream()
                 .map(questaoMapper::paraDTO)
                 .toList();
+    }
+
+    @Transactional
+    public CorrecaoQuestaoSimuladoDTO corrigirQuestao(
+            UsuarioAutenticado usuario,
+            String codigo,
+            String idPublicacao,
+            Integer questaoId,
+            CorrigirQuestaoPublicadaDTO dados) {
+        exigirAluno(usuario);
+        turmaService.validarCodigo(codigo);
+        Turma turma = turmaService.buscarAtiva(codigo);
+        turmaService.exigirAcesso(usuario, turma);
+
+        TurmaSimulado publicacao = turmaSimuladoRepository
+                .findByIdPublicacaoAndCodTurmaAndAtivo(idPublicacao, codigo, ATIVO)
+                .orElseThrow(this::publicacaoNaoEncontrada);
+        Simulado simulado = simuladoRepository.findById(publicacao.getCodSimulado())
+                .orElseThrow(this::publicacaoNaoEncontrada);
+        Questao questao = questaoRepository.findById(questaoId)
+                .filter(encontrada -> ATIVO.equals(encontrada.getAtivo()))
+                .orElseThrow(this::questaoNaoEncontrada);
+        if (!questaoSimuRepository.existsById(
+                new QuestaoSimuid(simulado.getCodSimulado(), questaoId))) {
+            throw questaoNaoEncontrada();
+        }
+
+        boolean acertou = CorretorQuestao.corrigir(questao, dados.getAlternativa());
+        Relatorioid relatorioId = new Relatorioid(questaoId, usuario.email());
+        Relatorio relatorio = relatorioRepository.findById(relatorioId).orElseGet(() -> {
+            Relatorio novo = new Relatorio();
+            novo.setCodQuest(questaoId);
+            novo.setEmail(usuario.email());
+            return novo;
+        });
+        relatorio.setAcertouErrou(acertou ? 1 : 0);
+        relatorio.setTipoUsu(TipoUsuario.ALUNO.name());
+        relatorioRepository.save(relatorio);
+
+        return new CorrecaoQuestaoSimuladoDTO(questaoId, acertou);
     }
 
     @Transactional
@@ -173,6 +225,20 @@ public class TurmaSimuladoService {
         return new RecursoNaoEncontradoException(
                 "PUBLICACAO_NAO_ENCONTRADA",
                 "A publicacao nao foi encontrada.");
+    }
+
+    private RecursoNaoEncontradoException questaoNaoEncontrada() {
+        return new RecursoNaoEncontradoException(
+                "QUESTAO_NAO_ENCONTRADA",
+                "A questao nao foi encontrada.");
+    }
+
+    private void exigirAluno(UsuarioAutenticado usuario) {
+        if (usuario.tipoUsuario() != TipoUsuario.ALUNO) {
+            throw new AcessoNegadoException(
+                    "ACESSO_NEGADO",
+                    "Esta operacao e permitida somente para aluno.");
+        }
     }
 
     public record ResultadoPublicacao(PublicacaoSimuladoDTO publicacao, boolean nova) {
