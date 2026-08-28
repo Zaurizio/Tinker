@@ -250,6 +250,30 @@ class TurmaServiceTest {
     }
 
     @Test
+    void contaDeAlunoInativaNaoApareceComoMembroAtivo() {
+        prepararTurmaAtiva();
+        when(alunoTurmaRepository.findByCodTurmaAndAtivoOrderByEmailAlunoAsc(CODIGO, 1))
+                .thenReturn(List.of(membership(EMAIL_ALUNO, CODIGO, 1)));
+        Aluno inativo = aluno();
+        inativo.setAtivo(0);
+        when(alunoRepository.findById(EMAIL_ALUNO)).thenReturn(Optional.of(inativo));
+
+        assertEquals(List.of(), service.listarMembros(professorAutenticado(), CODIGO));
+    }
+
+    @Test
+    void contaDeAlunoComAtivoNuloNaoCausaErroNemAparece() {
+        prepararTurmaAtiva();
+        when(alunoTurmaRepository.findByCodTurmaAndAtivoOrderByEmailAlunoAsc(CODIGO, 1))
+                .thenReturn(List.of(membership(EMAIL_ALUNO, CODIGO, 1)));
+        Aluno semEstado = aluno();
+        semEstado.setAtivo(null);
+        when(alunoRepository.findById(EMAIL_ALUNO)).thenReturn(Optional.of(semEstado));
+
+        assertEquals(List.of(), service.listarMembros(professorAutenticado(), CODIGO));
+    }
+
+    @Test
     void usuarioSemAcessoNaoListaMembros() {
         prepararTurmaAtiva();
 

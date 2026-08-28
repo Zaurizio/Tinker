@@ -138,6 +138,7 @@ public class TurmaService {
                 .map(AlunoTurma::getEmailAluno)
                 .map(alunoRepository::findById)
                 .flatMap(java.util.Optional::stream)
+                .filter(aluno -> ATIVO.equals(aluno.getAtivo()))
                 .map(aluno -> new MembroTurmaDTO(
                         aluno.getEmail(),
                         aluno.getNome(),
@@ -184,7 +185,7 @@ public class TurmaService {
         turmaRepository.save(turma);
     }
 
-    private void exigirAcesso(UsuarioAutenticado usuario, Turma turma) {
+    void exigirAcesso(UsuarioAutenticado usuario, Turma turma) {
         if (usuario.tipoUsuario() == TipoUsuario.PROFESSOR
                 && usuario.email().equals(turma.getEmailProf())) {
             return;
@@ -198,13 +199,13 @@ public class TurmaService {
         throw turmaNaoEncontrada();
     }
 
-    private void exigirCriador(UsuarioAutenticado usuario, Turma turma) {
+    void exigirCriador(UsuarioAutenticado usuario, Turma turma) {
         if (!usuario.email().equals(turma.getEmailProf())) {
             throw turmaNaoEncontrada();
         }
     }
 
-    private void exigirProfessor(UsuarioAutenticado usuario) {
+    void exigirProfessor(UsuarioAutenticado usuario) {
         if (usuario.tipoUsuario() != TipoUsuario.PROFESSOR) {
             throw acessoNegado();
         }
@@ -216,7 +217,7 @@ public class TurmaService {
         }
     }
 
-    private Turma buscarAtiva(String codigo) {
+    Turma buscarAtiva(String codigo) {
         return turmaRepository.findById(codigo)
                 .filter(turma -> ATIVO.equals(turma.getAtivo()))
                 .orElseThrow(this::turmaNaoEncontrada);
@@ -235,7 +236,7 @@ public class TurmaService {
         return new TurmaDTO(turma.getCodTurma(), turma.getNomeTurma(), criadorNome);
     }
 
-    private void validarCodigo(String codigo) {
+    void validarCodigo(String codigo) {
         if (codigo == null || !codigo.matches("^[0-9]{8}$")) {
             throw new DadosInvalidosException(
                     "CODIGO_TURMA_INVALIDO",

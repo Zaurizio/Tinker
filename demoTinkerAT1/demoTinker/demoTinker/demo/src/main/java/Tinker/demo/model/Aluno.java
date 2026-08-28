@@ -33,7 +33,7 @@ public class Aluno {
     private Date nascimento;
 
     @Column(name = "ativo")
-    private int ativo;
+    private Integer ativo;
 
     // Construtor vazio
     public Aluno() {
@@ -88,11 +88,11 @@ public class Aluno {
         this.nascimento = nascimento;
     }
 
-    public int getAtivo() {
+    public Integer getAtivo() {
         return ativo;
     }
 
-    public void setAtivo(int ativo) {
+    public void setAtivo(Integer ativo) {
         this.ativo = ativo;
     }
 }

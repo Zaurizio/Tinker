@@ -4,8 +4,11 @@ import Tinker.demo.dto.turma.CriarTurmaDTO;
 import Tinker.demo.dto.turma.EntrarTurmaDTO;
 import Tinker.demo.dto.turma.MembroTurmaDTO;
 import Tinker.demo.dto.turma.TurmaDTO;
+import Tinker.demo.dto.turma.PublicacaoSimuladoDTO;
+import Tinker.demo.dto.turma.PublicarSimuladoDTO;
 import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.TurmaService;
+import Tinker.demo.service.TurmaSimuladoService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +31,11 @@ public class TurmaController {
 
     private static final String CODIGO_VALIDO = "^[0-9]{8}$";
     private final TurmaService turmaService;
+    private final TurmaSimuladoService turmaSimuladoService;
 
-    public TurmaController(TurmaService turmaService) {
+    public TurmaController(TurmaService turmaService, TurmaSimuladoService turmaSimuladoService) {
         this.turmaService = turmaService;
+        this.turmaSimuladoService = turmaSimuladoService;
     }
 
     @GetMapping
@@ -64,6 +69,32 @@ public class TurmaController {
             @AuthenticationPrincipal UsuarioAutenticado usuario,
             @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo) {
         return turmaService.listarMembros(usuario, codigo);
+    }
+
+    @GetMapping("/{codigo}/simulados")
+    public List<PublicacaoSimuladoDTO> listarSimulados(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo) {
+        return turmaSimuladoService.listar(usuario, codigo);
+    }
+
+    @PostMapping("/{codigo}/simulados")
+    public ResponseEntity<PublicacaoSimuladoDTO> publicarSimulado(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
+            @Valid @RequestBody PublicarSimuladoDTO dados) {
+        TurmaSimuladoService.ResultadoPublicacao resultado =
+                turmaSimuladoService.publicar(usuario, codigo, dados);
+        return ResponseEntity.status(resultado.nova() ? 201 : 200).body(resultado.publicacao());
+    }
+
+    @DeleteMapping("/{codigo}/simulados/{idPublicacao}")
+    public ResponseEntity<Void> despublicarSimulado(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
+            @PathVariable String idPublicacao) {
+        turmaSimuladoService.despublicar(usuario, codigo, idPublicacao);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{codigo}/membros/me")
