@@ -68,7 +68,8 @@ class TurmaSimuladoCorrecaoServiceTest {
                 questaoSimuRepository,
                 questaoRepository,
                 new QuestaoMapper(),
-                relatorioRepository);
+                relatorioRepository,
+                mock(Tinker.demo.repository.RelatorioSimuladoRepository.class));
         when(turmaService.buscarAtiva(CODIGO)).thenReturn(turma());
     }
 

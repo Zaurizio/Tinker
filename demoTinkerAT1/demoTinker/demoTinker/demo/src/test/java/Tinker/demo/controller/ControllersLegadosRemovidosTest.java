@@ -78,11 +78,18 @@ class ControllersLegadosRemovidosTest {
                 Tinker.demo.security.UsuarioAutenticado.class,
                 String.class,
                 String.class);
+        Method concluirPublicada = TurmaController.class.getDeclaredMethod(
+                "concluirSimuladoPublicado",
+                Tinker.demo.security.UsuarioAutenticado.class,
+                String.class,
+                String.class,
+                Tinker.demo.dto.turma.ConcluirSimuladoPublicadoDTO.class);
 
         assertTrue(adicionar.isAnnotationPresent(PostMapping.class));
         assertTrue(remover.isAnnotationPresent(DeleteMapping.class));
         assertTrue(corrigirPublicada.isAnnotationPresent(PostMapping.class));
         assertTrue(listarPublicada.isAnnotationPresent(GetMapping.class));
+        assertTrue(concluirPublicada.isAnnotationPresent(PostMapping.class));
     }
 
     private void assertClasseAusente(String nome) {

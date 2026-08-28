@@ -61,7 +61,8 @@ class TurmaSimuladoServiceTest {
                 questaoSimuRepository,
                 questaoRepository,
                 new QuestaoMapper(),
-                mock(RelatorioRepository.class));
+                mock(RelatorioRepository.class),
+                mock(Tinker.demo.repository.RelatorioSimuladoRepository.class));
         when(turmaService.buscarAtiva(CODIGO)).thenReturn(turma());
         when(simuladoRepository.findById(15)).thenReturn(Optional.of(simulado()));
         when(questaoSimuRepository.countByCodSimulado(15)).thenReturn(10L);

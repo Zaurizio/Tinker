@@ -5,8 +5,12 @@ import Tinker.demo.dto.turma.PublicarSimuladoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.dto.simulado.CorrecaoQuestaoSimuladoDTO;
 import Tinker.demo.dto.turma.CorrigirQuestaoPublicadaDTO;
+import Tinker.demo.dto.turma.ConcluirSimuladoPublicadoDTO;
+import Tinker.demo.dto.turma.ConclusaoSimuladoDTO;
+import Tinker.demo.dto.turma.RespostaConclusaoSimuladoDTO;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.ConflitoDominioException;
+import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.model.Turma;
@@ -15,9 +19,11 @@ import Tinker.demo.model.Questao;
 import Tinker.demo.model.QuestaoSimuid;
 import Tinker.demo.model.Relatorio;
 import Tinker.demo.model.Relatorioid;
+import Tinker.demo.model.RelatorioSimulado;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.repository.QuestaoRepository;
 import Tinker.demo.repository.RelatorioRepository;
+import Tinker.demo.repository.RelatorioSimuladoRepository;
 import Tinker.demo.repository.QuestaoSimuRepository;
 import Tinker.demo.repository.SimuladoRepository;
 import Tinker.demo.repository.TurmaSimuladoRepository;
@@ -30,6 +36,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -46,6 +56,7 @@ public class TurmaSimuladoService {
     private final QuestaoRepository questaoRepository;
     private final QuestaoMapper questaoMapper;
     private final RelatorioRepository relatorioRepository;
+    private final RelatorioSimuladoRepository relatorioSimuladoRepository;
 
     public TurmaSimuladoService(
             TurmaService turmaService,
@@ -54,7 +65,8 @@ public class TurmaSimuladoService {
             QuestaoSimuRepository questaoSimuRepository,
             QuestaoRepository questaoRepository,
             QuestaoMapper questaoMapper,
-            RelatorioRepository relatorioRepository) {
+            RelatorioRepository relatorioRepository,
+            RelatorioSimuladoRepository relatorioSimuladoRepository) {
         this.turmaService = turmaService;
         this.turmaSimuladoRepository = turmaSimuladoRepository;
         this.simuladoRepository = simuladoRepository;
@@ -62,6 +74,7 @@ public class TurmaSimuladoService {
         this.questaoRepository = questaoRepository;
         this.questaoMapper = questaoMapper;
         this.relatorioRepository = relatorioRepository;
+        this.relatorioSimuladoRepository = relatorioSimuladoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -144,6 +157,100 @@ public class TurmaSimuladoService {
         relatorioRepository.save(relatorio);
 
         return new CorrecaoQuestaoSimuladoDTO(questaoId, acertou);
+    }
+
+    @Transactional
+    public ConclusaoSimuladoDTO concluir(
+            UsuarioAutenticado usuario,
+            String codigo,
+            String idPublicacao,
+            ConcluirSimuladoPublicadoDTO dados) {
+        exigirAluno(usuario);
+        turmaService.validarCodigo(codigo);
+        Turma turma = turmaService.buscarAtiva(codigo);
+        turmaService.exigirAcesso(usuario, turma);
+
+        TurmaSimulado publicacao = turmaSimuladoRepository
+                .findByIdPublicacaoAndCodTurmaAndAtivo(idPublicacao, codigo, ATIVO)
+                .orElseThrow(this::publicacaoNaoEncontrada);
+        Simulado simulado = simuladoRepository.findById(publicacao.getCodSimulado())
+                .orElseThrow(this::publicacaoNaoEncontrada);
+
+        List<Integer> idsAssociadosOrdenados = questaoSimuRepository
+                .findCodQuestoesByCodSimulado(simulado.getCodSimulado());
+        List<Questao> questoesAtivas = idsAssociadosOrdenados.isEmpty()
+                ? List.of()
+                : questaoRepository.findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(
+                        idsAssociadosOrdenados,
+                        ATIVO);
+        if (questoesAtivas.isEmpty()) {
+            throw new DadosInvalidosException(
+                    "SIMULADO_SEM_QUESTOES_ATIVAS",
+                    "O simulado nao possui questoes ativas para concluir.");
+        }
+        if (dados == null || dados.getRespostas() == null || dados.getRespostas().isEmpty()) {
+            throw new DadosInvalidosException(
+                    "RESPOSTAS_OBRIGATORIAS",
+                    "Informe todas as respostas do simulado.");
+        }
+
+        Map<Integer, RespostaConclusaoSimuladoDTO> respostasPorQuestao = new LinkedHashMap<>();
+        for (RespostaConclusaoSimuladoDTO resposta : dados.getRespostas()) {
+            if (resposta == null || resposta.getQuestaoId() == null) {
+                throw new DadosInvalidosException(
+                        "QUESTAO_OBRIGATORIA",
+                        "Todas as respostas devem informar a questao.");
+            }
+            if (respostasPorQuestao.putIfAbsent(resposta.getQuestaoId(), resposta) != null) {
+                throw new DadosInvalidosException(
+                        "QUESTAO_REPETIDA",
+                        "Cada questao deve possuir exatamente uma resposta.");
+            }
+        }
+
+        Set<Integer> idsAssociados = new LinkedHashSet<>(idsAssociadosOrdenados);
+        if (!idsAssociados.containsAll(respostasPorQuestao.keySet())) {
+            throw questaoNaoEncontrada();
+        }
+        Map<Integer, Questao> questoesPorId = new LinkedHashMap<>();
+        questoesAtivas.forEach(questao -> questoesPorId.put(questao.getCodQuestao(), questao));
+        Set<Integer> idsEsperados = questoesPorId.keySet();
+        if (!respostasPorQuestao.keySet().containsAll(idsEsperados)) {
+            throw new DadosInvalidosException(
+                    "RESPOSTAS_INCOMPLETAS",
+                    "Todas as questoes ativas devem ser respondidas.");
+        }
+        if (!idsEsperados.containsAll(respostasPorQuestao.keySet())) {
+            throw new DadosInvalidosException(
+                    "QUESTAO_EXTRA",
+                    "A conclusao contem uma questao inexistente ou inativa.");
+        }
+
+        int acertos = 0;
+        for (Map.Entry<Integer, Questao> entrada : questoesPorId.entrySet()) {
+            RespostaConclusaoSimuladoDTO resposta = respostasPorQuestao.get(entrada.getKey());
+            if (CorretorQuestao.corrigir(entrada.getValue(), resposta.getAlternativa())) {
+                acertos++;
+            }
+        }
+        int quantidadeQuestoes = questoesPorId.size();
+        int erros = quantidadeQuestoes - acertos;
+
+        RelatorioSimulado resultado = relatorioSimuladoRepository
+                .findByCodSimuladoAndEmailAluno(simulado.getCodSimulado(), usuario.email())
+                .orElseGet(RelatorioSimulado::new);
+        resultado.setCodSimulado(simulado.getCodSimulado());
+        resultado.setEmailAluno(usuario.email());
+        resultado.setAcertos(acertos);
+        resultado.setErros(erros);
+        relatorioSimuladoRepository.save(resultado);
+
+        return new ConclusaoSimuladoDTO(
+                simulado.getCodSimulado(),
+                quantidadeQuestoes,
+                acertos,
+                erros,
+                true);
     }
 
     @Transactional
