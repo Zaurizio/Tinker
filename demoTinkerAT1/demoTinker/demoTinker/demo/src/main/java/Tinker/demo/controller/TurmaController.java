@@ -11,6 +11,7 @@ import Tinker.demo.dto.simulado.CorrecaoQuestaoSimuladoDTO;
 import Tinker.demo.dto.turma.CorrigirQuestaoPublicadaDTO;
 import Tinker.demo.dto.turma.ConcluirSimuladoPublicadoDTO;
 import Tinker.demo.dto.turma.ConclusaoSimuladoDTO;
+import Tinker.demo.dto.turma.ResultadoIndividualSimuladoDTO;
 import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.TurmaService;
 import Tinker.demo.service.TurmaSimuladoService;
@@ -123,6 +124,14 @@ public class TurmaController {
             @PathVariable String idPublicacao,
             @Valid @RequestBody ConcluirSimuladoPublicadoDTO dados) {
         return turmaSimuladoService.concluir(usuario, codigo, idPublicacao, dados);
+    }
+
+    @GetMapping("/{codigo}/simulados/{idPublicacao}/resultado")
+    public ResultadoIndividualSimuladoDTO consultarResultadoSimuladoPublicado(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
+            @PathVariable String idPublicacao) {
+        return turmaSimuladoService.consultarResultado(usuario, codigo, idPublicacao);
     }
 
     @DeleteMapping("/{codigo}/simulados/{idPublicacao}")

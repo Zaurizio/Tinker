@@ -8,6 +8,7 @@ import Tinker.demo.dto.turma.CorrigirQuestaoPublicadaDTO;
 import Tinker.demo.dto.turma.ConcluirSimuladoPublicadoDTO;
 import Tinker.demo.dto.turma.ConclusaoSimuladoDTO;
 import Tinker.demo.dto.turma.RespostaConclusaoSimuladoDTO;
+import Tinker.demo.dto.turma.ResultadoIndividualSimuladoDTO;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.ConflitoDominioException;
 import Tinker.demo.exception.DadosInvalidosException;
@@ -251,6 +252,67 @@ public class TurmaSimuladoService {
                 acertos,
                 erros,
                 true);
+    }
+
+    @Transactional(readOnly = true)
+    public ResultadoIndividualSimuladoDTO consultarResultado(
+            UsuarioAutenticado usuario,
+            String codigo,
+            String idPublicacao) {
+        exigirAluno(usuario);
+        turmaService.validarCodigo(codigo);
+        Turma turma = turmaService.buscarAtiva(codigo);
+        turmaService.exigirAcesso(usuario, turma);
+
+        TurmaSimulado publicacao = turmaSimuladoRepository
+                .findByIdPublicacaoAndCodTurmaAndAtivo(idPublicacao, codigo, ATIVO)
+                .orElseThrow(this::publicacaoNaoEncontrada);
+        Simulado simulado = simuladoRepository.findById(publicacao.getCodSimulado())
+                .orElseThrow(this::publicacaoNaoEncontrada);
+
+        RelatorioSimulado resultado = relatorioSimuladoRepository
+                .findByCodSimuladoAndEmailAluno(simulado.getCodSimulado(), usuario.email())
+                .orElse(null);
+        if (resultadoValido(resultado)) {
+            return resultadoCompleto(simulado.getCodSimulado(), resultado);
+        }
+
+        List<Integer> idsAssociados = questaoSimuRepository
+                .findCodQuestoesByCodSimulado(simulado.getCodSimulado());
+        int quantidadeQuestoesAtual = idsAssociados.isEmpty()
+                ? 0
+                : questaoRepository.findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(
+                        idsAssociados,
+                        ATIVO).size();
+        return new ResultadoIndividualSimuladoDTO(
+                simulado.getCodSimulado(),
+                quantidadeQuestoesAtual,
+                false,
+                null,
+                null);
+    }
+
+    private ResultadoIndividualSimuladoDTO resultadoCompleto(
+            Integer simuladoId,
+            RelatorioSimulado resultado) {
+        return new ResultadoIndividualSimuladoDTO(
+                simuladoId,
+                resultado.getAcertos() + resultado.getErros(),
+                true,
+                resultado.getAcertos(),
+                resultado.getErros());
+    }
+
+    private boolean resultadoValido(RelatorioSimulado resultado) {
+        if (resultado == null
+                || resultado.getAcertos() == null
+                || resultado.getErros() == null
+                || resultado.getAcertos() < 0
+                || resultado.getErros() < 0) {
+            return false;
+        }
+        long quantidadeRealizada = (long) resultado.getAcertos() + resultado.getErros();
+        return quantidadeRealizada <= Integer.MAX_VALUE;
     }
 
     @Transactional
