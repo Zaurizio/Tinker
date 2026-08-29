@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import WelcomeMessage from "../components/home/WelcomeMessage";
 import CardsContainer from "../components/home/CardsContainer";
 import styles from "./Home.module.css";
 import { obterSessao } from "../services/autenticacaoService";
-import { listarEventosDoUsuario } from "../services/calendarioService";
+import { listarEventosDoCalendario } from "../services/calendarioApiService";
+import { obterResumoDesempenho } from "../services/desempenhoService";
 import { abreviarParteData, interpretarDataLocal } from "../utils/dataEvento";
 
 import { TbCalendarEvent, TbFileText } from "react-icons/tb";
@@ -55,6 +56,11 @@ function eEventoPassado(evento, agora) {
 
 const Home = () => {
   const [eventos, setEventos] = useState([]);
+  const [carregandoEventos, setCarregandoEventos] = useState(true);
+  const [erroEventos, setErroEventos] = useState("");
+  const [resumoDesempenho, setResumoDesempenho] = useState(null);
+  const [carregandoDesempenho, setCarregandoDesempenho] = useState(true);
+  const [erroDesempenho, setErroDesempenho] = useState("");
   const userName = obterSessao()?.nome?.trim() ?? "";
   const navigate = useNavigate();
 
@@ -62,15 +68,47 @@ const Home = () => {
     let componenteMontado = true;
 
     async function carregarEventos() {
+      setCarregandoEventos(true);
+      setErroEventos("");
+
       try {
-        const eventosCarregados = await listarEventosDoUsuario();
+        const eventosCarregados = await listarEventosDoCalendario();
         if (componenteMontado) setEventos(eventosCarregados);
-      } catch {
-        if (componenteMontado) setEventos([]);
+      } catch (erroCarregamento) {
+        if (componenteMontado) {
+          setErroEventos(
+            erroCarregamento instanceof Error
+              ? `${erroCarregamento.message}${erroCarregamento.codigo ? ` (${erroCarregamento.codigo})` : ""}`
+              : "Não foi possível carregar os eventos.",
+          );
+        }
+      } finally {
+        if (componenteMontado) setCarregandoEventos(false);
+      }
+    }
+
+    async function carregarDesempenho() {
+      setCarregandoDesempenho(true);
+      setErroDesempenho("");
+
+      try {
+        const resumo = await obterResumoDesempenho();
+        if (componenteMontado) setResumoDesempenho(resumo);
+      } catch (erroCarregamento) {
+        if (componenteMontado) {
+          setErroDesempenho(
+            erroCarregamento instanceof Error
+              ? `${erroCarregamento.message}${erroCarregamento.codigo ? ` (${erroCarregamento.codigo})` : ""}`
+              : "Não foi possível carregar o desempenho.",
+          );
+        }
+      } finally {
+        if (componenteMontado) setCarregandoDesempenho(false);
       }
     }
 
     carregarEventos();
+    carregarDesempenho();
     return () => {
       componenteMontado = false;
     };
@@ -135,7 +173,13 @@ const Home = () => {
             <section className={styles.cardHoje}>
               <h2 className={styles.cardHojeTitulo}>Essa semana</h2>
 
-              {eventosDaSemana.length === 0 ? (
+              {carregandoEventos ? (
+                <p className={styles.cardHojeEmpty}>Carregando eventos...</p>
+              ) : erroEventos ? (
+                <p className={styles.cardHojeEmpty} role="alert">
+                  {erroEventos}
+                </p>
+              ) : eventosDaSemana.length === 0 ? (
                 <p className={styles.cardHojeEmpty}>
                   Nenhum evento marcado essa semana.
                 </p>
@@ -177,7 +221,18 @@ const Home = () => {
                 onClick={() => navigate("/desempenho")}
               >
                 <div className={styles.cardResumoTaxa}>
-                  Taxa de acertos: <span>67%</span>
+                  {carregandoDesempenho ? (
+                    "Carregando desempenho..."
+                  ) : erroDesempenho ? (
+                    <span role="alert">{erroDesempenho}</span>
+                  ) : resumoDesempenho?.possuiRespostas ? (
+                    <>
+                      Taxa de acertos:{" "}
+                      <span>{resumoDesempenho.taxaAcertosGeral}%</span>
+                    </>
+                  ) : (
+                    "Nenhuma questão respondida"
+                  )}
                 </div>
                 <div className={styles.cardResumoTexto}>
                   Clique para ver desempenho
