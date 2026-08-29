@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Routes, Route } from "react-router";
 // Layouts
 import LayoutPublico from "./components/layout/LayoutPublico";
 import LayoutPrivado from "./components/layout/LayoutPrivado";
+import RotaProtegida from "./components/rotas/RotaProtegida";
 
 // Páginas públicas
 import Introducao from "./pages/publico/Introducao";
@@ -41,23 +42,25 @@ function App() {
           */}
         </Route>
 
-        <Route element={<LayoutPrivado />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/questoes" element={<Questoes />} />
-          <Route path="/simulados" element={<Simulados />} />
-          <Route path="/simulados/:simuladoId" element={<DetalhesSimulado />} />
-          <Route path="/desempenho" element={<Desempenho />} />
-          
-          <Route path="/calendario" element={<Calendario />} />
-          <Route path="/turma" element={<Turma />} />
-          <Route
-            path="/turma/:turmaId"
-            element={<Navigate to="simulados" replace />}
-          />
-          <Route path="/turma/:turmaId/simulados" element={<DetalhesTurma />} />
-          <Route path="/turma/:turmaId/eventos" element={<DetalhesTurma />} />
-          <Route path="/turma/:turmaId/membros" element={<DetalhesTurma />} />
-          <Route path="/suporte" element={<Suporte />} />
+        <Route element={<RotaProtegida />}>
+          <Route element={<LayoutPrivado />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/questoes" element={<Questoes />} />
+            <Route path="/simulados" element={<Simulados />} />
+            <Route path="/simulados/:simuladoId" element={<DetalhesSimulado />} />
+            <Route path="/desempenho" element={<Desempenho />} />
+
+            <Route path="/calendario" element={<Calendario />} />
+            <Route path="/turma" element={<Turma />} />
+            <Route
+              path="/turma/:turmaId"
+              element={<Navigate to="simulados" replace />}
+            />
+            <Route path="/turma/:turmaId/simulados" element={<DetalhesTurma />} />
+            <Route path="/turma/:turmaId/eventos" element={<DetalhesTurma />} />
+            <Route path="/turma/:turmaId/membros" element={<DetalhesTurma />} />
+            <Route path="/suporte" element={<Suporte />} />
+          </Route>
         </Route>
 
       </Routes>
