@@ -161,9 +161,11 @@ export default function CardQuestao({
 
       setResultadoResposta(resultado);
       setQuestaoRespondida(true);
-    } catch {
+    } catch (erro) {
       setErroResposta(
-        "Não foi possível enviar a resposta. Tente novamente.",
+        erro instanceof Error
+          ? erro.message
+          : "Não foi possível enviar a resposta. Tente novamente.",
       );
     } finally {
       setEnviandoResposta(false);
@@ -295,11 +297,12 @@ export default function CardQuestao({
       <div className={styles.alternativas}>
         {questao.alternativas.map((alternativa) => {
           const eliminada = alternativasEliminadas.has(alternativa.id);
+          const alternativaRespondida =
+            resultadoResposta?.alternativaSelecionadaId === alternativa.id;
           const alternativaCorreta =
-            resultadoResposta?.alternativaCorretaId === alternativa.id;
+            alternativaRespondida && resultadoResposta?.acertou;
           const alternativaIncorretaSelecionada =
-            resultadoResposta?.alternativaSelecionadaId === alternativa.id &&
-            !resultadoResposta.correta;
+            alternativaRespondida && resultadoResposta?.acertou === false;
 
           return (
             <div
@@ -365,6 +368,20 @@ export default function CardQuestao({
 
       {erroResposta && (
         <p className={styles.mensagemErro}>{erroResposta}</p>
+      )}
+
+      {resultadoResposta && (
+        <p
+          className={
+            resultadoResposta.acertou
+              ? styles.mensagemSucesso
+              : styles.mensagemErro
+          }
+        >
+          {resultadoResposta.acertou
+            ? "Resposta correta!"
+            : "Resposta incorreta."}
+        </p>
       )}
     </article>
   );

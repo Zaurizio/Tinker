@@ -51,6 +51,13 @@
   font-size: 0.9rem;
 }
 
+.mensagemSucesso {
+  margin: 10px 0 0;
+  color: #2e7d32;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .painelSimulados .mensagemErro {
   margin-top: 12px;
 }

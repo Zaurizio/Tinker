@@ -126,6 +126,25 @@
   justify-content: flex-end;
 }
 
+.mensagemConta,
+.mensagemErro,
+.mensagemSucesso {
+  margin: 16px 0 0;
+  font-size: 0.95rem;
+}
+
+.mensagemConta {
+  color: var(--cor-texto-secundario);
+}
+
+.mensagemErro {
+  color: var(--cor-alerta);
+}
+
+.mensagemSucesso {
+  color: #2e7d32;
+}
+
 .botaoPrimario,
 .botaoSecundario,
 .botaoContorno {
@@ -151,6 +170,11 @@
 
 .botaoPrimario:hover {
   background: var(--cor-botao-primario-hover);
+}
+
+.botaoPrimario:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .botaoSecundario {

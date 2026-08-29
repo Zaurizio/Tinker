@@ -27,11 +27,8 @@ const conteudosPorId = criarMapaPorId(conteudosCatalogo);
 const instituicoesPorId = criarMapaPorId(instituicoesCatalogo);
 
 function prepararQuestaoParaExibicao(questao) {
-  const { respostaCorretaId, ...questaoSemGabarito } = questao;
-  void respostaCorretaId;
-
   return {
-    ...questaoSemGabarito,
+    ...questao,
     alternativas: questao.alternativas.map((alternativa) => ({ ...alternativa })),
     simuladosIds: [...(questao.simuladosIds ?? [])],
     disciplina: disciplinasPorId.get(questao.disciplinaId),
@@ -164,16 +161,15 @@ export async function buscarQuestoesPorIds(ids) {
 }
 
 export async function responderQuestao(questaoId, alternativaSelecionadaId) {
-  const questao = questoes.find((item) => item.id === questaoId);
-
-  if (!questao) {
-    throw new Error("Questão não encontrada.");
-  }
+  const resposta = await apiService.post(
+    `/api/questoes/${questaoId}/correcoes`,
+    { alternativa: alternativaSelecionadaId },
+    { autenticada: true }
+  );
 
   return {
-    questaoId,
+    questaoId: resposta.questaoId,
     alternativaSelecionadaId,
-    alternativaCorretaId: questao.respostaCorretaId,
-    correta: alternativaSelecionadaId === questao.respostaCorretaId,
+    acertou: resposta.acertou,
   };
 }
