@@ -1,11 +1,18 @@
+import { Link } from "react-router";
 import estiloCard from "./CardSimuladoTurma.module.css";
 
-function CardSimuladoTurma({ simulado, usuarioAdministrador, onRemover }) {
+function CardSimuladoTurma({
+  codigo,
+  simulado,
+  usuarioAdministrador,
+  usuarioAluno,
+  onRemover,
+}) {
   const textoQuestoes = `${simulado.quantidadeQuestoes} ${
     simulado.quantidadeQuestoes === 1 ? "questão" : "questões"
   }`;
 
-  return (
+  const conteudo = (
     <article className={estiloCard.card}>
       <div className={estiloCard.conteudo}>
         <h3 className={estiloCard.titulo}>{simulado.titulo}</h3>
@@ -27,6 +34,19 @@ function CardSimuladoTurma({ simulado, usuarioAdministrador, onRemover }) {
         </div>
       )}
     </article>
+  );
+
+  if (!usuarioAluno) return conteudo;
+
+  return (
+    <Link
+      to={`/turma/${codigo}/simulados/${encodeURIComponent(simulado.idPublicacao)}`}
+      state={{ publicacao: simulado }}
+      className={estiloCard.linkCard}
+      aria-label={`Abrir simulado ${simulado.titulo}`}
+    >
+      {conteudo}
+    </Link>
   );
 }
 

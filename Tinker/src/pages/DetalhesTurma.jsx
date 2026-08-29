@@ -186,6 +186,7 @@ function DetalhesTurma() {
             <AbaSimuladosTurma
               codigo={turma.codigo}
               usuarioAdministrador={eProfessor}
+              usuarioAluno={eAluno}
             />
           ) : abaAtual === "membros" ? (
             <AbaMembrosTurma

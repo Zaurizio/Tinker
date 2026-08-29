@@ -22,7 +22,7 @@ function formatarErroApi(erro, mensagemPadrao) {
   return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
 }
 
-function AbaSimuladosTurma({ codigo, usuarioAdministrador }) {
+function AbaSimuladosTurma({ codigo, usuarioAdministrador, usuarioAluno }) {
   const [busca, setBusca] = useState("");
   const [simulados, setSimulados] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -151,8 +151,10 @@ function AbaSimuladosTurma({ codigo, usuarioAdministrador }) {
     return simuladosFiltrados.map((simulado) => (
       <CardSimuladoTurma
         key={simulado.idPublicacao}
+        codigo={codigo}
         simulado={simulado}
         usuarioAdministrador={usuarioAdministrador}
+        usuarioAluno={usuarioAluno}
         onRemover={() => {
           setErroRemocao("");
           setPublicacaoParaRemover(simulado);

@@ -21,6 +21,7 @@ import Desempenho from "./pages/Desempenho";
 import Calendario from "./pages/Calendario";
 import Turma from "./pages/Turma";
 import DetalhesTurma from "./pages/DetalhesTurma";
+import ExecutarSimuladoTurma from "./pages/ExecutarSimuladoTurma";
 import Suporte from "./pages/Suporte";
 
 function App() {
@@ -57,6 +58,10 @@ function App() {
               element={<Navigate to="simulados" replace />}
             />
             <Route path="/turma/:codigo/simulados" element={<DetalhesTurma />} />
+            <Route
+              path="/turma/:codigo/simulados/:idPublicacao"
+              element={<ExecutarSimuladoTurma />}
+            />
             <Route
               path="/turma/:codigo/eventos"
               element={<Navigate to="../simulados" relative="path" replace />}

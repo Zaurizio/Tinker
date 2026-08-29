@@ -1,3 +1,19 @@
+.linkCard {
+  color: inherit;
+  text-decoration: none;
+}
+
+.linkCard:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+.linkCard:hover .card {
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+}
+
 .card {
   min-height: 120px;
   padding: 16px;

@@ -47,6 +47,27 @@ function prepararPublicacaoSimulado(publicacao) {
   };
 }
 
+function validarIdPublicacao(idPublicacao) {
+  if (typeof idPublicacao !== "string" || !idPublicacao.trim()) {
+    const erro = new Error("A publicação não foi encontrada.");
+    erro.codigo = "PUBLICACAO_NAO_ENCONTRADA";
+    throw erro;
+  }
+
+  return encodeURIComponent(idPublicacao);
+}
+
+function prepararQuestaoPublicada(questao) {
+  const { vestibular, alternativas = [], ...dadosQuestao } = questao;
+
+  return {
+    ...dadosQuestao,
+    instituicao: vestibular,
+    alternativas: alternativas.map((alternativa) => ({ ...alternativa })),
+    simuladosIds: [],
+  };
+}
+
 export async function listarTurmasDaConta() {
   const turmas = await apiService.get("/api/turmas", {
     autenticada: true,
@@ -149,6 +170,64 @@ export async function removerSimuladoPublicadoDaTurma(
 ) {
   await apiService.delete(
     `/api/turmas/${validarCodigo(codigo)}/simulados/${encodeURIComponent(String(idPublicacao))}`,
+    { autenticada: true }
+  );
+}
+
+export async function listarQuestoesDoSimuladoPublicado(
+  codigo,
+  idPublicacao
+) {
+  const questoes = await apiService.get(
+    `/api/turmas/${validarCodigo(codigo)}/simulados/${validarIdPublicacao(idPublicacao)}/questoes`,
+    { autenticada: true }
+  );
+
+  return questoes.map(prepararQuestaoPublicada);
+}
+
+export async function corrigirQuestaoDoSimuladoPublicado(
+  codigo,
+  idPublicacao,
+  questaoId,
+  alternativa
+) {
+  const resposta = await apiService.post(
+    `/api/turmas/${validarCodigo(codigo)}/simulados/${validarIdPublicacao(idPublicacao)}/questoes/${questaoId}/correcoes`,
+    { alternativa },
+    { autenticada: true }
+  );
+
+  return {
+    questaoId: resposta.questaoId,
+    alternativaSelecionadaId: alternativa,
+    acertou: resposta.acertou,
+  };
+}
+
+export async function concluirSimuladoPublicado(
+  codigo,
+  idPublicacao,
+  respostas
+) {
+  return apiService.post(
+    `/api/turmas/${validarCodigo(codigo)}/simulados/${validarIdPublicacao(idPublicacao)}/conclusoes`,
+    {
+      respostas: respostas.map(({ questaoId, alternativa }) => ({
+        questaoId,
+        alternativa,
+      })),
+    },
+    { autenticada: true }
+  );
+}
+
+export async function obterResultadoDoSimuladoPublicado(
+  codigo,
+  idPublicacao
+) {
+  return apiService.get(
+    `/api/turmas/${validarCodigo(codigo)}/simulados/${validarIdPublicacao(idPublicacao)}/resultado`,
     { autenticada: true }
   );
 }

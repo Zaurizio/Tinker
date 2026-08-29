@@ -1,0 +1,157 @@
+.pagina {
+  flex: 1;
+  min-height: 100vh;
+  padding: 36px 32px;
+  box-sizing: border-box;
+  background: var(--cor-fundo-pagina);
+}
+
+.topo {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto 28px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 12px;
+}
+
+.botaoVoltar {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.botaoVoltar:hover {
+  background: var(--cor-fundo-hover);
+}
+
+.titulo {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto-principal);
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.conteudo {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.listaQuestoes {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.estado,
+.erro {
+  margin: 0;
+  padding: 24px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-secundario);
+  text-align: center;
+}
+
+.erro,
+.erroConclusao {
+  color: var(--cor-alerta);
+}
+
+.erroConclusao {
+  margin: 18px 0 0;
+  text-align: center;
+}
+
+.acoes {
+  margin-top: 22px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.acoes button,
+.resultado button {
+  min-height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 12px;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.acoes button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.resultado {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 16px;
+  background: var(--cor-fundo-card);
+  box-shadow: 0 4px 14px var(--cor-sombra-card);
+}
+
+.resultado h2 {
+  margin: 0;
+  color: var(--cor-texto-principal);
+}
+
+.metricas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.metricas span {
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--cor-fundo-input-suave);
+  color: var(--cor-texto-secundario);
+}
+
+@media (max-width: 600px) {
+  .pagina {
+    padding: 24px 16px;
+  }
+
+  .topo {
+    grid-template-columns: 42px minmax(0, 1fr) 42px;
+    gap: 8px;
+  }
+
+  .botaoVoltar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .titulo {
+    font-size: 1.5rem;
+  }
+
+  .acoes button,
+  .resultado button {
+    width: 100%;
+  }
+}
