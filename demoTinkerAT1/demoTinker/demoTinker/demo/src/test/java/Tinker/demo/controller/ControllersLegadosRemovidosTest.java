@@ -23,6 +23,7 @@ class ControllersLegadosRemovidosTest {
             AlunoController.class,
             ConteudoQuestController.class,
             CronogramaController.class,
+            DesempenhoController.class,
             HorarioMultController.class,
             LoginController.class,
             PerfilController.class,
