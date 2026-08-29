@@ -106,6 +106,13 @@ const CardSimulado = ({
                     >
                         Renomear
                     </button>
+                    <button
+                        type="button"
+                        className={styles.botaoExcluir}
+                        onClick={() => onExcluir(simulado)}
+                    >
+                        Excluir
+                    </button>
                 </div>
             </article>
         );

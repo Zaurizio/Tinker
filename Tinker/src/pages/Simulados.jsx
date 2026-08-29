@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import BarraBusca from "../components/ui/BarraBusca";
 import CardSimulado from "../components/simulados/CardSimulado";
 import ModalCriarSimulado from "../components/simulados/ModalCriarSimulado";
+import ModalExcluirSimulado from "../components/simulados/ModalExcluirSimulado";
 import ModalRenomearSimulado from "../components/simulados/ModalRenomearSimulado";
 import { obterSessao } from "../services/autenticacaoService";
 import {
   criarSimuladoVazio,
+  excluirSimuladoDoProfessor,
   listarSimuladosDoProfessor,
   renomearSimuladoDoProfessor,
 } from "../services/simuladosApiService";
@@ -25,6 +27,9 @@ function Simulados() {
   const [simuladoParaRenomear, setSimuladoParaRenomear] = useState(null);
   const [renomeando, setRenomeando] = useState(false);
   const [erroRenomeacao, setErroRenomeacao] = useState("");
+  const [simuladoParaExcluir, setSimuladoParaExcluir] = useState(null);
+  const [excluindo, setExcluindo] = useState(false);
+  const [erroExclusao, setErroExclusao] = useState("");
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
   const eProfessor = tipoUsuario === "PROFESSOR";
 
@@ -124,6 +129,31 @@ function Simulados() {
     }
   }
 
+  async function handleExcluir() {
+    if (excluindo || !simuladoParaExcluir) return;
+
+    setExcluindo(true);
+    setErroExclusao("");
+
+    try {
+      await excluirSimuladoDoProfessor(simuladoParaExcluir.id);
+      setSimulados((simuladosAtuais) =>
+        simuladosAtuais.filter(
+          (simulado) => simulado.id !== simuladoParaExcluir.id
+        )
+      );
+      setSimuladoParaExcluir(null);
+    } catch (erroExcluir) {
+      setErroExclusao(
+        erroExcluir instanceof Error
+          ? erroExcluir.message
+          : "Não foi possível excluir o simulado. Tente novamente."
+      );
+    } finally {
+      setExcluindo(false);
+    }
+  }
+
   function renderizarLista() {
     if (carregando) {
       return <div className={estiloSimulados.estadoVazio}>Carregando simulados...</div>;
@@ -146,6 +176,10 @@ function Simulados() {
         onRenomear={(simuladoSelecionado) => {
           setErroRenomeacao("");
           setSimuladoParaRenomear(simuladoSelecionado);
+        }}
+        onExcluir={(simuladoSelecionado) => {
+          setErroExclusao("");
+          setSimuladoParaExcluir(simuladoSelecionado);
         }}
       />
     ));
@@ -204,6 +238,17 @@ function Simulados() {
           onConfirmar={handleRenomear}
           renomeando={renomeando}
           erro={erroRenomeacao}
+        />
+      )}
+
+      {eProfessor && simuladoParaExcluir && (
+        <ModalExcluirSimulado
+          onFechar={() => {
+            if (!excluindo) setSimuladoParaExcluir(null);
+          }}
+          onConfirmar={handleExcluir}
+          excluindo={excluindo}
+          erro={erroExclusao}
         />
       )}
     </div>

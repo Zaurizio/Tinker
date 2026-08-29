@@ -81,10 +81,12 @@
 .acoesSomenteLeitura {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
     margin-top: 14px;
 }
 
-.botaoRenomear {
+.botaoRenomear,
+.botaoExcluir {
     min-height: 36px;
     padding: 0 14px;
     border: 1px solid var(--cor-borda-controle);
@@ -99,4 +101,8 @@
 .botaoRenomear:hover {
     background: var(--cor-fundo-hover);
     border-color: var(--cor-borda-hover);
+}
+
+.botaoExcluir {
+    color: var(--cor-alerta);
 }

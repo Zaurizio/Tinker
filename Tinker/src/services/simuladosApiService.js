@@ -37,3 +37,7 @@ export async function renomearSimuladoDoProfessor(id, { titulo }) {
 
   return prepararSimulado(simulado);
 }
+
+export async function excluirSimuladoDoProfessor(id) {
+  await apiService.delete(`/api/simulados/${id}`, { autenticada: true });
+}
