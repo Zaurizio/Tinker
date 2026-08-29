@@ -21,10 +21,9 @@ class ControllersLegadosRemovidosTest {
     private static final List<Class<?>> CONTROLLERS_RESTANTES = List.of(
             AdmController.class,
             AlunoController.class,
+            CalendarioController.class,
             ConteudoQuestController.class,
-            CronogramaController.class,
             DesempenhoController.class,
-            HorarioMultController.class,
             LoginController.class,
             PerfilController.class,
             ProfessorController.class,
@@ -36,6 +35,8 @@ class ControllersLegadosRemovidosTest {
     void controllersLegadosNaoExistemMais() {
         assertClasseAusente("Tinker.demo.controller.RelatorioController");
         assertClasseAusente("Tinker.demo.controller.QuestaoSimuController");
+        assertClasseAusente("Tinker.demo.controller.CronogramaController");
+        assertClasseAusente("Tinker.demo.controller.HorarioMultController");
     }
 
     @Test
