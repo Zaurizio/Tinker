@@ -5,7 +5,7 @@ import estiloCard from "./CardTurma.module.css";
 function CardTurma({ turma }) {
   return (
     <Link
-      to={`/turma/${turma.id}/simulados`}
+      to={`/turma/${turma.codigo}/simulados`}
       className={estiloCard.card}
       aria-label={`Abrir turma ${turma.nome}`}
     >

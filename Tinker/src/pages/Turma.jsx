@@ -4,11 +4,17 @@ import CardTurma from "../components/turma/CardTurma";
 import ModalEntrarTurma from "../components/turma/ModalEntrarTurma";
 import ModalCriarTurma from "../components/turma/ModalCriarTurma";
 import {
-  criarTurma,
-  entrarEmTurma,
-  listarTurmasDoUsuario,
-} from "../services/turmaService";
+  criarTurmaDaConta,
+  entrarEmTurmaDaConta,
+  listarTurmasDaConta,
+} from "../services/turmasApiService";
+import { obterSessao } from "../services/autenticacaoService";
 import estiloTurma from "./Turma.module.css";
+
+function formatarErroApi(erro, mensagemPadrao) {
+  if (!(erro instanceof Error)) return mensagemPadrao;
+  return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
+}
 
 function Turma() {
   const [busca, setBusca] = useState("");
@@ -17,18 +23,29 @@ function Turma() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const componenteMontadoRef = useRef(true);
+  const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
+  const eProfessor = tipoUsuario === "PROFESSOR";
+  const eAluno = tipoUsuario === "ALUNO";
 
   useEffect(() => {
     let carregamentoAtivo = true;
     componenteMontadoRef.current = true;
 
     async function carregarTurmas() {
+      setCarregando(true);
+      setErro("");
+
       try {
-        const turmasCarregadas = await listarTurmasDoUsuario();
+        const turmasCarregadas = await listarTurmasDaConta();
         if (carregamentoAtivo) setTurmas(turmasCarregadas);
-      } catch {
+      } catch (erroCarregamento) {
         if (carregamentoAtivo) {
-          setErro("Não foi possível carregar as turmas.");
+          setErro(
+            formatarErroApi(
+              erroCarregamento,
+              "Não foi possível carregar as turmas.",
+            ),
+          );
         }
       } finally {
         if (carregamentoAtivo) setCarregando(false);
@@ -52,17 +69,17 @@ function Turma() {
   }, [busca, turmas]);
 
   async function handleCriarTurma(dadosTurma) {
-    const novaTurma = await criarTurma(dadosTurma);
+    const novaTurma = await criarTurmaDaConta(dadosTurma);
     if (!componenteMontadoRef.current) return novaTurma;
     setTurmas((turmasAtuais) => [...turmasAtuais, novaTurma]);
     return novaTurma;
   }
 
   async function handleEntrarEmTurma(codigo) {
-    const turmaIngressada = await entrarEmTurma(codigo);
+    const turmaIngressada = await entrarEmTurmaDaConta(codigo);
     if (!componenteMontadoRef.current) return turmaIngressada;
     setTurmas((turmasAtuais) =>
-      turmasAtuais.some((turma) => turma.id === turmaIngressada.id)
+      turmasAtuais.some((turma) => turma.codigo === turmaIngressada.codigo)
         ? turmasAtuais
         : [...turmasAtuais, turmaIngressada]
     );
@@ -80,14 +97,26 @@ function Turma() {
           onChange={setBusca}
         />
 
-        <div className={estiloTurma.acoes}>
-          <button className={estiloTurma.botaoSecundario} onClick={() => setModalAberto("entrar")}>
-            Entrar em turma
-          </button>
-          <button className={estiloTurma.botaoPrimario} onClick={() => setModalAberto("criar")}>
-            Criar turma
-          </button>
-        </div>
+        {(eProfessor || eAluno) && (
+          <div className={estiloTurma.acoes}>
+            {eAluno && (
+              <button
+                className={estiloTurma.botaoSecundario}
+                onClick={() => setModalAberto("entrar")}
+              >
+                Entrar em turma
+              </button>
+            )}
+            {eProfessor && (
+              <button
+                className={estiloTurma.botaoPrimario}
+                onClick={() => setModalAberto("criar")}
+              >
+                Criar turma
+              </button>
+            )}
+          </div>
+        )}
 
         <div className={estiloTurma.listaTurmas}>
           {carregando ? (
@@ -100,7 +129,7 @@ function Turma() {
             </div>
           ) : turmasFiltradas.length > 0 ? (
             turmasFiltradas.map((turma) => (
-              <CardTurma key={turma.id} turma={turma} />
+              <CardTurma key={turma.codigo} turma={turma} />
             ))
           ) : (
             <div className={estiloTurma.estadoVazio}>Nenhuma turma encontrada.</div>
@@ -109,13 +138,13 @@ function Turma() {
 
       </div>
 
-      {modalAberto === "entrar" && (
+      {eAluno && modalAberto === "entrar" && (
         <ModalEntrarTurma
           onEntrar={handleEntrarEmTurma}
           onFechar={() => setModalAberto(null)}
         />
       )}
-      {modalAberto === "criar" && (
+      {eProfessor && modalAberto === "criar" && (
         <ModalCriarTurma
           onCriar={handleCriarTurma}
           onFechar={() => setModalAberto(null)}

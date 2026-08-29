@@ -18,12 +18,12 @@ function ModalEntrarTurma({ onEntrar, onFechar }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const codigoNormalizado = codigo.trim().toUpperCase();
+    const codigoNormalizado = codigo.trim();
 
     if (operacaoEmAndamentoRef.current) return;
 
-    if (!codigoNormalizado) {
-      setErro("Digite o código da turma.");
+    if (!/^\d{8}$/.test(codigoNormalizado)) {
+      setErro("O código deve conter exatamente oito dígitos.");
       return;
     }
 
@@ -37,7 +37,11 @@ function ModalEntrarTurma({ onEntrar, onFechar }) {
     } catch (erroEntrada) {
       if (!componenteMontadoRef.current) return;
 
-      setErro(erroEntrada.message || "Não foi possível entrar na turma.");
+      setErro(
+        erroEntrada instanceof Error
+          ? `${erroEntrada.message}${erroEntrada.codigo ? ` (${erroEntrada.codigo})` : ""}`
+          : "Não foi possível entrar na turma.",
+      );
       operacaoEmAndamentoRef.current = false;
       setEntrando(false);
     }
@@ -61,9 +65,11 @@ function ModalEntrarTurma({ onEntrar, onFechar }) {
             type="text"
             placeholder="Código da turma"
             value={codigo}
-            onChange={(e) => setCodigo(e.target.value)}
+            onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ""))}
             className={estiloModal.input}
             disabled={entrando}
+            inputMode="numeric"
+            maxLength={8}
             autoFocus
           />
           {erro && (

@@ -37,7 +37,11 @@ function ModalCriarTurma({ onCriar, onFechar }) {
     } catch (erroCriacao) {
       if (!componenteMontadoRef.current) return;
 
-      setErro(erroCriacao.message || "Não foi possível criar a turma.");
+      setErro(
+        erroCriacao instanceof Error
+          ? `${erroCriacao.message}${erroCriacao.codigo ? ` (${erroCriacao.codigo})` : ""}`
+          : "Não foi possível criar a turma.",
+      );
       operacaoEmAndamentoRef.current = false;
       setCriando(false);
     }
@@ -64,6 +68,7 @@ function ModalCriarTurma({ onCriar, onFechar }) {
             onChange={(e) => setNome(e.target.value)}
             className={estiloModal.input}
             disabled={criando}
+            maxLength={45}
             autoFocus
           />
           {erro && (
