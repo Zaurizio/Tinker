@@ -1,27 +1,4 @@
-import { desempenho } from "../data/desempenho";
-
-function calcularPorcentagem(acertos, questoesFeitas) {
-  if (questoesFeitas <= 0) return null;
-  return Math.round((acertos / questoesFeitas) * 100);
-}
-
-function prepararDesempenhoPorDisciplina(disciplinas) {
-  return disciplinas.map((disciplina) => {
-    const porcentagemAcertos = calcularPorcentagem(
-      disciplina.acertos,
-      disciplina.questoesFeitas
-    );
-
-    return {
-      id: disciplina.id,
-      nome: disciplina.nome,
-      porcentagemAcertos,
-      acertos: disciplina.acertos,
-      questoesFeitas: disciplina.questoesFeitas,
-      possuiRespostas: porcentagemAcertos !== null,
-    };
-  });
-}
+import { apiService } from "./apiService";
 
 function obterMensagemTaxaGeral(taxaAcertos) {
   if (taxaAcertos >= 80) return "Excelente evolução!";
@@ -30,52 +7,47 @@ function obterMensagemTaxaGeral(taxaAcertos) {
   return "Vamos construir sua base aos poucos.";
 }
 
-function criarDestaque(disciplina) {
+function prepararDestaque(disciplina) {
   if (!disciplina) return null;
-  return { nome: disciplina.nome, taxa: disciplina.porcentagemAcertos };
+
+  return {
+    nome: disciplina.disciplina,
+    taxa: disciplina.percentualAcertos,
+    acertos: disciplina.numeroAcertos,
+    questoesFeitas: disciplina.questoesFeitas,
+  };
+}
+
+function prepararDisciplinas(disciplinas) {
+  return (disciplinas ?? []).map((disciplina) => ({
+    id: disciplina.disciplina,
+    nome: disciplina.disciplina,
+    porcentagemAcertos: disciplina.percentualAcertos,
+    acertos: disciplina.numeroAcertos,
+    questoesFeitas: disciplina.questoesFeitas,
+  }));
 }
 
 export async function obterResumoDesempenho() {
-  const disciplinasPreparadas = prepararDesempenhoPorDisciplina(
-    desempenho.disciplinas
-  );
-  const disciplinasComRespostas = disciplinasPreparadas.filter(
-    (disciplina) => disciplina.possuiRespostas
-  );
-  const questoesRespondidas = desempenho.disciplinas.reduce(
-    (total, disciplina) => total + disciplina.questoesFeitas,
-    0
-  );
-  const totalAcertos = desempenho.disciplinas.reduce(
-    (total, disciplina) => total + disciplina.acertos,
-    0
-  );
-  const taxaAcertosGeral =
-    calcularPorcentagem(totalAcertos, questoesRespondidas) ?? 0;
-  const materiaMaiorAcerto = disciplinasComRespostas.reduce(
-    (maior, disciplina) =>
-      !maior || disciplina.porcentagemAcertos > maior.porcentagemAcertos
-        ? disciplina
-        : maior,
-    null
-  );
-  const materiaMenorAcerto = disciplinasComRespostas.reduce(
-    (menor, disciplina) =>
-      !menor || disciplina.porcentagemAcertos < menor.porcentagemAcertos
-        ? disciplina
-        : menor,
-    null
-  );
+  const dados = await apiService.get("/api/desempenho", { autenticada: true });
+  const questoesRespondidas = dados.questoesRespondidas ?? 0;
+  const possuiRespostas = questoesRespondidas > 0;
+  const taxaAcertosGeral = possuiRespostas ? dados.percentualGeral : null;
 
   return {
-    taxaAcertosGeral,
-    mensagemTaxaGeral: obterMensagemTaxaGeral(taxaAcertosGeral),
-    materiaMaiorAcerto: criarDestaque(materiaMaiorAcerto),
-    materiaMenorAcerto: criarDestaque(materiaMenorAcerto),
     questoesRespondidas,
-    simuladosFeitos: desempenho.simuladosFeitos,
-    disciplinas: disciplinasComRespostas.map((disciplina) => ({
-      ...disciplina,
-    })),
+    totalAcertos: dados.totalAcertos ?? 0,
+    possuiRespostas,
+    taxaAcertosGeral,
+    mensagemTaxaGeral: possuiRespostas
+      ? obterMensagemTaxaGeral(taxaAcertosGeral)
+      : "",
+    materiaMaiorAcerto: possuiRespostas
+      ? prepararDestaque(dados.maiorDesempenho)
+      : null,
+    materiaMenorAcerto: possuiRespostas
+      ? prepararDestaque(dados.menorDesempenho)
+      : null,
+    disciplinas: possuiRespostas ? prepararDisciplinas(dados.disciplinas) : [],
   };
 }

@@ -46,6 +46,8 @@ function Desempenho() {
         <p className={styles.erro} role="alert">{erro}</p>
       ) : !dadosDesempenho ? (
         <p className={styles.estado}>Nenhum dado de desempenho disponível.</p>
+      ) : !dadosDesempenho.possuiRespostas ? (
+        <p className={styles.estado}>Você ainda não respondeu nenhuma questão.</p>
       ) : (
         <>
           <div className={styles.gridCards}>
@@ -82,10 +84,6 @@ function Desempenho() {
               <CardMetrica
                 titulo="Questões Respondidas"
                 valor={dadosDesempenho.questoesRespondidas}
-              />
-              <CardMetrica
-                titulo="Simulados feitos"
-                valor={dadosDesempenho.simuladosFeitos}
               />
             </div>
           </div>
