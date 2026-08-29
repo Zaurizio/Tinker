@@ -20,6 +20,33 @@ function prepararTurma(turma) {
   };
 }
 
+function formatarDataPublicacao(dataPublicacao) {
+  const data = new Date(dataPublicacao);
+
+  if (Number.isNaN(data.getTime())) return dataPublicacao;
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "America/Sao_Paulo",
+  }).format(data);
+}
+
+function prepararPublicacaoSimulado(publicacao) {
+  return {
+    idPublicacao: String(publicacao.idPublicacao),
+    simuladoId: publicacao.simuladoId,
+    titulo: publicacao.titulo,
+    descricao: publicacao.descricao ?? "",
+    quantidadeQuestoes: publicacao.quantidadeQuestoes,
+    dataPublicacao: publicacao.dataPublicacao,
+    dataPublicacaoFormatada: formatarDataPublicacao(
+      publicacao.dataPublicacao,
+    ),
+  };
+}
+
 export async function listarTurmasDaConta() {
   const turmas = await apiService.get("/api/turmas", {
     autenticada: true,
@@ -89,4 +116,39 @@ export async function excluirTurmaDaConta(codigo) {
   await apiService.delete(`/api/turmas/${validarCodigo(codigo)}`, {
     autenticada: true,
   });
+}
+
+export async function listarSimuladosPublicadosNaTurma(codigo) {
+  const publicacoes = await apiService.get(
+    `/api/turmas/${validarCodigo(codigo)}/simulados`,
+    { autenticada: true }
+  );
+
+  return publicacoes.map(prepararPublicacaoSimulado);
+}
+
+export async function publicarSimuladoNaTurmaDaConta(codigo, simuladoId) {
+  if (!Number.isInteger(simuladoId)) {
+    const erro = new Error("Selecione um simulado.");
+    erro.codigo = "SIMULADO_OBRIGATORIO";
+    throw erro;
+  }
+
+  const publicacao = await apiService.post(
+    `/api/turmas/${validarCodigo(codigo)}/simulados`,
+    { simuladoId },
+    { autenticada: true }
+  );
+
+  return prepararPublicacaoSimulado(publicacao);
+}
+
+export async function removerSimuladoPublicadoDaTurma(
+  codigo,
+  idPublicacao
+) {
+  await apiService.delete(
+    `/api/turmas/${validarCodigo(codigo)}/simulados/${encodeURIComponent(String(idPublicacao))}`,
+    { autenticada: true }
+  );
 }

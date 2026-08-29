@@ -8,6 +8,7 @@ import {
   useParams,
 } from "react-router";
 import AbaMembrosTurma from "../components/turma/AbaMembrosTurma";
+import AbaSimuladosTurma from "../components/turma/AbaSimuladosTurma";
 import ModalConfirmarAcaoTurma from "../components/turma/ModalConfirmarAcaoTurma";
 import { obterSessao } from "../services/autenticacaoService";
 import {
@@ -181,7 +182,12 @@ function DetalhesTurma() {
         )}
 
         <div className={estiloDetalhes.conteudoAba}>
-          {abaAtual === "membros" ? (
+          {abaAtual === "simulados" ? (
+            <AbaSimuladosTurma
+              codigo={turma.codigo}
+              usuarioAdministrador={eProfessor}
+            />
+          ) : abaAtual === "membros" ? (
             <AbaMembrosTurma
               codigo={turma.codigo}
               usuarioAdministrador={eProfessor}

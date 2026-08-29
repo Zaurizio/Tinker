@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import BarraBusca from "../ui/BarraBusca";
 import {
-  adicionarSimuladoDaTurmaAosMeus,
-  listarSimuladosDaTurma,
-  publicarSimuladoNaTurma,
-} from "../../services/turmaService";
+  listarSimuladosPublicadosNaTurma,
+  publicarSimuladoNaTurmaDaConta,
+  removerSimuladoPublicadoDaTurma,
+} from "../../services/turmasApiService";
+import BarraBusca from "../ui/BarraBusca";
 import CardSimuladoTurma from "./CardSimuladoTurma";
+import ModalConfirmarAcaoTurma from "./ModalConfirmarAcaoTurma";
 import ModalPublicarSimulado from "./ModalPublicarSimulado";
 import estiloSimulados from "./AbaSimuladosTurma.module.css";
 
@@ -16,21 +17,21 @@ function normalizarTexto(texto) {
     .toLowerCase();
 }
 
-function AbaSimuladosTurma({ turmaId, usuarioAdministrador }) {
+function formatarErroApi(erro, mensagemPadrao) {
+  if (!(erro instanceof Error)) return mensagemPadrao;
+  return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
+}
+
+function AbaSimuladosTurma({ codigo, usuarioAdministrador }) {
   const [busca, setBusca] = useState("");
   const [simulados, setSimulados] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [modalPublicacaoAberto, setModalPublicacaoAberto] = useState(false);
-  const componenteMontadoRef = useRef(true);
-
-  useEffect(() => {
-    componenteMontadoRef.current = true;
-
-    return () => {
-      componenteMontadoRef.current = false;
-    };
-  }, []);
+  const [publicacaoParaRemover, setPublicacaoParaRemover] = useState(null);
+  const [removendo, setRemovendo] = useState(false);
+  const [erroRemocao, setErroRemocao] = useState("");
+  const removendoRef = useRef(false);
 
   useEffect(() => {
     let carregamentoAtivo = true;
@@ -40,11 +41,17 @@ function AbaSimuladosTurma({ turmaId, usuarioAdministrador }) {
       setErro("");
 
       try {
-        const simuladosCarregados = await listarSimuladosDaTurma(turmaId);
+        const simuladosCarregados =
+          await listarSimuladosPublicadosNaTurma(codigo);
         if (carregamentoAtivo) setSimulados(simuladosCarregados);
-      } catch {
+      } catch (erroCarregamento) {
         if (carregamentoAtivo) {
-          setErro("Não foi possível carregar os simulados.");
+          setErro(
+            formatarErroApi(
+              erroCarregamento,
+              "Não foi possível carregar os simulados.",
+            ),
+          );
         }
       } finally {
         if (carregamentoAtivo) setCarregando(false);
@@ -52,55 +59,73 @@ function AbaSimuladosTurma({ turmaId, usuarioAdministrador }) {
     }
 
     carregarSimulados();
-
     return () => {
       carregamentoAtivo = false;
     };
-  }, [turmaId]);
+  }, [codigo]);
 
   const simuladosFiltrados = useMemo(() => {
     const buscaNormalizada = normalizarTexto(busca.trim());
 
     return simulados.filter((simulado) =>
-      normalizarTexto(simulado.titulo).includes(buscaNormalizada)
+      normalizarTexto(simulado.titulo).includes(buscaNormalizada),
     );
   }, [busca, simulados]);
 
   async function handlePublicarSimulado(simuladoId) {
-    const simuladoPublicado = await publicarSimuladoNaTurma(turmaId, simuladoId);
-
-    if (!componenteMontadoRef.current) return;
-
-    setSimulados((simuladosAtuais) =>
-      simuladosAtuais.some(
-        (simulado) => simulado.idPublicacao === simuladoPublicado.idPublicacao
-      )
-        ? simuladosAtuais
-        : [...simuladosAtuais, simuladoPublicado]
+    const simuladoPublicado = await publicarSimuladoNaTurmaDaConta(
+      codigo,
+      simuladoId,
     );
+
+    setSimulados((simuladosAtuais) => [
+      simuladoPublicado,
+      ...simuladosAtuais.filter(
+        (simulado) => simulado.idPublicacao !== simuladoPublicado.idPublicacao,
+      ),
+    ]);
   }
 
-  async function handleAdicionarAosMeus(publicacaoId) {
-    const resultado = await adicionarSimuladoDaTurmaAosMeus(publicacaoId);
+  async function handleRemoverPublicacao() {
+    if (!publicacaoParaRemover || removendoRef.current) return;
 
-    if (!componenteMontadoRef.current) return resultado;
+    removendoRef.current = true;
+    setRemovendo(true);
+    setErroRemocao("");
 
-    setSimulados((simuladosAtuais) =>
-      simuladosAtuais.map((simulado) =>
-        simulado.idPublicacao === publicacaoId
-          ? { ...simulado, salvoPeloUsuario: true }
-          : simulado
-      )
-    );
-
-    return resultado;
+    try {
+      await removerSimuladoPublicadoDaTurma(
+        codigo,
+        publicacaoParaRemover.idPublicacao,
+      );
+      setSimulados((simuladosAtuais) =>
+        simuladosAtuais.filter(
+          (simulado) =>
+            simulado.idPublicacao !== publicacaoParaRemover.idPublicacao,
+        ),
+      );
+      setPublicacaoParaRemover(null);
+    } catch (erroOperacao) {
+      setErroRemocao(
+        formatarErroApi(
+          erroOperacao,
+          "Não foi possível retirar o simulado da turma.",
+        ),
+      );
+    } finally {
+      removendoRef.current = false;
+      setRemovendo(false);
+    }
   }
 
   function renderizarLista() {
     if (carregando) {
-      return <div className={estiloSimulados.estado} role="status">Carregando simulados...</div>;
+      return (
+        <div className={estiloSimulados.estado} role="status">
+          Carregando simulados...
+        </div>
+      );
     }
-
     if (erro) {
       return (
         <div className={estiloSimulados.estado} role="alert">
@@ -108,7 +133,6 @@ function AbaSimuladosTurma({ turmaId, usuarioAdministrador }) {
         </div>
       );
     }
-
     if (simulados.length === 0) {
       return (
         <div className={estiloSimulados.estado}>
@@ -116,16 +140,23 @@ function AbaSimuladosTurma({ turmaId, usuarioAdministrador }) {
         </div>
       );
     }
-
     if (simuladosFiltrados.length === 0) {
-      return <div className={estiloSimulados.estado}>Nenhum simulado encontrado.</div>;
+      return (
+        <div className={estiloSimulados.estado}>
+          Nenhum simulado encontrado.
+        </div>
+      );
     }
 
     return simuladosFiltrados.map((simulado) => (
       <CardSimuladoTurma
         key={simulado.idPublicacao}
         simulado={simulado}
-        onAdicionar={handleAdicionarAosMeus}
+        usuarioAdministrador={usuarioAdministrador}
+        onRemover={() => {
+          setErroRemocao("");
+          setPublicacaoParaRemover(simulado);
+        }}
       />
     ));
   }
@@ -159,10 +190,24 @@ function AbaSimuladosTurma({ turmaId, usuarioAdministrador }) {
 
       <div className={estiloSimulados.lista}>{renderizarLista()}</div>
 
-      {modalPublicacaoAberto && (
+      {usuarioAdministrador && modalPublicacaoAberto && (
         <ModalPublicarSimulado
           onPublicar={handlePublicarSimulado}
           onFechar={() => setModalPublicacaoAberto(false)}
+        />
+      )}
+
+      {usuarioAdministrador && publicacaoParaRemover && (
+        <ModalConfirmarAcaoTurma
+          titulo="Retirar simulado"
+          descricao={`Retirar “${publicacaoParaRemover.titulo}” desta turma?`}
+          textoConfirmar="Retirar"
+          processando={removendo}
+          erro={erroRemocao}
+          onConfirmar={handleRemoverPublicacao}
+          onFechar={() => {
+            if (!removendo) setPublicacaoParaRemover(null);
+          }}
         />
       )}
     </section>

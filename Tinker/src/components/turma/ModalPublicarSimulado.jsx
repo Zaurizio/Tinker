@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { listarSimuladosDoProfessor } from "../../services/simuladosApiService";
 import BarraBusca from "../ui/BarraBusca";
-import { listarSimuladosDoUsuario } from "../../services/simuladosService";
 import estiloModal from "./ModalPublicarSimulado.module.css";
 
 function normalizarTexto(texto) {
@@ -8,6 +8,11 @@ function normalizarTexto(texto) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
+}
+
+function formatarErroApi(erro, mensagemPadrao) {
+  if (!(erro instanceof Error)) return mensagemPadrao;
+  return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
 }
 
 function ModalPublicarSimulado({ onPublicar, onFechar }) {
@@ -19,19 +24,22 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
   const [publicando, setPublicando] = useState(false);
   const [erroPublicacao, setErroPublicacao] = useState("");
   const publicacaoEmAndamentoRef = useRef(false);
-  const componenteMontadoRef = useRef(true);
 
   useEffect(() => {
     let carregamentoAtivo = true;
-    componenteMontadoRef.current = true;
 
     async function carregarSimulados() {
       try {
-        const simuladosCarregados = await listarSimuladosDoUsuario();
+        const simuladosCarregados = await listarSimuladosDoProfessor();
         if (carregamentoAtivo) setSimulados(simuladosCarregados);
-      } catch {
+      } catch (erro) {
         if (carregamentoAtivo) {
-          setErroCarregamento("Não foi possível carregar os simulados.");
+          setErroCarregamento(
+            formatarErroApi(
+              erro,
+              "Não foi possível carregar os simulados.",
+            ),
+          );
         }
       } finally {
         if (carregamentoAtivo) setCarregando(false);
@@ -39,25 +47,23 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
     }
 
     carregarSimulados();
-
     return () => {
       carregamentoAtivo = false;
-      componenteMontadoRef.current = false;
     };
   }, []);
 
   const simuladosFiltrados = useMemo(() => {
     const buscaNormalizada = normalizarTexto(busca.trim());
-
     return simulados.filter((simulado) =>
-      normalizarTexto(simulado.titulo).includes(buscaNormalizada)
+      normalizarTexto(simulado.titulo).includes(buscaNormalizada),
     );
   }, [busca, simulados]);
 
   async function handleSubmit(evento) {
     evento.preventDefault();
-
-    if (simuladoSelecionadoId === null || publicacaoEmAndamentoRef.current) return;
+    if (simuladoSelecionadoId === null || publicacaoEmAndamentoRef.current) {
+      return;
+    }
 
     publicacaoEmAndamentoRef.current = true;
     setPublicando(true);
@@ -65,39 +71,51 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
 
     try {
       await onPublicar(simuladoSelecionadoId);
-      if (componenteMontadoRef.current) onFechar();
+      onFechar();
     } catch (erro) {
-      if (!componenteMontadoRef.current) return;
-
       setErroPublicacao(
-        erro instanceof Error ? erro.message : "Não foi possível publicar o simulado."
+        formatarErroApi(erro, "Não foi possível publicar o simulado."),
       );
       publicacaoEmAndamentoRef.current = false;
       setPublicando(false);
     }
   }
 
-  function handleFechar() {
-    if (!publicacaoEmAndamentoRef.current) onFechar();
-  }
-
   function renderizarOpcoes() {
-    if (carregando) return <div className={estiloModal.estado} role="status">Carregando simulados...</div>;
+    if (carregando) {
+      return (
+        <div className={estiloModal.estado} role="status">
+          Carregando simulados...
+        </div>
+      );
+    }
     if (erroCarregamento) {
-      return <div className={estiloModal.estado} role="alert">{erroCarregamento}</div>;
+      return (
+        <div className={estiloModal.estado} role="alert">
+          {erroCarregamento}
+        </div>
+      );
     }
     if (simulados.length === 0) {
-      return <div className={estiloModal.estado}>Você ainda não possui simulados.</div>;
+      return (
+        <div className={estiloModal.estado}>
+          Você ainda não possui simulados.
+        </div>
+      );
     }
     if (simuladosFiltrados.length === 0) {
-      return <div className={estiloModal.estado}>Nenhum simulado encontrado.</div>;
+      return (
+        <div className={estiloModal.estado}>Nenhum simulado encontrado.</div>
+      );
     }
 
     return simuladosFiltrados.map((simulado) => (
       <label
         key={simulado.id}
         className={`${estiloModal.opcao} ${
-          simuladoSelecionadoId === simulado.id ? estiloModal.opcaoSelecionada : ""
+          simuladoSelecionadoId === simulado.id
+            ? estiloModal.opcaoSelecionada
+            : ""
         }`}
       >
         <input
@@ -111,7 +129,8 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
         <span>
           <strong>{simulado.titulo}</strong>
           <small>
-            {simulado.quantidadeQuestoes} {simulado.quantidadeQuestoes === 1 ? "questão" : "questões"}
+            {simulado.quantidadeQuestoes}{" "}
+            {simulado.quantidadeQuestoes === 1 ? "questão" : "questões"}
           </small>
         </span>
       </label>
@@ -119,7 +138,10 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
   }
 
   return (
-    <div className={estiloModal.overlay} onClick={handleFechar}>
+    <div
+      className={estiloModal.overlay}
+      onClick={publicando ? undefined : onFechar}
+    >
       <div
         className={estiloModal.modal}
         role="dialog"
@@ -137,7 +159,6 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
             onChange={setBusca}
             disabled={publicando}
           />
-
           <div className={estiloModal.opcoes}>{renderizarOpcoes()}</div>
 
           {erroPublicacao && (
@@ -147,7 +168,7 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
           )}
 
           <div className={estiloModal.acoes}>
-            <button type="button" onClick={handleFechar} disabled={publicando}>
+            <button type="button" onClick={onFechar} disabled={publicando}>
               Cancelar
             </button>
             <button

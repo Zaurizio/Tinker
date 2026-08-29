@@ -26,6 +26,14 @@
   overflow-wrap: anywhere;
 }
 
+.descricao {
+  margin: -8px 0 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .informacoes {
   display: flex;
   flex-wrap: wrap;
@@ -48,7 +56,7 @@
   border: 1px solid var(--cor-borda-controle);
   border-radius: 12px;
   background: var(--cor-fundo-card);
-  color: var(--cor-primaria-destaque);
+  color: var(--cor-acao-destrutiva);
   font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
