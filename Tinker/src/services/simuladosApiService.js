@@ -1,13 +1,19 @@
 import { apiService } from "./apiService";
 
 function prepararSimulado(simulado) {
-  return {
+  const simuladoPreparado = {
     id: simulado.id,
     titulo: simulado.titulo,
     descricao: simulado.descricao ?? "",
     tempo: simulado.tempo ?? null,
     quantidadeQuestoes: simulado.quantidadeQuestoes,
   };
+
+  if (Array.isArray(simulado.questoesIds)) {
+    simuladoPreparado.questoesIds = [...simulado.questoesIds];
+  }
+
+  return simuladoPreparado;
 }
 
 export async function listarSimuladosDoProfessor() {
@@ -76,6 +82,35 @@ export async function obterSimuladoDoProfessor(id) {
   });
 
   return prepararSimulado(simulado);
+}
+
+export async function carregarSimuladosDoProfessorComQuestoes() {
+  const simulados = await listarSimuladosDoProfessor();
+
+  return Promise.all(
+    simulados.map((simulado) => obterSimuladoDoProfessor(simulado.id))
+  );
+}
+
+export async function adicionarQuestoesAoSimuladoDoProfessor(
+  simuladoId,
+  questoesIds
+) {
+  return apiService.post(
+    `/api/simulados/${simuladoId}/questoes`,
+    { questoesIds: [...questoesIds] },
+    { autenticada: true }
+  );
+}
+
+export async function removerQuestaoDoSimuladoDoProfessor(
+  simuladoId,
+  questaoId
+) {
+  await apiService.delete(
+    `/api/simulados/${simuladoId}/questoes/${questaoId}`,
+    { autenticada: true }
+  );
 }
 
 export async function listarQuestoesDoSimuladoDoProfessor(id) {

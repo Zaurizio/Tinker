@@ -7,16 +7,35 @@ import {
   responderQuestao,
 } from "../services/questoesService";
 import {
-  atualizarQuestaoNosSimulados,
-  listarSimuladosDoUsuario,
-} from "../services/simuladosService";
+  adicionarQuestoesAoSimuladoDoProfessor,
+  carregarSimuladosDoProfessorComQuestoes,
+  removerQuestaoDoSimuladoDoProfessor,
+} from "../services/simuladosApiService";
+import { obterSessao } from "../services/autenticacaoService";
 
 const TAMANHO_LOTE = 10;
+
+function construirAssociacoesPorQuestao(simulados) {
+  const associacoes = {};
+
+  simulados.forEach((simulado) => {
+    (simulado.questoesIds ?? []).forEach((questaoId) => {
+      associacoes[questaoId] = [
+        ...(associacoes[questaoId] ?? []),
+        simulado.id,
+      ];
+    });
+  });
+
+  return associacoes;
+}
 
 function Questoes() {
   const [resultados, setResultados] = useState(null); //busca por questoes
   const [simulados, setSimulados] = useState([]);
-  const [carregandoSimulados, setCarregandoSimulados] = useState(true);
+  const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
+  const eProfessor = tipoUsuario === "PROFESSOR";
+  const [carregandoSimulados, setCarregandoSimulados] = useState(eProfessor);
   const [erroSimulados, setErroSimulados] = useState("");
   const [versaoBusca, setVersaoBusca] = useState(0);
   const [simuladosPorQuestao, setSimuladosPorQuestao] = useState({});
@@ -31,14 +50,25 @@ function Questoes() {
     let carregamentoAtivo = true;
 
     async function carregarSimulados() {
+      if (!eProfessor) {
+        setSimulados([]);
+        setSimuladosPorQuestao({});
+        setCarregandoSimulados(false);
+        return;
+      }
+
       setCarregandoSimulados(true);
       setErroSimulados("");
 
       try {
-        const simuladosDoUsuario = await listarSimuladosDoUsuario();
+        const simuladosDoUsuario =
+          await carregarSimuladosDoProfessorComQuestoes();
 
         if (carregamentoAtivo) {
           setSimulados(simuladosDoUsuario);
+          setSimuladosPorQuestao(
+            construirAssociacoesPorQuestao(simuladosDoUsuario),
+          );
         }
       } catch {
         if (carregamentoAtivo) {
@@ -56,7 +86,7 @@ function Questoes() {
     return () => {
       carregamentoAtivo = false;
     };
-  }, []);
+  }, [eProfessor]);
 
   async function handleBuscarQuestoes(filtros) {
     buscaAtivaRef.current += 1;
@@ -132,17 +162,60 @@ function Questoes() {
   }
 
   async function handleSalvarSimulados(questaoId, simuladosIds) {
-    const simuladosAtualizados = await atualizarQuestaoNosSimulados(
-      questaoId,
-      simuladosIds,
+    const selecaoAnterior = new Set(simuladosPorQuestao[questaoId] ?? []);
+    const novaSelecao = new Set(simuladosIds);
+    const adicionados = simuladosIds.filter(
+      (simuladoId) => !selecaoAnterior.has(simuladoId),
     );
+    const removidos = [...selecaoAnterior].filter(
+      (simuladoId) => !novaSelecao.has(simuladoId),
+    );
+
+    if (adicionados.length === 0 && removidos.length === 0) {
+      return [...selecaoAnterior];
+    }
+
+    const resultados = await Promise.allSettled([
+      ...adicionados.map((simuladoId) =>
+        adicionarQuestoesAoSimuladoDoProfessor(simuladoId, [questaoId]),
+      ),
+      ...removidos.map((simuladoId) =>
+        removerQuestaoDoSimuladoDoProfessor(simuladoId, questaoId),
+      ),
+    ]);
+    const falha = resultados.find(
+      (resultado) => resultado.status === "rejected",
+    );
+
+    if (falha) {
+      const erroOperacao =
+        falha.reason instanceof Error
+          ? falha.reason
+          : new Error("Não foi possível salvar. Tente novamente.");
+
+      try {
+        const simuladosSincronizados =
+          await carregarSimuladosDoProfessorComQuestoes();
+        const associacoesSincronizadas =
+          construirAssociacoesPorQuestao(simuladosSincronizados);
+        setSimulados(simuladosSincronizados);
+        setSimuladosPorQuestao(associacoesSincronizadas);
+        setErroSimulados("");
+        erroOperacao.simuladosIdsSincronizados =
+          associacoesSincronizadas[questaoId] ?? [];
+      } catch {
+        setErroSimulados("Não foi possível sincronizar os simulados.");
+      }
+
+      throw erroOperacao;
+    }
 
     setSimuladosPorQuestao((associacoesAtuais) => ({
       ...associacoesAtuais,
-      [questaoId]: simuladosAtualizados,
+      [questaoId]: simuladosIds,
     }));
 
-    return simuladosAtualizados;
+    return simuladosIds;
   }
 
   async function handleEnviarResposta(questaoId, alternativaSelecionadaId) {
@@ -177,6 +250,7 @@ function Questoes() {
                   erroSimulados={erroSimulados}
                   onSalvarSimulados={handleSalvarSimulados}
                   onEnviarResposta={handleEnviarResposta}
+                  exibirSeletorSimulados={eProfessor}
                 />
               );
             })

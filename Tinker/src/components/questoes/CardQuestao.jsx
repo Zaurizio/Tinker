@@ -14,6 +14,7 @@ export default function CardQuestao({
   erroSimulados,
   onSalvarSimulados,
   onEnviarResposta,
+  exibirSeletorSimulados = false,
 }) {
   const [alternativaSelecionada, setAlternativaSelecionada] = useState(null);
   const [questaoRespondida, setQuestaoRespondida] = useState(false);
@@ -22,9 +23,6 @@ export default function CardQuestao({
   const [erroResposta, setErroResposta] = useState("");
   const [seletorSimuladosAberto, setSeletorSimuladosAberto] = useState(false);
   const [buscaSimulado, setBuscaSimulado] = useState("");
-  const [simuladosSelecionados, setSimuladosSelecionados] = useState(
-    () => new Set(questao.simuladosIds ?? []),
-  );
   const [simuladosTemporarios, setSimuladosTemporarios] = useState(
     () => new Set(questao.simuladosIds ?? []),
   );
@@ -49,7 +47,7 @@ export default function CardQuestao({
         seletorSimuladosRef.current &&
         !seletorSimuladosRef.current.contains(evento.target)
       ) {
-        setSimuladosTemporarios(new Set(simuladosSelecionados));
+        setSimuladosTemporarios(new Set(questao.simuladosIds ?? []));
         setBuscaSimulado("");
         setErroSalvamento("");
         setSeletorSimuladosAberto(false);
@@ -61,7 +59,7 @@ export default function CardQuestao({
     }
 
     return () => document.removeEventListener("mousedown", fecharAoClicarFora);
-  }, [seletorSimuladosAberto, simuladosSelecionados]);
+  }, [seletorSimuladosAberto, questao.simuladosIds]);
 
   function normalizarTexto(texto) {
     return texto
@@ -91,14 +89,14 @@ export default function CardQuestao({
   }
 
   function abrirSeletorSimulados() {
-    setSimuladosTemporarios(new Set(simuladosSelecionados));
+    setSimuladosTemporarios(new Set(questao.simuladosIds ?? []));
     setBuscaSimulado("");
     setErroSalvamento("");
     setSeletorSimuladosAberto(true);
   }
 
   function fecharSeletorSimulados() {
-    setSimuladosTemporarios(new Set(simuladosSelecionados));
+    setSimuladosTemporarios(new Set(questao.simuladosIds ?? []));
     setBuscaSimulado("");
     setErroSalvamento("");
     setSeletorSimuladosAberto(false);
@@ -123,19 +121,28 @@ export default function CardQuestao({
       return;
     }
 
-    const novaSelecao = new Set(simuladosTemporarios);
-    const simuladosIds = [...novaSelecao];
+    const simuladosIds = [...simuladosTemporarios];
 
     setSalvandoSimulados(true);
     setErroSalvamento("");
 
     try {
       await onSalvarSimulados(questao.id, simuladosIds);
-      setSimuladosSelecionados(novaSelecao);
       setBuscaSimulado("");
       setSeletorSimuladosAberto(false);
-    } catch {
-      setErroSalvamento("Não foi possível salvar. Tente novamente.");
+    } catch (erro) {
+      if (Array.isArray(erro?.simuladosIdsSincronizados)) {
+        const selecaoSincronizada = new Set(
+          erro.simuladosIdsSincronizados,
+        );
+        setSimuladosTemporarios(new Set(selecaoSincronizada));
+      }
+
+      setErroSalvamento(
+        erro instanceof Error
+          ? erro.message
+          : "Não foi possível salvar. Tente novamente.",
+      );
     } finally {
       setSalvandoSimulados(false);
     }
@@ -182,30 +189,34 @@ export default function CardQuestao({
           <span>{questao.ano}</span>
         </div>
 
-        <div className={styles.areaSeletorSimulados} ref={seletorSimuladosRef}>
-          <IconButton
-            className={styles.botaoSalvar}
-            aria-label="Salvar questão em simulado"
-            aria-controls={
-              seletorSimuladosAberto ? `simulados-${questao.id}` : undefined
-            }
-            aria-expanded={seletorSimuladosAberto}
-            aria-haspopup="dialog"
-            onClick={() =>
-              seletorSimuladosAberto
-                ? fecharSeletorSimulados()
-                : abrirSeletorSimulados()
-            }
-            size="small"
+        {exibirSeletorSimulados && (
+          <div
+            className={styles.areaSeletorSimulados}
+            ref={seletorSimuladosRef}
           >
-            {simuladosSelecionados.size > 0 ? (
-              <BookmarkIcon />
-            ) : (
-              <BookmarkBorderIcon />
-            )}
-          </IconButton>
+            <IconButton
+              className={styles.botaoSalvar}
+              aria-label="Salvar questão em simulado"
+              aria-controls={
+                seletorSimuladosAberto ? `simulados-${questao.id}` : undefined
+              }
+              aria-expanded={seletorSimuladosAberto}
+              aria-haspopup="dialog"
+              onClick={() =>
+                seletorSimuladosAberto
+                  ? fecharSeletorSimulados()
+                  : abrirSeletorSimulados()
+              }
+              size="small"
+            >
+              {(questao.simuladosIds?.length ?? 0) > 0 ? (
+                <BookmarkIcon />
+              ) : (
+                <BookmarkBorderIcon />
+              )}
+            </IconButton>
 
-          {seletorSimuladosAberto && (
+            {seletorSimuladosAberto && (
             <div
               id={`simulados-${questao.id}`}
               className={`${estilosSelecao.painelSelecao} ${styles.painelSimulados}`}
@@ -286,8 +297,9 @@ export default function CardQuestao({
                 </button>
               </div>
             </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       <p className={styles.enunciado}>
