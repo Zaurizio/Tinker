@@ -136,7 +136,8 @@ function PainelBuscaQuestoes({ onBuscarQuestoes }) {
                   ? estiloPainel.botaoStatusAtivo
                   : ""
               }`}
-              onClick={() => atualizarFiltro("status", "jaRespondi")}
+              disabled
+              title="Disponível quando o histórico de respostas for integrado."
             >
               Já respondi
             </button>
@@ -148,11 +149,15 @@ function PainelBuscaQuestoes({ onBuscarQuestoes }) {
                   ? estiloPainel.botaoStatusAtivo
                   : ""
               }`}
-              onClick={() => atualizarFiltro("status", "naoRespondi")}
+              disabled
+              title="Disponível quando o histórico de respostas for integrado."
             >
               Não respondi
             </button>
           </div>
+          <span className={estiloPainel.avisoStatus}>
+            Histórico de respostas em breve.
+          </span>
         </div>
 
         {/*Botão de envio e limpar*/}

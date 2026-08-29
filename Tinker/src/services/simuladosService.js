@@ -1,6 +1,9 @@
 import { simulados } from "../data/simulados";
 import { usuarioAtual } from "../data/usuario";
-import { buscarQuestoes, buscarQuestoesPorIds } from "./questoesService";
+import {
+  buscarQuestoesParaSimulados,
+  buscarQuestoesPorIds,
+} from "./questoesService";
 
 const simuladosEmMemoria = simulados.map((simulado) => ({
   ...simulado,
@@ -154,7 +157,7 @@ export async function gerarSimulado({ titulo, filtros, quantidadeQuestoes }) {
     throw new Error("A quantidade de questões deve ser um número inteiro entre 1 e 200.");
   }
 
-  const resultadoBusca = await buscarQuestoes(
+  const resultadoBusca = await buscarQuestoesParaSimulados(
     { ...filtros, trecho: "" },
     { pagina: 0, tamanho: quantidade }
   );

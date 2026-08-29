@@ -95,6 +95,16 @@
   border-color: var(--cor-borda-hover);
 }
 
+.botaoStatus:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.avisoStatus {
+  color: var(--cor-texto-secundario);
+  font-size: 0.82rem;
+}
+
 .botaoStatusAtivo {
   background: #132845;
   border-color: #2F5D95;
