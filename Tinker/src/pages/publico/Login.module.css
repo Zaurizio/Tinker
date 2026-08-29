@@ -148,6 +148,70 @@
   background: #244a70;
 }
 
+.botao:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.seletorConta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.opcoesConta {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.opcaoConta {
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  border: 1px solid #D0DCE8;
+  border-radius: 7px;
+  background: #F8FAFC;
+  color: #47627A;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.opcaoConta:hover {
+  border-color: #B8C6D6;
+  background: #F1F5F9;
+  color: #5E6B7A;
+}
+
+.opcaoConta[aria-pressed="true"] {
+  border-color: #AFC9E0;
+  background: #E7F0F8;
+  color: #2F5D8A;
+}
+
+.opcaoConta[aria-pressed="true"]:hover {
+  border-color: #8FB4D2;
+  background: #DDEBF7;
+  color: #244A70;
+}
+
+.opcaoConta:focus-visible {
+  outline: 3px solid rgba(47, 93, 138, 0.28);
+  outline-offset: 2px;
+}
+
+.mensagemErro {
+  margin: -2px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--cor-fundo-erro-suave);
+  color: var(--cor-alerta);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
 .rodape {
   margin: 20px 0 0 0; /*espaço em cima*/
   text-align: center;
