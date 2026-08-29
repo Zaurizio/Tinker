@@ -9,8 +9,6 @@ import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.dto.simulado.GerarSimuladoDTO;
 import Tinker.demo.dto.simulado.SimuladoGeradoDTO;
-import Tinker.demo.dto.simulado.CorrigirQuestaoSimuladoDTO;
-import Tinker.demo.dto.simulado.CorrecaoQuestaoSimuladoDTO;
 import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.SimuladoService;
 import jakarta.validation.Valid;
@@ -76,14 +74,6 @@ public class SimuladoController {
             @PathVariable Integer id,
             @Valid @RequestBody QuestoesIdsDTO dados) {
         return simuladoService.adicionarQuestoes(usuario, id, dados);
-    }
-
-    @PostMapping("/{id}/correcoes")
-    public CorrecaoQuestaoSimuladoDTO corrigirQuestao(
-            @AuthenticationPrincipal UsuarioAutenticado usuario,
-            @PathVariable Integer id,
-            @Valid @RequestBody CorrigirQuestaoSimuladoDTO dados) {
-        return simuladoService.corrigirQuestao(usuario, id, dados);
     }
 
     @DeleteMapping("/{id}/questoes/{questaoId}")

@@ -227,15 +227,32 @@ public class TurmaSimuladoService {
                     "A conclusao contem uma questao inexistente ou inativa.");
         }
 
+        Map<Integer, Boolean> resultadosPorQuestao = new LinkedHashMap<>();
         int acertos = 0;
         for (Map.Entry<Integer, Questao> entrada : questoesPorId.entrySet()) {
             RespostaConclusaoSimuladoDTO resposta = respostasPorQuestao.get(entrada.getKey());
-            if (CorretorQuestao.corrigir(entrada.getValue(), resposta.getAlternativa())) {
+            boolean acertou = CorretorQuestao.corrigir(
+                    entrada.getValue(), resposta.getAlternativa());
+            resultadosPorQuestao.put(entrada.getKey(), acertou);
+            if (acertou) {
                 acertos++;
             }
         }
         int quantidadeQuestoes = questoesPorId.size();
         int erros = quantidadeQuestoes - acertos;
+
+        for (Map.Entry<Integer, Boolean> resultadoQuestao : resultadosPorQuestao.entrySet()) {
+            Relatorioid id = new Relatorioid(resultadoQuestao.getKey(), usuario.email());
+            Relatorio relatorio = relatorioRepository.findById(id).orElseGet(() -> {
+                Relatorio novo = new Relatorio();
+                novo.setCodQuest(resultadoQuestao.getKey());
+                novo.setEmail(usuario.email());
+                return novo;
+            });
+            relatorio.setAcertouErrou(resultadoQuestao.getValue() ? 1 : 0);
+            relatorio.setTipoUsu(TipoUsuario.ALUNO.name());
+            relatorioRepository.save(relatorio);
+        }
 
         RelatorioSimulado resultado = relatorioSimuladoRepository
                 .findByCodSimuladoAndEmailAluno(simulado.getCodSimulado(), usuario.email())

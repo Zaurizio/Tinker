@@ -171,6 +171,7 @@ class SimuladoServiceTest {
                 questaoSimuRepository,
                 simuladoRepository);
         ordem.verify(turmaSimuladoRepository).deleteByCodSimulado(1);
+        ordem.verify(relatorioSimuladoRepository).deleteByCodSimulado(1);
         ordem.verify(questaoSimuRepository).deleteByCodSimulado(1);
         ordem.verify(simuladoRepository).delete(existente);
 

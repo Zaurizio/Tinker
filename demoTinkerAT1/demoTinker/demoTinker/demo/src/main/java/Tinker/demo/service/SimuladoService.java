@@ -8,8 +8,6 @@ import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.dto.simulado.SimuladoResumoDTO;
 import Tinker.demo.dto.simulado.GerarSimuladoDTO;
 import Tinker.demo.dto.simulado.SimuladoGeradoDTO;
-import Tinker.demo.dto.simulado.CorrigirQuestaoSimuladoDTO;
-import Tinker.demo.dto.simulado.CorrecaoQuestaoSimuladoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.AcessoNegadoException;
@@ -209,37 +207,6 @@ public class SimuladoService {
         questaoSimuRepository.deleteById(associacaoId);
     }
 
-    @Transactional(readOnly = true)
-    public CorrecaoQuestaoSimuladoDTO corrigirQuestao(
-            UsuarioAutenticado usuario,
-            Integer id,
-            CorrigirQuestaoSimuladoDTO dados) {
-        buscarDoUsuario(usuario, id);
-
-        if (dados == null || dados.getQuestaoId() == null) {
-            throw new DadosInvalidosException(
-                    "QUESTAO_OBRIGATORIA",
-                    "Informe a questao que sera corrigida.");
-        }
-
-        Integer questaoId = dados.getQuestaoId();
-        if (!questaoSimuRepository.existsById(new QuestaoSimuid(id, questaoId))) {
-            throw new RecursoNaoEncontradoException(
-                    "QUESTAO_NAO_PERTENCE_AO_SIMULADO",
-                    "A questao nao pertence ao simulado.");
-        }
-
-        Questao questao = questaoRepository.findById(questaoId)
-                .filter(encontrada -> Integer.valueOf(1).equals(encontrada.getAtivo()))
-                .orElseThrow(() -> new RecursoNaoEncontradoException(
-                        "QUESTAO_NAO_ENCONTRADA",
-                        "A questao nao existe ou esta inativa."));
-
-        return new CorrecaoQuestaoSimuladoDTO(
-                questaoId,
-                CorretorQuestao.corrigir(questao, dados.getAlternativaSelecionadaId()));
-    }
-
     @Transactional
     public SimuladoDetalheDTO atualizar(
             UsuarioAutenticado usuario,
@@ -277,6 +244,7 @@ public class SimuladoService {
         Simulado simulado = buscarDoUsuario(usuario, id);
 
         turmaSimuladoRepository.deleteByCodSimulado(id);
+        relatorioSimuladoRepository.deleteByCodSimulado(id);
         questaoSimuRepository.deleteByCodSimulado(id);
         simuladoRepository.delete(simulado);
     }

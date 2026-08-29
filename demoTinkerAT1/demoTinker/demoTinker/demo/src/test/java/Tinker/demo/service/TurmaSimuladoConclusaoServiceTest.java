@@ -8,6 +8,7 @@ import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
+import Tinker.demo.model.Relatorio;
 import Tinker.demo.model.RelatorioSimulado;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.model.Turma;
@@ -109,6 +110,27 @@ class TurmaSimuladoConclusaoServiceTest {
         assertEquals(2, existente.getAcertos());
         assertEquals(0, existente.getErros());
         verify(resultadoRepository, times(1)).save(existente);
+    }
+
+    @Test
+    void conclusaoAtualizaDesempenhoDeCadaQuestao() {
+        prepararConclusaoValida();
+        Relatorio existente = new Relatorio(10, EMAIL_ALUNO, 0);
+        existente.setTipoUsu("ALUNO");
+        when(relatorioRepository.findById(new Tinker.demo.model.Relatorioid(10, EMAIL_ALUNO)))
+                .thenReturn(Optional.of(existente));
+
+        concluir(dados(resposta(10, "A"), resposta(11, "C")));
+
+        var captor = org.mockito.ArgumentCaptor.forClass(Tinker.demo.model.Relatorio.class);
+        verify(relatorioRepository, times(2)).save(captor.capture());
+        assertEquals(List.of(10, 11), captor.getAllValues().stream()
+                .map(Tinker.demo.model.Relatorio::getCodQuest).toList());
+        assertEquals(List.of(1, 0), captor.getAllValues().stream()
+                .map(Tinker.demo.model.Relatorio::getAcertouErrou).toList());
+        assertTrue(captor.getAllValues().stream()
+                .allMatch(relatorio -> EMAIL_ALUNO.equals(relatorio.getEmail())
+                        && "ALUNO".equals(relatorio.getTipoUsu())));
     }
 
     @Test
@@ -270,8 +292,8 @@ class TurmaSimuladoConclusaoServiceTest {
         assertFalse(resposta.toString().contains("GABARITO"));
         assertEquals(0, simulado.getConclusao());
         verify(simuladoRepository, never()).save(any());
-        verify(relatorioRepository, never()).findById(any());
-        verify(relatorioRepository, never()).save(any());
+        verify(relatorioRepository, times(2)).findById(any());
+        verify(relatorioRepository, times(2)).save(any());
         verify(relatorioRepository, never()).delete(any());
         verify(publicacaoRepository, never()).save(any());
         verify(questaoRepository, never()).save(any());

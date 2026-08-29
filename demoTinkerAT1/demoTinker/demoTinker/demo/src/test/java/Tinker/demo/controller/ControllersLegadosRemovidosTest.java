@@ -1,10 +1,7 @@
 package Tinker.demo.controller;
 
-import Tinker.demo.model.QuestaoSimu;
-import Tinker.demo.model.Relatorio;
-import Tinker.demo.repository.QuestaoSimuRepository;
-import Tinker.demo.repository.RelatorioRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ControllersLegadosRemovidosTest {
 
     private static final List<Class<?>> CONTROLLERS_RESTANTES = List.of(
-            AdmController.class,
-            AlunoController.class,
             CalendarioController.class,
-            ConteudoQuestController.class,
             DesempenhoController.class,
             LoginController.class,
             PerfilController.class,
-            ProfessorController.class,
             QuestaoController.class,
             SimuladoController.class,
             TurmaController.class);
@@ -37,22 +30,38 @@ class ControllersLegadosRemovidosTest {
         assertClasseAusente("Tinker.demo.controller.QuestaoSimuController");
         assertClasseAusente("Tinker.demo.controller.CronogramaController");
         assertClasseAusente("Tinker.demo.controller.HorarioMultController");
+        assertClasseAusente("Tinker.demo.controller.AlunoController");
+        assertClasseAusente("Tinker.demo.controller.ProfessorController");
+        assertClasseAusente("Tinker.demo.controller.AdmController");
+        assertClasseAusente("Tinker.demo.controller.ConteudoQuestController");
     }
 
     @Test
     void nenhumControllerRestanteExpoeEntidadesOuRepositoriesInternos() {
         for (Class<?> controller : CONTROLLERS_RESTANTES) {
             assertFalse(Arrays.stream(controller.getDeclaredFields())
-                    .anyMatch(campo -> campo.getType().equals(RelatorioRepository.class)
-                            || campo.getType().equals(QuestaoSimuRepository.class)));
+                    .anyMatch(campo -> campo.getType().getSimpleName().endsWith("Repository")));
             assertFalse(Arrays.stream(controller.getDeclaredMethods())
                     .map(Method::getReturnType)
-                    .anyMatch(tipo -> tipo.equals(Relatorio.class)
-                            || tipo.equals(QuestaoSimu.class)));
+                    .anyMatch(tipo -> tipo.isAnnotationPresent(jakarta.persistence.Entity.class)));
             assertFalse(Arrays.stream(controller.getDeclaredMethods())
                     .flatMap(metodo -> Arrays.stream(metodo.getParameterTypes()))
-                    .anyMatch(tipo -> tipo.equals(Relatorio.class)
-                            || tipo.equals(QuestaoSimu.class)));
+                    .anyMatch(tipo -> tipo.isAnnotationPresent(jakarta.persistence.Entity.class)));
+        }
+    }
+
+    @Test
+    void todoParametroDeUsuarioAutenticadoVemDoPrincipalJwt() {
+        for (Class<?> controller : CONTROLLERS_RESTANTES) {
+            for (Method metodo : controller.getDeclaredMethods()) {
+                Arrays.stream(metodo.getParameters())
+                        .filter(parametro -> parametro.getType().equals(
+                                Tinker.demo.security.UsuarioAutenticado.class))
+                        .forEach(parametro -> assertTrue(
+                                parametro.isAnnotationPresent(AuthenticationPrincipal.class),
+                                controller.getSimpleName() + "." + metodo.getName()
+                                        + " não usa @AuthenticationPrincipal"));
+            }
         }
     }
 
