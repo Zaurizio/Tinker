@@ -71,6 +71,71 @@
   color: var(--cor-texto-placeholder);
 }
 
+.listaEventosSemana {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eventoSemana {
+  min-height: 86px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-input-suave);
+  box-sizing: border-box;
+}
+
+.dataEventoSemana {
+  width: 62px;
+  min-height: 62px;
+  flex-shrink: 0;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 11px;
+  background: var(--cor-fundo-card);
+  line-height: 1;
+}
+
+.mesEventoSemana,
+.diaEventoSemana {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.dataEventoSemana strong {
+  margin: 4px 0;
+  color: var(--cor-texto-principal);
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+
+.informacoesEventoSemana {
+  min-width: 0;
+}
+
+.informacoesEventoSemana h3 {
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto-principal);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.informacoesEventoSemana p {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.85rem;
+}
+
 .cardResumo {
   flex: 1.2;
   min-width: 260px;
