@@ -16,6 +16,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MapeamentoSchemaAtualTest {
 
@@ -48,7 +49,7 @@ class MapeamentoSchemaAtualTest {
     }
 
     @Test
-    void colunasTipoUsuarioSaoMapeadasComoVarcharOito() throws Exception {
+    void relatorioEstaPreparadoParaTipoProfessorNaChaveFutura() throws Exception {
         Field tipoSimulado = Simulado.class.getDeclaredField("tipoUsu");
         Field tipoRelatorio = Relatorio.class.getDeclaredField("tipoUsu");
 
@@ -56,14 +57,24 @@ class MapeamentoSchemaAtualTest {
         assertEquals(8, tipoSimulado.getAnnotation(Column.class).length());
         assertFalse(tipoSimulado.getAnnotation(Column.class).nullable());
         assertEquals("tipo_usu", tipoRelatorio.getAnnotation(Column.class).name());
-        assertEquals(8, tipoRelatorio.getAnnotation(Column.class).length());
+        assertEquals(9, tipoRelatorio.getAnnotation(Column.class).length());
         assertFalse(tipoRelatorio.getAnnotation(Column.class).nullable());
+        assertTrue(tipoRelatorio.isAnnotationPresent(jakarta.persistence.Id.class));
+        assertEquals(3, quantidadeDeIds(Relatorio.class));
         assertEquals("PROF", Simulado.TIPO_USUARIO_PROFESSOR);
     }
 
     @Test
     void relatorioApontaParaTabelaAtual() {
         assertEquals("Relatorio_Questao", Relatorio.class.getAnnotation(Table.class).name());
+    }
+
+    @Test
+    void chaveFuturaSeparaMesmoEmailPorTipo() {
+        Relatorioid aluno = new Relatorioid(10, "mesmo@teste.com", "ALUNO");
+        Relatorioid professor = new Relatorioid(10, "mesmo@teste.com", "PROFESSOR");
+
+        assertFalse(aluno.equals(professor));
     }
 
     @Test

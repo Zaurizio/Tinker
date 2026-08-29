@@ -9,7 +9,6 @@ import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
 import Tinker.demo.model.QuestaoSimuid;
 import Tinker.demo.model.Relatorio;
-import Tinker.demo.model.Relatorioid;
 import Tinker.demo.model.Simulado;
 import Tinker.demo.model.Turma;
 import Tinker.demo.model.TurmaSimulado;
@@ -100,9 +99,9 @@ class TurmaSimuladoCorrecaoServiceTest {
     @Test
     void novaRespostaSubstituiResultadoAnteriorSemDuplicar() {
         prepararCorrecao(questao("A", 1));
-        Relatorio existente = new Relatorio(QUESTAO_ID, EMAIL_ALUNO, 0);
-        existente.setTipoUsu("ALUNO");
-        when(relatorioRepository.findById(new Relatorioid(QUESTAO_ID, EMAIL_ALUNO)))
+        Relatorio existente = new Relatorio(QUESTAO_ID, EMAIL_ALUNO, "ALUNO", 0);
+        when(relatorioRepository.findByCodQuestAndEmailAndTipoUsu(
+                QUESTAO_ID, EMAIL_ALUNO, "ALUNO"))
                 .thenReturn(Optional.of(existente));
 
         CorrecaoQuestaoSimuladoDTO resposta = corrigir("A");
@@ -253,7 +252,8 @@ class TurmaSimuladoCorrecaoServiceTest {
         when(questaoRepository.findById(QUESTAO_ID)).thenReturn(Optional.of(questao));
         when(questaoSimuRepository.existsById(new QuestaoSimuid(SIMULADO_ID, QUESTAO_ID)))
                 .thenReturn(true);
-        when(relatorioRepository.findById(new Relatorioid(QUESTAO_ID, EMAIL_ALUNO)))
+        when(relatorioRepository.findByCodQuestAndEmailAndTipoUsu(
+                QUESTAO_ID, EMAIL_ALUNO, "ALUNO"))
                 .thenReturn(Optional.empty());
     }
 

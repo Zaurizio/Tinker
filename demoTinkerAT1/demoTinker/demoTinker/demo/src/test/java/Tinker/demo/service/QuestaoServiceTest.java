@@ -1,10 +1,18 @@
 package Tinker.demo.service;
 
 import Tinker.demo.dto.questao.PaginaQuestaoDTO;
+import Tinker.demo.dto.questao.CorrigirQuestaoDTO;
+import Tinker.demo.dto.questao.CorrecaoQuestaoDTO;
+import Tinker.demo.exception.AcessoNegadoException;
+import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
+import Tinker.demo.model.Relatorio;
 import Tinker.demo.repository.QuestaoRepository;
+import Tinker.demo.repository.RelatorioRepository;
+import Tinker.demo.security.TipoUsuario;
+import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.specification.QuestaoSpecifications;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -31,18 +39,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
 class QuestaoServiceTest {
 
     private QuestaoRepository questaoRepository;
+    private RelatorioRepository relatorioRepository;
     private QuestaoService questaoService;
 
     @BeforeEach
     void configurar() {
         questaoRepository = mock(QuestaoRepository.class);
-        questaoService = new QuestaoService(questaoRepository, new QuestaoMapper());
+        relatorioRepository = mock(RelatorioRepository.class);
+        questaoService = new QuestaoService(
+                questaoRepository, new QuestaoMapper(), relatorioRepository);
     }
 
     @Test
@@ -141,6 +153,113 @@ class QuestaoServiceTest {
         verify(path).in(List.of("ENEM"));
         verify(path).in(List.of(2024, 2025));
         verify(builder).like(textoMinusculo, "%funcao%");
+    }
+
+    @Test
+    void respostaAvulsaCorretaCriaResultadoTipadoSemGabarito() {
+        Questao questao = questaoAtiva();
+        questao.setResposta("A");
+        when(questaoRepository.findById(1)).thenReturn(Optional.of(questao));
+
+        CorrecaoQuestaoDTO resposta = questaoService.corrigir(
+                usuario("mesmo@teste.com", TipoUsuario.ALUNO), 1, new CorrigirQuestaoDTO(" a "));
+
+        assertEquals(1, resposta.questaoId());
+        assertTrue(resposta.acertou());
+        assertEquals(List.of("questaoId", "acertou"),
+                java.util.Arrays.stream(CorrecaoQuestaoDTO.class.getRecordComponents())
+                        .map(c -> c.getName()).toList());
+        Relatorio salvo = relatorioSalvo();
+        assertEquals("mesmo@teste.com", salvo.getEmail());
+        assertEquals("ALUNO", salvo.getTipoUsu());
+        assertEquals(1, salvo.getAcertouErrou());
+    }
+
+    @Test
+    void respostaAvulsaIncorretaEhPersistida() {
+        Questao questao = questaoAtiva();
+        questao.setResposta("A");
+        when(questaoRepository.findById(1)).thenReturn(Optional.of(questao));
+
+        CorrecaoQuestaoDTO resposta = questaoService.corrigir(
+                usuario("aluno@teste.com", TipoUsuario.ALUNO), 1, new CorrigirQuestaoDTO("B"));
+
+        assertFalse(resposta.acertou());
+        assertEquals(0, relatorioSalvo().getAcertouErrou());
+    }
+
+    @Test
+    void novaRespostaSubstituiResultadoDaMesmaConta() {
+        Questao questao = questaoAtiva();
+        questao.setResposta("A");
+        Relatorio existente = new Relatorio(1, "mesmo@teste.com", "PROFESSOR", 0);
+        when(questaoRepository.findById(1)).thenReturn(Optional.of(questao));
+        when(relatorioRepository.findByCodQuestAndEmailAndTipoUsu(
+                1, "mesmo@teste.com", "PROFESSOR")).thenReturn(Optional.of(existente));
+
+        questaoService.corrigir(
+                usuario("mesmo@teste.com", TipoUsuario.PROFESSOR),
+                1, new CorrigirQuestaoDTO("A"));
+
+        assertEquals(1, existente.getAcertouErrou());
+        verify(relatorioRepository).save(existente);
+    }
+
+    @Test
+    void mesmoEmailMantemResultadosSeparadosPorTipo() {
+        Questao questao = questaoAtiva();
+        questao.setResposta("A");
+        when(questaoRepository.findById(1)).thenReturn(Optional.of(questao));
+
+        questaoService.corrigir(
+                usuario("mesmo@teste.com", TipoUsuario.ALUNO), 1, new CorrigirQuestaoDTO("A"));
+        questaoService.corrigir(
+                usuario("mesmo@teste.com", TipoUsuario.PROFESSOR), 1, new CorrigirQuestaoDTO("B"));
+
+        verify(relatorioRepository).findByCodQuestAndEmailAndTipoUsu(
+                1, "mesmo@teste.com", "ALUNO");
+        verify(relatorioRepository).findByCodQuestAndEmailAndTipoUsu(
+                1, "mesmo@teste.com", "PROFESSOR");
+    }
+
+    @Test
+    void alternativaInvalidaNaoPersiste() {
+        when(questaoRepository.findById(1)).thenReturn(Optional.of(questaoAtiva()));
+        assertThrows(DadosInvalidosException.class, () -> questaoService.corrigir(
+                usuario("aluno@teste.com", TipoUsuario.ALUNO), 1, new CorrigirQuestaoDTO("F")));
+        verify(relatorioRepository, never()).save(any());
+    }
+
+    @Test
+    void questaoInexistenteOuInativaNaoPodeSerRespondida() {
+        Questao inativa = questaoAtiva();
+        inativa.setAtivo(0);
+        when(questaoRepository.findById(1)).thenReturn(Optional.empty());
+        when(questaoRepository.findById(2)).thenReturn(Optional.of(inativa));
+
+        assertThrows(RecursoNaoEncontradoException.class, () -> questaoService.corrigir(
+                usuario("aluno@teste.com", TipoUsuario.ALUNO), 1, new CorrigirQuestaoDTO("A")));
+        assertThrows(RecursoNaoEncontradoException.class, () -> questaoService.corrigir(
+                usuario("aluno@teste.com", TipoUsuario.ALUNO), 2, new CorrigirQuestaoDTO("A")));
+        verify(relatorioRepository, never()).save(any());
+    }
+
+    @Test
+    void administradorNaoPodeResponder() {
+        assertThrows(AcessoNegadoException.class, () -> questaoService.corrigir(
+                usuario("adm@teste.com", TipoUsuario.ADMINISTRADOR),
+                1, new CorrigirQuestaoDTO("A")));
+        verify(questaoRepository, never()).findById(any());
+    }
+
+    private Relatorio relatorioSalvo() {
+        var captor = org.mockito.ArgumentCaptor.forClass(Relatorio.class);
+        verify(relatorioRepository).save(captor.capture());
+        return captor.getValue();
+    }
+
+    private UsuarioAutenticado usuario(String email, TipoUsuario tipo) {
+        return new UsuarioAutenticado(email, tipo);
     }
 
     private Questao questaoAtiva() {

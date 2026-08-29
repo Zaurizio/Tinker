@@ -129,14 +129,18 @@ class DesempenhoServiceTest {
     }
 
     @Test
-    void professorEAdministradorRecebem403SemConsultarDados() {
-        assertThrows(AcessoNegadoException.class, () -> service.consultar(
-                usuario("prof@tinker.com", TipoUsuario.PROFESSOR)));
+    void professorConsultaSomenteSeuTipoEAdministradorRecebe403() {
+        when(relatorioRepository.findByEmailAndTipoUsu(EMAIL, "PROFESSOR"))
+                .thenReturn(List.of(relatorio(1, 1, "PROFESSOR")));
+        when(questaoRepository.findAllById(List.of(1)))
+                .thenReturn(List.of(questao(1, "Matematica")));
+
+        DesempenhoDTO professor = service.consultar(usuario(EMAIL, TipoUsuario.PROFESSOR));
+
+        assertEquals(1, professor.questoesRespondidas());
+        verify(relatorioRepository).findByEmailAndTipoUsu(EMAIL, "PROFESSOR");
         assertThrows(AcessoNegadoException.class, () -> service.consultar(
                 usuario("adm@tinker.com", TipoUsuario.ADMINISTRADOR)));
-
-        verify(relatorioRepository, never()).findByEmailAndTipoUsu(any(), any());
-        verify(questaoRepository, never()).findAllById(any());
     }
 
     @Test
@@ -195,10 +199,14 @@ class DesempenhoServiceTest {
     }
 
     private Relatorio relatorio(int questaoId, Integer resultado) {
+        return relatorio(questaoId, resultado, "ALUNO");
+    }
+
+    private Relatorio relatorio(int questaoId, Integer resultado, String tipo) {
         Relatorio relatorio = new Relatorio();
         relatorio.setCodQuest(questaoId);
         relatorio.setEmail(EMAIL);
-        relatorio.setTipoUsu("ALUNO");
+        relatorio.setTipoUsu(tipo);
         relatorio.setAcertouErrou(resultado);
         return relatorio;
     }

@@ -34,7 +34,7 @@ public class DesempenhoService {
     public DesempenhoDTO consultar(UsuarioAutenticado usuario) {
         exigirAluno(usuario);
         List<Relatorio> relatorios = relatorioRepository.findByEmailAndTipoUsu(
-                usuario.email(), TipoUsuario.ALUNO.name());
+                usuario.email(), usuario.tipoUsuario().name());
         if (relatorios.isEmpty()) {
             return vazio();
         }
@@ -122,7 +122,7 @@ public class DesempenhoService {
     }
 
     private void exigirAluno(UsuarioAutenticado usuario) {
-        if (usuario.tipoUsuario() != TipoUsuario.ALUNO) {
+        if (usuario.tipoUsuario() == TipoUsuario.ADMINISTRADOR) {
             throw new AcessoNegadoException(
                     "ACESSO_NEGADO",
                     "Esta operacao e permitida somente para aluno.");

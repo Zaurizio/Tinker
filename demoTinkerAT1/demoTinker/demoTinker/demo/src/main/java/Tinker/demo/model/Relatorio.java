@@ -16,18 +16,20 @@ public class Relatorio {
     @Column(name = "email", length = 45, nullable = false)
     private String email;
 
+    @Id
+    @Column(name = "tipo_usu", length = 9, nullable = false)
+    private String tipoUsu;
+
     @Column(name = "acertou/errou", nullable = false)
     private Integer acertouErrou;
-
-    @Column(name = "tipo_usu", length = 8, nullable = false)
-    private String tipoUsu;
 
     public Relatorio() {
     }
 
-    public Relatorio(Integer codQuest, String email, Integer acertouErrou) {
+    public Relatorio(Integer codQuest, String email, String tipoUsu, Integer acertouErrou) {
         this.codQuest = codQuest;
         this.email = email;
+        this.tipoUsu = tipoUsu;
         this.acertouErrou = acertouErrou;
     }
 
@@ -68,12 +70,14 @@ public class Relatorio {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Relatorio relatorio = (Relatorio) o;
-        return Objects.equals(codQuest, relatorio.codQuest) && Objects.equals(email, relatorio.email);
+        return Objects.equals(codQuest, relatorio.codQuest)
+                && Objects.equals(email, relatorio.email)
+                && Objects.equals(tipoUsu, relatorio.tipoUsu);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(codQuest, email);
+        return Objects.hash(codQuest, email, tipoUsu);
     }
 
     @Override

@@ -2,11 +2,18 @@ package Tinker.demo.service;
 
 import Tinker.demo.dto.questao.PaginaQuestaoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
+import Tinker.demo.dto.questao.CorrigirQuestaoDTO;
+import Tinker.demo.dto.questao.CorrecaoQuestaoDTO;
+import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
+import Tinker.demo.model.Relatorio;
 import Tinker.demo.repository.QuestaoRepository;
+import Tinker.demo.repository.RelatorioRepository;
+import Tinker.demo.security.TipoUsuario;
+import Tinker.demo.security.UsuarioAutenticado;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +30,15 @@ public class QuestaoService {
 
     private final QuestaoRepository questaoRepository;
     private final QuestaoMapper questaoMapper;
+    private final RelatorioRepository relatorioRepository;
 
-    public QuestaoService(QuestaoRepository questaoRepository, QuestaoMapper questaoMapper) {
+    public QuestaoService(
+            QuestaoRepository questaoRepository,
+            QuestaoMapper questaoMapper,
+            RelatorioRepository relatorioRepository) {
         this.questaoRepository = questaoRepository;
         this.questaoMapper = questaoMapper;
+        this.relatorioRepository = relatorioRepository;
     }
 
     @Transactional(readOnly = true)
@@ -68,6 +80,30 @@ public class QuestaoService {
                         "QUESTAO_NAO_ENCONTRADA",
                         "A questao nao foi encontrada."));
         return questaoMapper.paraDTO(questao);
+    }
+
+    @Transactional
+    public CorrecaoQuestaoDTO corrigir(
+            UsuarioAutenticado usuario, Integer id, CorrigirQuestaoDTO dados) {
+        if (usuario.tipoUsuario() == TipoUsuario.ADMINISTRADOR) {
+            throw new AcessoNegadoException(
+                    "ACESSO_NEGADO", "Administrador não pode responder questões.");
+        }
+        Questao questao = questaoRepository.findById(id)
+                .filter(item -> Integer.valueOf(1).equals(item.getAtivo()))
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "QUESTAO_NAO_ENCONTRADA", "A questão não foi encontrada."));
+        boolean acertou = CorretorQuestao.corrigir(questao, dados.alternativa());
+        String tipo = usuario.tipoUsuario().name();
+        Relatorio relatorio = relatorioRepository
+                .findByCodQuestAndEmailAndTipoUsu(id, usuario.email(), tipo)
+                .orElseGet(Relatorio::new);
+        relatorio.setCodQuest(id);
+        relatorio.setEmail(usuario.email());
+        relatorio.setTipoUsu(tipo);
+        relatorio.setAcertouErrou(acertou ? 1 : 0);
+        relatorioRepository.save(relatorio);
+        return new CorrecaoQuestaoDTO(id, acertou);
     }
 
     private void validarPagina(int pagina, int tamanho) {

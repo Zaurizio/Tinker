@@ -19,7 +19,6 @@ import Tinker.demo.model.TurmaSimulado;
 import Tinker.demo.model.Questao;
 import Tinker.demo.model.QuestaoSimuid;
 import Tinker.demo.model.Relatorio;
-import Tinker.demo.model.Relatorioid;
 import Tinker.demo.model.RelatorioSimulado;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.repository.QuestaoRepository;
@@ -146,15 +145,17 @@ public class TurmaSimuladoService {
         }
 
         boolean acertou = CorretorQuestao.corrigir(questao, dados.getAlternativa());
-        Relatorioid relatorioId = new Relatorioid(questaoId, usuario.email());
-        Relatorio relatorio = relatorioRepository.findById(relatorioId).orElseGet(() -> {
+        String tipoUsuario = usuario.tipoUsuario().name();
+        Relatorio relatorio = relatorioRepository
+                .findByCodQuestAndEmailAndTipoUsu(questaoId, usuario.email(), tipoUsuario)
+                .orElseGet(() -> {
             Relatorio novo = new Relatorio();
             novo.setCodQuest(questaoId);
             novo.setEmail(usuario.email());
             return novo;
         });
         relatorio.setAcertouErrou(acertou ? 1 : 0);
-        relatorio.setTipoUsu(TipoUsuario.ALUNO.name());
+        relatorio.setTipoUsu(tipoUsuario);
         relatorioRepository.save(relatorio);
 
         return new CorrecaoQuestaoSimuladoDTO(questaoId, acertou);
@@ -242,15 +243,18 @@ public class TurmaSimuladoService {
         int erros = quantidadeQuestoes - acertos;
 
         for (Map.Entry<Integer, Boolean> resultadoQuestao : resultadosPorQuestao.entrySet()) {
-            Relatorioid id = new Relatorioid(resultadoQuestao.getKey(), usuario.email());
-            Relatorio relatorio = relatorioRepository.findById(id).orElseGet(() -> {
+            String tipoUsuario = usuario.tipoUsuario().name();
+            Relatorio relatorio = relatorioRepository
+                    .findByCodQuestAndEmailAndTipoUsu(
+                            resultadoQuestao.getKey(), usuario.email(), tipoUsuario)
+                    .orElseGet(() -> {
                 Relatorio novo = new Relatorio();
                 novo.setCodQuest(resultadoQuestao.getKey());
                 novo.setEmail(usuario.email());
                 return novo;
             });
             relatorio.setAcertouErrou(resultadoQuestao.getValue() ? 1 : 0);
-            relatorio.setTipoUsu(TipoUsuario.ALUNO.name());
+            relatorio.setTipoUsu(tipoUsuario);
             relatorioRepository.save(relatorio);
         }
 

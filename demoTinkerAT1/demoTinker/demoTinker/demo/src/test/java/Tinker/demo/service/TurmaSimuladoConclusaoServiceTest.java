@@ -115,9 +115,9 @@ class TurmaSimuladoConclusaoServiceTest {
     @Test
     void conclusaoAtualizaDesempenhoDeCadaQuestao() {
         prepararConclusaoValida();
-        Relatorio existente = new Relatorio(10, EMAIL_ALUNO, 0);
-        existente.setTipoUsu("ALUNO");
-        when(relatorioRepository.findById(new Tinker.demo.model.Relatorioid(10, EMAIL_ALUNO)))
+        Relatorio existente = new Relatorio(10, EMAIL_ALUNO, "ALUNO", 0);
+        when(relatorioRepository.findByCodQuestAndEmailAndTipoUsu(
+                10, EMAIL_ALUNO, "ALUNO"))
                 .thenReturn(Optional.of(existente));
 
         concluir(dados(resposta(10, "A"), resposta(11, "C")));
@@ -292,7 +292,8 @@ class TurmaSimuladoConclusaoServiceTest {
         assertFalse(resposta.toString().contains("GABARITO"));
         assertEquals(0, simulado.getConclusao());
         verify(simuladoRepository, never()).save(any());
-        verify(relatorioRepository, times(2)).findById(any());
+        verify(relatorioRepository, times(2))
+                .findByCodQuestAndEmailAndTipoUsu(any(), any(), any());
         verify(relatorioRepository, times(2)).save(any());
         verify(relatorioRepository, never()).delete(any());
         verify(publicacaoRepository, never()).save(any());

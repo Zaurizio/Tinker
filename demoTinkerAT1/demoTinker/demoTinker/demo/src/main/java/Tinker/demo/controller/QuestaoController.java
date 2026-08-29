@@ -2,9 +2,16 @@ package Tinker.demo.controller;
 
 import Tinker.demo.dto.questao.PaginaQuestaoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
+import Tinker.demo.dto.questao.CorrigirQuestaoDTO;
+import Tinker.demo.dto.questao.CorrecaoQuestaoDTO;
+import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.QuestaoService;
+import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,5 +44,13 @@ public class QuestaoController {
     @GetMapping("/{id}")
     public QuestaoDTO detalhar(@PathVariable Integer id) {
         return questaoService.detalhar(id);
+    }
+
+    @PostMapping("/{id}/correcoes")
+    public CorrecaoQuestaoDTO corrigir(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable Integer id,
+            @Valid @RequestBody CorrigirQuestaoDTO dados) {
+        return questaoService.corrigir(usuario, id, dados);
     }
 }
