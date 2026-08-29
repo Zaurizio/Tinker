@@ -20,7 +20,6 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
     instituicoes: [],
     anos: [],
     quantidadeQuestoes: "", // Novo campo para quantidade de questões
-    status: "todas", // Manter se aplicável a simulados, ou remover se não for usar
   });
 
   function atualizarFiltro(campo, valor) {
@@ -39,7 +38,6 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
       instituicoes: [],
       anos: [],
       quantidadeQuestoes: "",
-      status: "todas",
     });
     if (onLimparFiltros) {
       onLimparFiltros(); // Chama a função externa se existir
@@ -53,9 +51,9 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
     if (
       !Number.isInteger(quantidadeQuestoes) ||
       quantidadeQuestoes < 1 ||
-      quantidadeQuestoes > 200
+      quantidadeQuestoes > 50
     ) {
-      setErroQuantidade("Informe uma quantidade inteira entre 1 e 200.");
+      setErroQuantidade("Informe uma quantidade inteira entre 1 e 50");
       return;
     }
 
@@ -66,7 +64,6 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
         conteudos: [...filtros.conteudos],
         instituicoes: [...filtros.instituicoes],
         anos: [...filtros.anos],
-        status: filtros.status,
         quantidadeQuestoes,
       });
     }
@@ -136,52 +133,9 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
                   atualizarFiltro("quantidadeQuestoes", event.target.value)
                 }
                 min="1"
-                max="200"
+                max="50"
               />
             </div>
-          </div>
-        </div>
-
-        {/* Botões de status (manter se aplicável a simulados, ou remover) */}
-        <div className={estiloPainel.linhaStatus}>
-          <span className={estiloPainel.rotuloStatus}>
-            Mostrar apenas questões:
-          </span>
-
-          <div className={estiloPainel.grupoBotoesStatus}>
-            <button
-              type="button"
-              className={`${estiloPainel.botaoStatus} ${
-                filtros.status === "todas" ? estiloPainel.botaoStatusAtivo : ""
-              }`}
-              onClick={() => atualizarFiltro("status", "todas")}
-            >
-              Todas
-            </button>
-
-            <button
-              type="button"
-              className={`${estiloPainel.botaoStatus} ${
-                filtros.status === "jaRespondi"
-                  ? estiloPainel.botaoStatusAtivo
-                  : ""
-              }`}
-              onClick={() => atualizarFiltro("status", "jaRespondi")}
-            >
-              Já respondi
-            </button>
-
-            <button
-              type="button"
-              className={`${estiloPainel.botaoStatus} ${
-                filtros.status === "naoRespondi"
-                  ? estiloPainel.botaoStatusAtivo
-                  : ""
-              }`}
-              onClick={() => atualizarFiltro("status", "naoRespondi")}
-            >
-              Não respondi
-            </button>
           </div>
         </div>
 

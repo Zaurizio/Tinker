@@ -36,6 +36,7 @@ function ModalGerarSimulado({
             placeholder="Ex: Simulado de revisão"
             className={estiloModal.input}
             disabled={gerando}
+            maxLength={20}
             required
           />
 

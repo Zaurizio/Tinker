@@ -4,11 +4,14 @@ import BarraBusca from "../components/ui/BarraBusca";
 import CardSimulado from "../components/simulados/CardSimulado";
 import ModalCriarSimulado from "../components/simulados/ModalCriarSimulado";
 import ModalExcluirSimulado from "../components/simulados/ModalExcluirSimulado";
+import ModalGerarSimulado from "../components/simulados/ModalGerarSimulado";
 import ModalRenomearSimulado from "../components/simulados/ModalRenomearSimulado";
+import PainelFiltroSimulados from "../components/simulados/PainelFiltroSimulados";
 import { obterSessao } from "../services/autenticacaoService";
 import {
   criarSimuladoVazio,
   excluirSimuladoDoProfessor,
+  gerarSimuladoDoProfessor,
   listarSimuladosDoProfessor,
   renomearSimuladoDoProfessor,
 } from "../services/simuladosApiService";
@@ -26,6 +29,10 @@ function Simulados() {
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
   const [criando, setCriando] = useState(false);
   const [erroCriacao, setErroCriacao] = useState("");
+  const [painelGeracaoAberto, setPainelGeracaoAberto] = useState(false);
+  const [filtrosGeracao, setFiltrosGeracao] = useState(null);
+  const [gerando, setGerando] = useState(false);
+  const [erroGeracao, setErroGeracao] = useState("");
   const [simuladoParaRenomear, setSimuladoParaRenomear] = useState(null);
   const [renomeando, setRenomeando] = useState(false);
   const [erroRenomeacao, setErroRenomeacao] = useState("");
@@ -131,6 +138,31 @@ function Simulados() {
     }
   }
 
+  async function handleGerar(titulo) {
+    if (gerando || !filtrosGeracao) return;
+
+    setGerando(true);
+    setErroGeracao("");
+
+    try {
+      const novoSimulado = await gerarSimuladoDoProfessor({
+        titulo,
+        ...filtrosGeracao,
+      });
+      adicionarOuAtualizarSimulado(novoSimulado);
+      setFiltrosGeracao(null);
+      setPainelGeracaoAberto(false);
+    } catch (erroGerar) {
+      setErroGeracao(
+        erroGerar instanceof Error
+          ? erroGerar.message
+          : "Não foi possível gerar o simulado. Tente novamente."
+      );
+    } finally {
+      setGerando(false);
+    }
+  }
+
   async function handleExcluir() {
     if (excluindo || !simuladoParaExcluir) return;
 
@@ -217,7 +249,25 @@ function Simulados() {
               >
                 Criar Simulado
               </button>
+              <button
+                type="button"
+                className={estiloSimulados.botaoFiltrarSimulados}
+                onClick={() => {
+                  setErroGeracao("");
+                  setPainelGeracaoAberto((aberto) => !aberto);
+                }}
+              >
+                Gerar Simulado
+              </button>
             </div>
+            {painelGeracaoAberto && (
+              <PainelFiltroSimulados
+                onGerarSimulado={(filtros) => {
+                  setErroGeracao("");
+                  setFiltrosGeracao(filtros);
+                }}
+              />
+            )}
             <div className={estiloSimulados.listaSimulados}>{renderizarLista()}</div>
           </>
         )}
@@ -231,6 +281,18 @@ function Simulados() {
           onSalvar={handleCriar}
           salvando={criando}
           erro={erroCriacao}
+        />
+      )}
+
+      {eProfessor && filtrosGeracao && (
+        <ModalGerarSimulado
+          quantidadeQuestoes={filtrosGeracao.quantidadeQuestoes}
+          onFechar={() => {
+            if (!gerando) setFiltrosGeracao(null);
+          }}
+          onConfirmar={handleGerar}
+          gerando={gerando}
+          erro={erroGeracao}
         />
       )}
 

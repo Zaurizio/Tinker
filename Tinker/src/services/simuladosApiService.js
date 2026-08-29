@@ -28,6 +28,34 @@ export async function criarSimuladoVazio({ titulo }) {
   return prepararSimulado(simulado);
 }
 
+export async function gerarSimuladoDoProfessor({
+  titulo,
+  descricao = null,
+  tempo = null,
+  quantidadeQuestoes,
+  disciplinas = [],
+  conteudos = [],
+  instituicoes = [],
+  anos = [],
+}) {
+  const simulado = await apiService.post(
+    "/api/simulados/geracoes",
+    {
+      titulo,
+      descricao,
+      tempo,
+      quantidadeQuestoes: Number(quantidadeQuestoes),
+      disciplinas: Array.isArray(disciplinas) ? disciplinas : [],
+      conteudos: Array.isArray(conteudos) ? conteudos : [],
+      vestibulares: Array.isArray(instituicoes) ? instituicoes : [],
+      anos: Array.isArray(anos) ? anos.map(Number) : [],
+    },
+    { autenticada: true }
+  );
+
+  return prepararSimulado(simulado);
+}
+
 export async function renomearSimuladoDoProfessor(id, { titulo }) {
   const simulado = await apiService.patch(
     `/api/simulados/${id}`,
