@@ -1,18 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdPerson } from "react-icons/md";
-import { listarMembrosDaTurma } from "../../services/turmaService";
+import {
+  listarMembrosDaTurmaDaConta,
+  removerMembroDaTurmaDaConta,
+} from "../../services/turmasApiService";
+import ModalConfirmarAcaoTurma from "./ModalConfirmarAcaoTurma";
 import estiloMembros from "./AbaMembrosTurma.module.css";
 
-const ROTULOS_PAPEIS = {
-  administrador: "Administrador",
-  professor: "Professor",
-  aluno: "Aluno",
-};
+function formatarErroApi(erro, mensagemPadrao) {
+  if (!(erro instanceof Error)) return mensagemPadrao;
+  return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
+}
 
-function AbaMembrosTurma({ turmaId }) {
+function AbaMembrosTurma({ codigo, usuarioAdministrador }) {
   const [membros, setMembros] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
+  const [membroParaRemover, setMembroParaRemover] = useState(null);
+  const [removendo, setRemovendo] = useState(false);
+  const [erroRemocao, setErroRemocao] = useState("");
+  const removendoRef = useRef(false);
 
   useEffect(() => {
     let carregamentoAtivo = true;
@@ -22,11 +29,16 @@ function AbaMembrosTurma({ turmaId }) {
       setErro("");
 
       try {
-        const membrosCarregados = await listarMembrosDaTurma(turmaId);
+        const membrosCarregados = await listarMembrosDaTurmaDaConta(codigo);
         if (carregamentoAtivo) setMembros(membrosCarregados);
-      } catch {
+      } catch (erroCarregamento) {
         if (carregamentoAtivo) {
-          setErro("Não foi possível carregar os membros.");
+          setErro(
+            formatarErroApi(
+              erroCarregamento,
+              "Não foi possível carregar os membros.",
+            ),
+          );
         }
       } finally {
         if (carregamentoAtivo) setCarregando(false);
@@ -34,11 +46,35 @@ function AbaMembrosTurma({ turmaId }) {
     }
 
     carregarMembros();
-
     return () => {
       carregamentoAtivo = false;
     };
-  }, [turmaId]);
+  }, [codigo]);
+
+  async function handleRemoverMembro() {
+    if (!membroParaRemover || removendoRef.current) return;
+
+    removendoRef.current = true;
+    setRemovendo(true);
+    setErroRemocao("");
+
+    try {
+      await removerMembroDaTurmaDaConta(codigo, membroParaRemover.email);
+      setMembros((membrosAtuais) =>
+        membrosAtuais.filter(
+          (membro) => membro.email !== membroParaRemover.email,
+        ),
+      );
+      setMembroParaRemover(null);
+    } catch (erroOperacao) {
+      setErroRemocao(
+        formatarErroApi(erroOperacao, "Não foi possível remover o membro."),
+      );
+    } finally {
+      removendoRef.current = false;
+      setRemovendo(false);
+    }
+  }
 
   return (
     <section aria-labelledby="titulo-membros">
@@ -57,35 +93,48 @@ function AbaMembrosTurma({ turmaId }) {
         ) : membros.length === 0 ? (
           <div className={estiloMembros.estado}>Nenhum membro encontrado.</div>
         ) : (
-          membros.map((membro) => {
-            const administrador = membro.tipo === "administrador";
-
-            return (
-              <div
-                key={membro.id}
-                className={`${estiloMembros.membro} ${
-                  administrador ? estiloMembros.administrador : ""
-                }`}
-              >
-                <div className={estiloMembros.foto}>
-                  {membro.fotoPerfil ? (
-                    <img src={membro.fotoPerfil} alt="" />
-                  ) : (
-                    <MdPerson aria-hidden="true" />
-                  )}
-                </div>
-
-                <div className={estiloMembros.identificacao}>
-                  <span className={estiloMembros.nome}>{membro.nome}</span>
-                  <span className={estiloMembros.papel}>
-                    {ROTULOS_PAPEIS[membro.tipo] ?? membro.tipo}
-                  </span>
-                </div>
+          membros.map((membro) => (
+            <div key={membro.email} className={estiloMembros.membro}>
+              <div className={estiloMembros.foto}>
+                <MdPerson aria-hidden="true" />
               </div>
-            );
-          })
+
+              <div className={estiloMembros.identificacao}>
+                <span className={estiloMembros.nome}>{membro.nomeCompleto}</span>
+                <span className={estiloMembros.papel}>{membro.email}</span>
+              </div>
+
+              {usuarioAdministrador && (
+                <button
+                  type="button"
+                  className={estiloMembros.botaoRemover}
+                  onClick={() => {
+                    setErroRemocao("");
+                    setMembroParaRemover(membro);
+                  }}
+                  disabled={removendo}
+                >
+                  Remover
+                </button>
+              )}
+            </div>
+          ))
         )}
       </div>
+
+      {membroParaRemover && (
+        <ModalConfirmarAcaoTurma
+          titulo="Remover membro"
+          descricao={`Remover ${membroParaRemover.nomeCompleto} desta turma?`}
+          textoConfirmar="Remover"
+          processando={removendo}
+          erro={erroRemocao}
+          onConfirmar={handleRemoverMembro}
+          onFechar={() => {
+            if (!removendo) setMembroParaRemover(null);
+          }}
+        />
+      )}
     </section>
   );
 }

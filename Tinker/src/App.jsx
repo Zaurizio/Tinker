@@ -53,12 +53,15 @@ function App() {
             <Route path="/calendario" element={<Calendario />} />
             <Route path="/turma" element={<Turma />} />
             <Route
-              path="/turma/:turmaId"
+              path="/turma/:codigo"
               element={<Navigate to="simulados" replace />}
             />
-            <Route path="/turma/:turmaId/simulados" element={<DetalhesTurma />} />
-            <Route path="/turma/:turmaId/eventos" element={<DetalhesTurma />} />
-            <Route path="/turma/:turmaId/membros" element={<DetalhesTurma />} />
+            <Route path="/turma/:codigo/simulados" element={<DetalhesTurma />} />
+            <Route
+              path="/turma/:codigo/eventos"
+              element={<Navigate to="../simulados" relative="path" replace />}
+            />
+            <Route path="/turma/:codigo/membros" element={<DetalhesTurma />} />
             <Route path="/suporte" element={<Suporte />} />
           </Route>
         </Route>

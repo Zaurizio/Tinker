@@ -42,6 +42,7 @@
 
 .identificacao {
   min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -70,4 +71,24 @@
   padding: 18px 4px;
   color: var(--cor-texto-placeholder);
   font-size: 0.9rem;
+}
+
+.botaoRemover {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--cor-acao-destrutiva);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--cor-acao-destrutiva);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botaoRemover:hover:not(:disabled) {
+  background: var(--cor-fundo-hover);
+}
+
+.botaoRemover:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }

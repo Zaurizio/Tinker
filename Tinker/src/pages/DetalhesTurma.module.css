@@ -144,6 +144,31 @@
   padding: 38px 32px;
 }
 
+.acoesTurma {
+  padding: 16px 28px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.botaoDestrutivo {
+  padding: 10px 16px;
+  border: 1px solid var(--cor-acao-destrutiva);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--cor-acao-destrutiva);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botaoDestrutivo:hover:not(:disabled) {
+  background: var(--cor-fundo-hover);
+}
+
+.botaoDestrutivo:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
 .conteudoAba h2 {
   margin: 0 0 8px;
   color: var(--cor-texto-principal);
