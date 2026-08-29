@@ -10,6 +10,8 @@ import Tinker.demo.security.UsuarioAutenticado;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -54,13 +56,16 @@ class CalendarioControllerTest {
     }
 
     @Test
-    void getEPostRecebemUsuarioPorAuthenticationPrincipal() throws Exception {
+    void getPostEDeleteRecebemUsuarioPorAuthenticationPrincipal() throws Exception {
         Method listar = CalendarioController.class.getDeclaredMethod("listar", UsuarioAutenticado.class);
         Method criar = CalendarioController.class.getDeclaredMethod(
                 "criar", UsuarioAutenticado.class, CriarEventoDTO.class);
+        Method excluir = CalendarioController.class.getDeclaredMethod(
+                "excluir", UsuarioAutenticado.class, String.class);
 
         assertTrue(listar.getParameters()[0].isAnnotationPresent(AuthenticationPrincipal.class));
         assertTrue(criar.getParameters()[0].isAnnotationPresent(AuthenticationPrincipal.class));
+        assertTrue(excluir.getParameters()[0].isAnnotationPresent(AuthenticationPrincipal.class));
     }
 
     @Test
@@ -94,8 +99,22 @@ class CalendarioControllerTest {
             assertFalse(Arrays.stream(metodo.getParameters())
                     .map(Parameter::getName)
                     .anyMatch(nome -> nome.equalsIgnoreCase("email")));
-            assertFalse(Arrays.stream(metodo.getParameterTypes()).anyMatch(String.class::equals));
+            assertFalse(Arrays.stream(metodo.getParameters())
+                    .filter(parametro -> parametro.isAnnotationPresent(RequestBody.class)
+                            || parametro.isAnnotationPresent(RequestParam.class))
+                    .anyMatch(parametro -> parametro.getType().equals(String.class)));
         }
+    }
+
+    @Test
+    void exclusaoEncaminhaSomenteUsuarioAutenticadoEIdAoService() {
+        CalendarioService service = mock(CalendarioService.class);
+        CalendarioController controller = new CalendarioController(service);
+        UsuarioAutenticado usuario = new UsuarioAutenticado("aluno@teste.com", TipoUsuario.ALUNO);
+
+        controller.excluir(usuario, "2026-09-10|14:00");
+
+        verify(service).excluir(usuario, "2026-09-10|14:00");
     }
 
     private void assertAusente(String classe) {

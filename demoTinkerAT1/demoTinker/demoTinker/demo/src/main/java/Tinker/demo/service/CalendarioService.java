@@ -6,6 +6,7 @@ import Tinker.demo.dto.calendario.RecorrenciaEvento;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.ConflitoDominioException;
 import Tinker.demo.exception.DadosInvalidosException;
+import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.HorarioMult;
 import Tinker.demo.model.HorarioMultid;
 import Tinker.demo.repository.HorarioMultRepository;
@@ -87,6 +88,16 @@ public class CalendarioService {
         return repository.saveAll(ocorrencias).stream().map(this::paraDTO).toList();
     }
 
+    @Transactional
+    public void excluir(UsuarioAutenticado usuario, String id) {
+        validarUsuarioPermitido(usuario);
+        HorarioMultid chave = chaveDoEvento(usuario.email(), id);
+        HorarioMult evento = repository.findById(chave).orElseThrow(() ->
+                new RecursoNaoEncontradoException(
+                        "EVENTO_NAO_ENCONTRADO", "Evento não encontrado."));
+        repository.delete(evento);
+    }
+
     private void validarUsuarioPermitido(UsuarioAutenticado usuario) {
         if (usuario.tipoUsuario() == TipoUsuario.ADMINISTRADOR) {
             throw new AcessoNegadoException(
@@ -156,6 +167,25 @@ public class CalendarioService {
 
     private float paraFloat(LocalTime horario) {
         return horario.getHour() + horario.getMinute() / 60.0f;
+    }
+
+    private HorarioMultid chaveDoEvento(String email, String id) {
+        try {
+            if (id == null) {
+                throw new IllegalArgumentException();
+            }
+            String[] partes = id.split("\\|", -1);
+            if (partes.length != 2 || partes[0].isBlank() || partes[1].isBlank()) {
+                throw new IllegalArgumentException();
+            }
+            LocalDate data = LocalDate.parse(partes[0]);
+            float inicio = "DIA_INTEIRO".equals(partes[1])
+                    ? INICIO_DIA_INTEIRO : paraFloat(LocalTime.parse(partes[1]));
+            return new HorarioMultid(email, data, inicio);
+        } catch (RuntimeException erro) {
+            throw new DadosInvalidosException(
+                    "ID_EVENTO_INVALIDO", "O ID do evento possui formato inválido.");
+        }
     }
 
     private LocalTime deFloat(float horario) {

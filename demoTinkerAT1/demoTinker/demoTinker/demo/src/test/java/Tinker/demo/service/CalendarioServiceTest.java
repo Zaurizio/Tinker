@@ -6,7 +6,9 @@ import Tinker.demo.dto.calendario.RecorrenciaEvento;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.ConflitoDominioException;
 import Tinker.demo.exception.DadosInvalidosException;
+import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.HorarioMult;
+import Tinker.demo.model.HorarioMultid;
 import Tinker.demo.repository.HorarioMultRepository;
 import Tinker.demo.security.TipoUsuario;
 import Tinker.demo.security.UsuarioAutenticado;
@@ -20,6 +22,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -183,6 +186,84 @@ class CalendarioServiceTest {
         assertEquals(List.of("id", "titulo", "data", "horarioInicio", "horarioFim", "diaInteiro", "cor"),
                 Arrays.stream(EventoCalendarioDTO.class.getRecordComponents()).map(c -> c.getName()).toList());
         assertFalse(HorarioMult.class.isAssignableFrom(EventoCalendarioDTO.class));
+    }
+
+    @Test
+    void removeEventoPeloIdEEmailAutenticado() {
+        HorarioMult evento = evento("aluno@teste.com", "2026-09-10", 14f);
+        HorarioMultid chave = new HorarioMultid(
+                "aluno@teste.com", LocalDate.of(2026, 9, 10), 14f);
+        when(repository.findById(chave)).thenReturn(Optional.of(evento));
+
+        service.excluir(aluno(), "2026-09-10|14:00");
+
+        verify(repository).findById(chave);
+        verify(repository).delete(evento);
+    }
+
+    @Test
+    void removeSomenteUmaOcorrenciaRecorrente() {
+        HorarioMult ocorrencia = evento("aluno@teste.com", "2026-09-17", 14f);
+        HorarioMultid chave = new HorarioMultid(
+                "aluno@teste.com", LocalDate.of(2026, 9, 17), 14f);
+        when(repository.findById(chave)).thenReturn(Optional.of(ocorrencia));
+
+        service.excluir(aluno(), "2026-09-17|14:00");
+
+        verify(repository).delete(ocorrencia);
+        verify(repository, never()).deleteAll();
+    }
+
+    @Test
+    void eventoInexistenteRetorna404() {
+        RecursoNaoEncontradoException erro = assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.excluir(aluno(), "2026-09-10|14:00"));
+        assertEquals(404, erro.getStatus().value());
+        assertEquals("EVENTO_NAO_ENCONTRADO", erro.getCodigo());
+        verify(repository, never()).delete(any());
+    }
+
+    @Test
+    void eventoDeOutroUsuarioRetorna404SemConsultarEmailDoProprietario() {
+        HorarioMultid chaveDoUsuario = new HorarioMultid(
+                "aluno@teste.com", LocalDate.of(2026, 9, 10), 14f);
+
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.excluir(aluno(), "2026-09-10|14:00"));
+
+        verify(repository).findById(chaveDoUsuario);
+        verify(repository, never()).delete(any());
+    }
+
+    @Test
+    void idInvalidoRetornaErroControlado() {
+        assertCodigo("ID_EVENTO_INVALIDO", () -> service.excluir(aluno(), "2026-09-10|25:00"));
+        verify(repository, never()).findById(any());
+        verify(repository, never()).delete(any());
+    }
+
+    @Test
+    void removeEventoDeDiaInteiro() {
+        HorarioMult evento = evento("aluno@teste.com", "2026-09-10", -1f);
+        evento.setDiaInteiro(true);
+        HorarioMultid chave = new HorarioMultid(
+                "aluno@teste.com", LocalDate.of(2026, 9, 10), -1f);
+        when(repository.findById(chave)).thenReturn(Optional.of(evento));
+
+        service.excluir(aluno(), "2026-09-10|DIA_INTEIRO");
+
+        verify(repository).delete(evento);
+    }
+
+    @Test
+    void administradorNaoPodeRemoverEvento() {
+        AcessoNegadoException erro = assertThrows(AcessoNegadoException.class, () ->
+                service.excluir(
+                        new UsuarioAutenticado("admin@teste.com", TipoUsuario.ADMINISTRADOR),
+                        "2026-09-10|14:00"));
+        assertEquals(403, erro.getStatus().value());
+        verify(repository, never()).findById(any());
+        verify(repository, never()).delete(any());
     }
 
     private void assertDatas(RecorrenciaEvento recorrencia, int repeticoes, String... datas) {
