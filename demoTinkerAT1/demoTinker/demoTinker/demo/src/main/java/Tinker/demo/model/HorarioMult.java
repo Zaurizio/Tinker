@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @IdClass(HorarioMultid.class)
@@ -40,7 +42,8 @@ public class HorarioMult {
     private String titulo;
 
     @Column(name = "dia_inteiro")
-    private Integer diaInteiro;
+    @JdbcTypeCode(SqlTypes.TINYINT)
+    private Boolean diaInteiro;
 
     @Column(name = "cor", length = 45)
     private String cor;
@@ -72,8 +75,8 @@ public class HorarioMult {
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
 
-    public Integer getDiaInteiro() { return diaInteiro; }
-    public void setDiaInteiro(Integer diaInteiro) { this.diaInteiro = diaInteiro; }
+    public Boolean getDiaInteiro() { return diaInteiro; }
+    public void setDiaInteiro(Boolean diaInteiro) { this.diaInteiro = diaInteiro; }
 
     public String getCor() { return cor; }
     public void setCor(String cor) { this.cor = cor; }

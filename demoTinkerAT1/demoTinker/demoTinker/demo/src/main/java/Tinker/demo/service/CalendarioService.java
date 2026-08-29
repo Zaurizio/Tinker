@@ -11,6 +11,7 @@ import Tinker.demo.model.HorarioMultid;
 import Tinker.demo.repository.HorarioMultRepository;
 import Tinker.demo.security.TipoUsuario;
 import Tinker.demo.security.UsuarioAutenticado;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ public class CalendarioService {
     private final HorarioMultRepository repository;
     private final Clock clock;
 
+    @Autowired
     public CalendarioService(HorarioMultRepository repository) {
         this(repository, Clock.systemDefaultZone());
     }
@@ -77,7 +79,7 @@ public class CalendarioService {
             evento.setHorarioFim(Boolean.TRUE.equals(entrada.diaInteiro())
                     ? FIM_DIA_INTEIRO : entrada.horarioFim().toString());
             evento.setTitulo(titulo);
-            evento.setDiaInteiro(Boolean.TRUE.equals(entrada.diaInteiro()) ? 1 : 0);
+            evento.setDiaInteiro(Boolean.TRUE.equals(entrada.diaInteiro()));
             evento.setCor(entrada.cor());
             ocorrencias.add(evento);
         }
@@ -144,7 +146,7 @@ public class CalendarioService {
     }
 
     private EventoCalendarioDTO paraDTO(HorarioMult evento) {
-        boolean diaInteiro = Integer.valueOf(1).equals(evento.getDiaInteiro());
+        boolean diaInteiro = Boolean.TRUE.equals(evento.getDiaInteiro());
         LocalTime inicio = diaInteiro ? null : deFloat(evento.getHorarioInicio());
         LocalTime fim = diaInteiro ? null : LocalTime.parse(evento.getHorarioFim());
         String id = evento.getData() + "|" + (diaInteiro ? "DIA_INTEIRO" : inicio);

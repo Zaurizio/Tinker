@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import org.junit.jupiter.api.Test;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -98,7 +100,10 @@ class MapeamentoSchemaAtualTest {
     @Test
     void horarioMultMapeiaColunasAdicionadasNoDump() throws Exception {
         assertEquals("titulo", coluna(HorarioMult.class, "titulo"));
-        assertEquals("dia_inteiro", coluna(HorarioMult.class, "diaInteiro"));
+        Field diaInteiro = HorarioMult.class.getDeclaredField("diaInteiro");
+        assertEquals("dia_inteiro", diaInteiro.getAnnotation(Column.class).name());
+        assertEquals(Boolean.class, diaInteiro.getType());
+        assertEquals(SqlTypes.TINYINT, diaInteiro.getAnnotation(JdbcTypeCode.class).value());
         assertEquals("cor", coluna(HorarioMult.class, "cor"));
     }
 

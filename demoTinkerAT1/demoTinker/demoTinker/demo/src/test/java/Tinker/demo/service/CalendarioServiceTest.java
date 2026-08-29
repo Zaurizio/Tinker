@@ -204,7 +204,7 @@ class CalendarioServiceTest {
         evento.setHorarioInicio(inicio);
         evento.setHorarioFim("15:30");
         evento.setTitulo("Evento");
-        evento.setDiaInteiro(0);
+        evento.setDiaInteiro(false);
         evento.setCor("#2F80ED");
         return evento;
     }
