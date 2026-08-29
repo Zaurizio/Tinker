@@ -2,7 +2,14 @@ import React, { useState, useRef } from 'react';
 import styles from './CardSimulado.module.css';
 import SimuladoOptions from './SimuladoOptions';
 
-const CardSimulado = ({ simulado, onAbrir, onRenomear, onBaixar, onExcluir }) => {
+const CardSimulado = ({
+    simulado,
+    onAbrir,
+    onRenomear,
+    onBaixar,
+    onExcluir,
+    somenteLeitura = false,
+}) => {
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, shouldGoUp: false });
     const buttonRef = useRef(null); // Referência para o botão de três pontinhos
@@ -77,6 +84,32 @@ const CardSimulado = ({ simulado, onAbrir, onRenomear, onBaixar, onExcluir }) =>
         handleCloseMenu();
         onExcluir(simulado);
     };
+
+    if (somenteLeitura) {
+        return (
+            <article className={`${styles.cardSimulado} ${styles.cardSomenteLeitura}`}>
+                <div className={styles.header}>
+                    <h3 className={styles.simuladoTitle}>{simulado.titulo}</h3>
+                </div>
+                {simulado.descricao && (
+                    <p className={styles.simuladoDescription}>{simulado.descricao}</p>
+                )}
+                <p className={styles.simuladoMeta}>
+                    {simulado.quantidadeQuestoes} questões
+                    {simulado.tempo !== null && ` · ${simulado.tempo} min`}
+                </p>
+                <div className={styles.acoesSomenteLeitura}>
+                    <button
+                        type="button"
+                        className={styles.botaoRenomear}
+                        onClick={() => onRenomear(simulado)}
+                    >
+                        Renomear
+                    </button>
+                </div>
+            </article>
+        );
+    }
 
     return (
         <div

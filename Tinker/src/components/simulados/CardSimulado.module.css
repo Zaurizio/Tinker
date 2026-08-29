@@ -23,6 +23,15 @@
     outline-offset: 2px;
 }
 
+.cardSomenteLeitura {
+    cursor: default;
+}
+
+.cardSomenteLeitura:hover {
+    border-color: var(--cor-borda-antiga);
+    box-shadow: 0 2px 4px var(--cor-sombra-preta-suave);
+}
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -61,4 +70,33 @@
     color: var(--cor-texto-antigo-muted);
     margin: 0;
     flex-grow: 1; /* Permite que a descrição ocupe o espaço restante */
+}
+
+.simuladoMeta {
+    font-size: 0.86em;
+    color: var(--cor-texto-antigo-muted);
+    margin: 10px 0 0;
+}
+
+.acoesSomenteLeitura {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.botaoRenomear {
+    min-height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--cor-borda-controle);
+    border-radius: 10px;
+    background: var(--cor-fundo-card);
+    color: var(--cor-primaria-destaque);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.botaoRenomear:hover {
+    background: var(--cor-fundo-hover);
+    border-color: var(--cor-borda-hover);
 }

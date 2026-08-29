@@ -1,72 +1,62 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useMemo, useState } from "react";
 import BarraBusca from "../components/ui/BarraBusca";
 import CardSimulado from "../components/simulados/CardSimulado";
 import ModalCriarSimulado from "../components/simulados/ModalCriarSimulado";
-import ModalExcluirSimulado from "../components/simulados/ModalExcluirSimulado";
-import ModalGerarSimulado from "../components/simulados/ModalGerarSimulado";
 import ModalRenomearSimulado from "../components/simulados/ModalRenomearSimulado";
-import PainelFiltroSimulados from "../components/simulados/PainelFiltroSimulados";
+import { obterSessao } from "../services/autenticacaoService";
 import {
-  criarSimulado,
-  excluirSimulado,
-  gerarSimulado,
-  listarSimuladosDoUsuario,
-  renomearSimulado,
-} from "../services/simuladosService";
+  criarSimuladoVazio,
+  listarSimuladosDoProfessor,
+  renomearSimuladoDoProfessor,
+} from "../services/simuladosApiService";
 import estiloSimulados from "./Simulados.module.css";
 
 const normalizarTexto = (texto) =>
   texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 function Simulados() {
-  const navigate = useNavigate();
   const [busca, setBusca] = useState("");
-  const [modalCriarSimuladoAberto, setModalCriarSimuladoAberto] = useState(false);
-  const [mostrarPainelFiltro, setMostrarPainelFiltro] = useState(false);
   const [simulados, setSimulados] = useState([]);
-  const [carregandoSimulados, setCarregandoSimulados] = useState(true);
-  const [erroSimulados, setErroSimulados] = useState(null);
-  const [criandoSimulado, setCriandoSimulado] = useState(false);
-  const [erroCriacaoSimulado, setErroCriacaoSimulado] = useState(null);
-  const [filtrosGeracaoPendentes, setFiltrosGeracaoPendentes] = useState(null);
-  const [modalGerarSimuladoAberto, setModalGerarSimuladoAberto] = useState(false);
-  const [gerandoSimulado, setGerandoSimulado] = useState(false);
-  const [erroGeracaoSimulado, setErroGeracaoSimulado] = useState(null);
-  const [simuladoSelecionado, setSimuladoSelecionado] = useState(null);
-  const [modalRenomearAberto, setModalRenomearAberto] = useState(false);
-  const [renomeandoSimulado, setRenomeandoSimulado] = useState(false);
-  const [erroRenomeacao, setErroRenomeacao] = useState(null);
-  const [modalExcluirAberto, setModalExcluirAberto] = useState(false);
-  const [excluindoSimulado, setExcluindoSimulado] = useState(false);
-  const [erroExclusao, setErroExclusao] = useState(null);
-  const componenteMontadoRef = useRef(true);
-  const criacaoEmAndamentoRef = useRef(false);
-  const geracaoEmAndamentoRef = useRef(false);
-  const renomeacaoEmAndamentoRef = useRef(false);
-  const exclusaoEmAndamentoRef = useRef(false);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+  const [modalCriarAberto, setModalCriarAberto] = useState(false);
+  const [criando, setCriando] = useState(false);
+  const [erroCriacao, setErroCriacao] = useState("");
+  const [simuladoParaRenomear, setSimuladoParaRenomear] = useState(null);
+  const [renomeando, setRenomeando] = useState(false);
+  const [erroRenomeacao, setErroRenomeacao] = useState("");
+  const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
+  const eProfessor = tipoUsuario === "PROFESSOR";
 
   useEffect(() => {
     let componenteMontado = true;
-    componenteMontadoRef.current = true;
 
     async function carregarSimulados() {
+      if (!eProfessor) {
+        if (componenteMontado) setCarregando(false);
+        return;
+      }
+
+      setCarregando(true);
+      setErro("");
+
       try {
-        const simuladosCarregados = await listarSimuladosDoUsuario();
+        const simuladosCarregados = await listarSimuladosDoProfessor();
         if (componenteMontado) setSimulados(simuladosCarregados);
-      } catch (erro) {
-        if (componenteMontado) setErroSimulados(erro);
+      } catch {
+        if (componenteMontado) {
+          setErro("Não foi possível carregar os simulados. Tente novamente.");
+        }
       } finally {
-        if (componenteMontado) setCarregandoSimulados(false);
+        if (componenteMontado) setCarregando(false);
       }
     }
 
     carregarSimulados();
     return () => {
       componenteMontado = false;
-      componenteMontadoRef.current = false;
     };
-  }, []);
+  }, [eProfessor]);
 
   const simuladosFiltrados = useMemo(() => {
     const buscaNormalizada = normalizarTexto(busca);
@@ -75,251 +65,88 @@ function Simulados() {
     );
   }, [busca, simulados]);
 
-  const handleAbrirSimulado = (simuladoId) => {
-    navigate(`/simulados/${simuladoId}`);
-  };
-
-  const handleSolicitarRenomeacao = (simulado) => {
-    setSimuladoSelecionado(simulado);
-    setErroRenomeacao(null);
-    setModalRenomearAberto(true);
-  };
-
-  const handleFecharRenomeacao = () => {
-    if (renomeandoSimulado) return;
-
-    setModalRenomearAberto(false);
-    setSimuladoSelecionado(null);
-    setErroRenomeacao(null);
-  };
-
-  const handleConfirmarRenomeacao = async (titulo) => {
-    if (
-      renomeandoSimulado ||
-      renomeacaoEmAndamentoRef.current ||
-      !simuladoSelecionado
-    ) return;
-
-    renomeacaoEmAndamentoRef.current = true;
-    setRenomeandoSimulado(true);
-    setErroRenomeacao(null);
-
-    try {
-      const simuladoAtualizado = await renomearSimulado(
-        simuladoSelecionado.id,
-        { titulo }
-      );
-
-      if (componenteMontadoRef.current) {
-        adicionarOuAtualizarSimulado(simuladoAtualizado);
-        setModalRenomearAberto(false);
-        setSimuladoSelecionado(null);
-      }
-    } catch (erro) {
-      if (componenteMontadoRef.current) {
-        setErroRenomeacao(
-          erro instanceof Error
-            ? erro.message
-            : "Não foi possível renomear o simulado. Tente novamente."
-        );
-      }
-    } finally {
-      renomeacaoEmAndamentoRef.current = false;
-      if (componenteMontadoRef.current) setRenomeandoSimulado(false);
-    }
-  };
-
-  const handleSolicitarExclusao = (simulado) => {
-    setSimuladoSelecionado(simulado);
-    setErroExclusao(null);
-    setModalExcluirAberto(true);
-  };
-
-  const handleFecharExclusao = () => {
-    if (excluindoSimulado) return;
-
-    setModalExcluirAberto(false);
-    setSimuladoSelecionado(null);
-    setErroExclusao(null);
-  };
-
-  const handleConfirmarExclusao = async () => {
-    if (
-      excluindoSimulado ||
-      exclusaoEmAndamentoRef.current ||
-      !simuladoSelecionado
-    ) return;
-
-    exclusaoEmAndamentoRef.current = true;
-    setExcluindoSimulado(true);
-    setErroExclusao(null);
-
-    try {
-      const resultado = await excluirSimulado(simuladoSelecionado.id);
-
-      if (componenteMontadoRef.current) {
-        setSimulados((simuladosAtuais) =>
-          simuladosAtuais.filter((simulado) => simulado.id !== resultado.id)
-        );
-        setModalExcluirAberto(false);
-        setSimuladoSelecionado(null);
-      }
-    } catch (erro) {
-      if (componenteMontadoRef.current) {
-        setErroExclusao(
-          erro instanceof Error
-            ? erro.message
-            : "Não foi possível excluir o simulado. Tente novamente."
-        );
-      }
-    } finally {
-      exclusaoEmAndamentoRef.current = false;
-      if (componenteMontadoRef.current) setExcluindoSimulado(false);
-    }
-  };
-
-  const handleBaixarSimulado = () => {
-    // O download será implementado quando o contrato da API estiver disponível.
-  };
-
-  const handleAbrirModalCriacao = () => {
-    setErroCriacaoSimulado(null);
-    setModalCriarSimuladoAberto(true);
-  };
-
   function adicionarOuAtualizarSimulado(simuladoRecebido) {
     setSimulados((simuladosAtuais) => {
-      const simuladoJaExiste = simuladosAtuais.some(
+      const jaExiste = simuladosAtuais.some(
         (simulado) => simulado.id === simuladoRecebido.id
       );
 
-      if (simuladoJaExiste) {
-        return simuladosAtuais.map((simulado) =>
-          simulado.id === simuladoRecebido.id ? simuladoRecebido : simulado
-        );
-      }
-
-      return [...simuladosAtuais, simuladoRecebido];
+      return jaExiste
+        ? simuladosAtuais.map((simulado) =>
+            simulado.id === simuladoRecebido.id ? simuladoRecebido : simulado
+          )
+        : [...simuladosAtuais, simuladoRecebido];
     });
   }
 
-  const handleConfirmarCriacao = async (titulo) => {
-    if (criandoSimulado || criacaoEmAndamentoRef.current) return;
+  async function handleCriar(titulo) {
+    if (criando) return;
 
-    criacaoEmAndamentoRef.current = true;
-    setCriandoSimulado(true);
-    setErroCriacaoSimulado(null);
-
-    try {
-      const novoSimulado = await criarSimulado({ titulo });
-
-      if (componenteMontadoRef.current) {
-        adicionarOuAtualizarSimulado(novoSimulado);
-        setModalCriarSimuladoAberto(false);
-      }
-    } catch (erro) {
-      if (componenteMontadoRef.current) {
-        setErroCriacaoSimulado(
-          erro instanceof Error
-            ? erro.message
-            : "Não foi possível criar o simulado. Tente novamente."
-        );
-      }
-    } finally {
-      criacaoEmAndamentoRef.current = false;
-      if (componenteMontadoRef.current) setCriandoSimulado(false);
-    }
-  };
-
-  const handleGerarSimuladoComFiltros = (filtros) => {
-    setFiltrosGeracaoPendentes({
-      ...filtros,
-      disciplinas: [...filtros.disciplinas],
-      conteudos: [...filtros.conteudos],
-      instituicoes: [...filtros.instituicoes],
-      anos: [...filtros.anos],
-    });
-    setErroGeracaoSimulado(null);
-    setModalGerarSimuladoAberto(true);
-  };
-
-  const handleFecharModalGeracao = () => {
-    if (gerandoSimulado) return;
-
-    setModalGerarSimuladoAberto(false);
-    setFiltrosGeracaoPendentes(null);
-    setErroGeracaoSimulado(null);
-  };
-
-  const handleConfirmarGeracao = async (titulo) => {
-    if (
-      gerandoSimulado ||
-      geracaoEmAndamentoRef.current ||
-      !filtrosGeracaoPendentes
-    ) return;
-
-    geracaoEmAndamentoRef.current = true;
-    setGerandoSimulado(true);
-    setErroGeracaoSimulado(null);
-
-    const { quantidadeQuestoes, ...filtros } = filtrosGeracaoPendentes;
+    setCriando(true);
+    setErroCriacao("");
 
     try {
-      const novoSimulado = await gerarSimulado({
-        titulo,
-        filtros,
-        quantidadeQuestoes,
-      });
-
-      if (componenteMontadoRef.current) {
-        adicionarOuAtualizarSimulado(novoSimulado);
-        setModalGerarSimuladoAberto(false);
-        setFiltrosGeracaoPendentes(null);
-        setMostrarPainelFiltro(false);
-      }
-    } catch (erro) {
-      if (componenteMontadoRef.current) {
-        setErroGeracaoSimulado(
-          erro instanceof Error
-            ? erro.message
-            : "Não foi possível gerar o simulado. Tente novamente."
-        );
-      }
+      const novoSimulado = await criarSimuladoVazio({ titulo });
+      adicionarOuAtualizarSimulado(novoSimulado);
+      setModalCriarAberto(false);
+    } catch (erroCriar) {
+      setErroCriacao(
+        erroCriar instanceof Error
+          ? erroCriar.message
+          : "Não foi possível criar o simulado. Tente novamente."
+      );
     } finally {
-      geracaoEmAndamentoRef.current = false;
-      if (componenteMontadoRef.current) setGerandoSimulado(false);
+      setCriando(false);
     }
-  };
+  }
 
-  function renderizarListaSimulados() {
-    if (carregandoSimulados) {
+  async function handleRenomear(titulo) {
+    if (renomeando || !simuladoParaRenomear) return;
+
+    setRenomeando(true);
+    setErroRenomeacao("");
+
+    try {
+      const simuladoAtualizado = await renomearSimuladoDoProfessor(
+        simuladoParaRenomear.id,
+        { titulo }
+      );
+      adicionarOuAtualizarSimulado(simuladoAtualizado);
+      setSimuladoParaRenomear(null);
+    } catch (erroRenomear) {
+      setErroRenomeacao(
+        erroRenomear instanceof Error
+          ? erroRenomear.message
+          : "Não foi possível renomear o simulado. Tente novamente."
+      );
+    } finally {
+      setRenomeando(false);
+    }
+  }
+
+  function renderizarLista() {
+    if (carregando) {
       return <div className={estiloSimulados.estadoVazio}>Carregando simulados...</div>;
     }
-    if (erroSimulados) {
-      return (
-        <div className={estiloSimulados.estadoVazio}>
-          Não foi possível carregar os simulados. Tente novamente.
-        </div>
-      );
+    if (erro) {
+      return <div className={estiloSimulados.estadoVazio} role="alert">{erro}</div>;
     }
     if (simulados.length === 0) {
-      return (
-        <div className={estiloSimulados.estadoVazio}>
-          Você ainda não tem nenhum simulado.
-        </div>
-      );
+      return <div className={estiloSimulados.estadoVazio}>Você ainda não tem nenhum simulado.</div>;
     }
     if (simuladosFiltrados.length === 0) {
       return <div className={estiloSimulados.estadoVazio}>Nenhum simulado encontrado.</div>;
     }
+
     return simuladosFiltrados.map((simulado) => (
       <CardSimulado
         key={simulado.id}
         simulado={simulado}
-        onAbrir={handleAbrirSimulado}
-        onRenomear={handleSolicitarRenomeacao}
-        onBaixar={handleBaixarSimulado}
-        onExcluir={handleSolicitarExclusao}
+        somenteLeitura
+        onRenomear={(simuladoSelecionado) => {
+          setErroRenomeacao("");
+          setSimuladoParaRenomear(simuladoSelecionado);
+        }}
       />
     ));
   }
@@ -329,73 +156,54 @@ function Simulados() {
       <div className={estiloSimulados.conteudo}>
         <h1 className={estiloSimulados.titulo}>Meus Simulados</h1>
 
-        {!mostrarPainelFiltro && (
-          <BarraBusca
-            placeholder="Pesquisar simulados..."
-            value={busca}
-            onChange={setBusca}
-          />
-        )}
-
-        <div className={estiloSimulados.acoes}>
-          <button
-            className={estiloSimulados.botaoCriarSimulado}
-            onClick={handleAbrirModalCriacao}
-          >
-            Criar Simulado
-          </button>
-          <button
-            className={estiloSimulados.botaoFiltrarSimulados}
-            onClick={() => setMostrarPainelFiltro(!mostrarPainelFiltro)}
-          >
-            {mostrarPainelFiltro ? "Ver Simulados" : "Filtrar Questões"}
-          </button>
-        </div>
-
-        {mostrarPainelFiltro ? (
-          <PainelFiltroSimulados onGerarSimulado={handleGerarSimuladoComFiltros} />
+        {!eProfessor ? (
+          <p className={estiloSimulados.estadoVazio}>
+            Os simulados serão acessados pelas turmas quando essa integração estiver disponível.
+          </p>
         ) : (
-          <div className={estiloSimulados.listaSimulados}>
-            {renderizarListaSimulados()}
-          </div>
+          <>
+            <BarraBusca
+              placeholder="Pesquisar simulados..."
+              value={busca}
+              onChange={setBusca}
+            />
+            <div className={estiloSimulados.acoes}>
+              <button
+                type="button"
+                className={estiloSimulados.botaoCriarSimulado}
+                onClick={() => {
+                  setErroCriacao("");
+                  setModalCriarAberto(true);
+                }}
+              >
+                Criar Simulado
+              </button>
+            </div>
+            <div className={estiloSimulados.listaSimulados}>{renderizarLista()}</div>
+          </>
         )}
       </div>
 
-      {modalCriarSimuladoAberto && (
+      {eProfessor && modalCriarAberto && (
         <ModalCriarSimulado
-          onFechar={() => setModalCriarSimuladoAberto(false)}
-          onSalvar={handleConfirmarCriacao}
-          salvando={criandoSimulado}
-          erro={erroCriacaoSimulado}
+          onFechar={() => {
+            if (!criando) setModalCriarAberto(false);
+          }}
+          onSalvar={handleCriar}
+          salvando={criando}
+          erro={erroCriacao}
         />
       )}
 
-      {modalGerarSimuladoAberto && filtrosGeracaoPendentes && (
-        <ModalGerarSimulado
-          quantidadeQuestoes={filtrosGeracaoPendentes.quantidadeQuestoes}
-          onFechar={handleFecharModalGeracao}
-          onConfirmar={handleConfirmarGeracao}
-          gerando={gerandoSimulado}
-          erro={erroGeracaoSimulado}
-        />
-      )}
-
-      {modalRenomearAberto && simuladoSelecionado && (
+      {eProfessor && simuladoParaRenomear && (
         <ModalRenomearSimulado
-          tituloAtual={simuladoSelecionado.titulo}
-          onFechar={handleFecharRenomeacao}
-          onConfirmar={handleConfirmarRenomeacao}
-          renomeando={renomeandoSimulado}
+          tituloAtual={simuladoParaRenomear.titulo}
+          onFechar={() => {
+            if (!renomeando) setSimuladoParaRenomear(null);
+          }}
+          onConfirmar={handleRenomear}
+          renomeando={renomeando}
           erro={erroRenomeacao}
-        />
-      )}
-
-      {modalExcluirAberto && simuladoSelecionado && (
-        <ModalExcluirSimulado
-          onFechar={handleFecharExclusao}
-          onConfirmar={handleConfirmarExclusao}
-          excluindo={excluindoSimulado}
-          erro={erroExclusao}
         />
       )}
     </div>
