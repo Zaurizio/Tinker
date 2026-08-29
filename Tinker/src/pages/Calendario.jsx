@@ -2,13 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import CardEvento from "../components/calendario/CardEvento";
 import CardDetalhesEvento from "../components/calendario/CardDetalhesEvento";
 import {
-  criarEvento,
-  excluirEvento,
-  excluirSerieEventos,
-  listarEventosDoUsuario,
-  obterEventoPorId,
-  possuiOutrasOcorrenciasDaSerie,
-} from "../services/calendarioService";
+  criarEventoNoCalendario,
+  excluirEventoDoCalendario,
+  listarEventosDoCalendario,
+} from "../services/calendarioApiService";
+import { obterSessao } from "../services/autenticacaoService";
 
 /*seta esquerda*/ import { IoIosArrowBack } from "react-icons/io"; //<IoIosArrowBack />
 /*seta direita*/ import { IoIosArrowForward } from "react-icons/io"; //<IoIosArrowForward />
@@ -33,7 +31,6 @@ function Calendario() {
   const componenteMontadoRef = useRef(true);
   const criacaoEmAndamentoRef = useRef(false);
   const remocaoEmAndamentoRef = useRef(false);
-  const requisicaoDetalhesRef = useRef(0);
 
   const [eventos, setEventos] = useState([]);
   const [carregandoEventos, setCarregandoEventos] = useState(true);
@@ -41,11 +38,11 @@ function Calendario() {
   const [salvandoEvento, setSalvandoEvento] = useState(false);
   const [erroCriacaoEvento, setErroCriacaoEvento] = useState("");
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
-  const [carregandoDetalhesEvento, setCarregandoDetalhesEvento] = useState(false);
-  const [erroDetalhesEvento, setErroDetalhesEvento] = useState("");
-  const [etapaRemocao, setEtapaRemocao] = useState("detalhes");
+  const [confirmandoRemocao, setConfirmandoRemocao] = useState(false);
   const [removendoEvento, setRemovendoEvento] = useState(false);
   const [erroRemocaoEvento, setErroRemocaoEvento] = useState("");
+  const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
+  const podeGerenciar = tipoUsuario === "ALUNO" || tipoUsuario === "PROFESSOR";
 
   useEffect(() => {
     let componenteMontado = true;
@@ -56,20 +53,17 @@ function Calendario() {
       setErroEventos("");
 
       try {
-        const eventosCarregados = await listarEventosDoUsuario();
+        const eventosCarregados = await listarEventosDoCalendario();
         if (componenteMontado) {
-          setEventos((eventosAtuais) => {
-            const eventosPorId = new Map(
-              eventosCarregados.map((evento) => [evento.id, evento])
-            );
-
-            eventosAtuais.forEach((evento) => eventosPorId.set(evento.id, evento));
-            return Array.from(eventosPorId.values());
-          });
+          setEventos(eventosCarregados);
         }
-      } catch {
+      } catch (erroCarregamento) {
         if (componenteMontado) {
-          setErroEventos("Não foi possível carregar os eventos. Tente novamente.");
+          setErroEventos(
+            erroCarregamento instanceof Error
+              ? `${erroCarregamento.message}${erroCarregamento.codigo ? ` (${erroCarregamento.codigo})` : ""}`
+              : "Não foi possível carregar os eventos. Tente novamente.",
+          );
         }
       } finally {
         if (componenteMontado) setCarregandoEventos(false);
@@ -100,7 +94,13 @@ function Calendario() {
   const botaoCriarRef = useRef(null);
 
   function handleCriar() {
-    if (carregandoEventos || erroEventos || salvandoEvento || removendoEvento) return;
+    if (
+      !podeGerenciar ||
+      carregandoEventos ||
+      erroEventos ||
+      salvandoEvento ||
+      removendoEvento
+    ) return;
 
     const dataLocal = new Date();
     const hoje = [
@@ -113,111 +113,61 @@ function Calendario() {
     setCardAberto(hoje);
   }
 
-  async function handleAbrirEvento(info) {
+  function handleAbrirEvento(info) {
     info.jsEvent?.stopPropagation();
     if (carregandoEventos || erroEventos || salvandoEvento || removendoEvento) return;
 
-    const numeroRequisicao = requisicaoDetalhesRef.current + 1;
-    requisicaoDetalhesRef.current = numeroRequisicao;
+    const evento = eventos.find(
+      (item) => String(item.id) === String(info.event.id),
+    );
     setCardAberto(false);
-    setEventoSelecionado(null);
-    setEtapaRemocao("detalhes");
-    setErroDetalhesEvento("");
+    setEventoSelecionado(evento ?? null);
+    setConfirmandoRemocao(false);
     setErroRemocaoEvento("");
-    setCarregandoDetalhesEvento(true);
-
-    try {
-      const evento = await obterEventoPorId(info.event.id);
-      if (
-        componenteMontadoRef.current
-        && requisicaoDetalhesRef.current === numeroRequisicao
-      ) setEventoSelecionado(evento);
-    } catch (erro) {
-      if (
-        componenteMontadoRef.current
-        && requisicaoDetalhesRef.current === numeroRequisicao
-      ) {
-        setErroDetalhesEvento(
-          erro instanceof Error ? erro.message : "Não foi possível carregar o evento."
-        );
-      }
-    } finally {
-      if (
-        componenteMontadoRef.current
-        && requisicaoDetalhesRef.current === numeroRequisicao
-      ) setCarregandoDetalhesEvento(false);
-    }
   }
 
   function handleFecharDetalhes() {
-    if (removendoEvento || carregandoDetalhesEvento) return;
-    requisicaoDetalhesRef.current += 1;
+    if (removendoEvento) return;
     setEventoSelecionado(null);
-    setErroDetalhesEvento("");
     setErroRemocaoEvento("");
-    setEtapaRemocao("detalhes");
+    setConfirmandoRemocao(false);
   }
 
-  async function executarRemocao(removerSerie) {
-    if (!eventoSelecionado || removendoEvento || remocaoEmAndamentoRef.current) return;
+  async function executarRemocao() {
+    if (
+      !podeGerenciar ||
+      !eventoSelecionado ||
+      removendoEvento ||
+      remocaoEmAndamentoRef.current
+    ) return;
 
     remocaoEmAndamentoRef.current = true;
     setRemovendoEvento(true);
     setErroRemocaoEvento("");
 
     try {
-      if (removerSerie) {
-        await excluirSerieEventos(eventoSelecionado.serieId);
-      } else {
-        await excluirEvento(eventoSelecionado.id);
-      }
+      await excluirEventoDoCalendario(eventoSelecionado.id);
 
       if (componenteMontadoRef.current) {
-        setEventos((eventosAtuais) => eventosAtuais.filter((evento) => {
-          if (removerSerie) {
-            return String(evento.extendedProps?.serieId ?? "")
-              !== String(eventoSelecionado.serieId);
-          }
-          return String(evento.id) !== String(eventoSelecionado.id);
-        }));
+        setEventos((eventosAtuais) =>
+          eventosAtuais.filter(
+            (evento) => String(evento.id) !== String(eventoSelecionado.id),
+          ),
+        );
         setEventoSelecionado(null);
-        setEtapaRemocao("detalhes");
+        setConfirmandoRemocao(false);
       }
     } catch (erro) {
       if (componenteMontadoRef.current) {
         setErroRemocaoEvento(
-          erro instanceof Error ? erro.message : "Não foi possível remover o evento."
+          erro instanceof Error
+            ? `${erro.message}${erro.codigo ? ` (${erro.codigo})` : ""}`
+            : "Não foi possível remover o evento.",
         );
       }
     } finally {
       remocaoEmAndamentoRef.current = false;
       if (componenteMontadoRef.current) setRemovendoEvento(false);
-    }
-  }
-
-  async function handleContinuarRemocao() {
-    if (!eventoSelecionado || removendoEvento) return;
-
-    setErroRemocaoEvento("");
-    setCarregandoDetalhesEvento(true);
-    try {
-      const possuiOutras = await possuiOutrasOcorrenciasDaSerie(eventoSelecionado.id);
-      if (!componenteMontadoRef.current) return;
-
-      if (possuiOutras) {
-        setEtapaRemocao("escolhaSerie");
-      } else {
-        setCarregandoDetalhesEvento(false);
-        await executarRemocao(false);
-      }
-    } catch (erro) {
-      if (componenteMontadoRef.current) {
-        setErroRemocaoEvento(
-          erro instanceof Error ? erro.message : "Não foi possível verificar a sequência."
-        );
-      }
-    } finally {
-      if (componenteMontadoRef.current) setCarregandoDetalhesEvento(false);
     }
   }
 
@@ -252,6 +202,8 @@ function Calendario() {
   /*adiciona evento novo*/
   async function handleSalvarEvento(dadosEvento) {
     if (
+      !podeGerenciar
+      ||
       carregandoEventos
       || erroEventos
       || salvandoEvento
@@ -263,7 +215,7 @@ function Calendario() {
     setErroCriacaoEvento("");
 
     try {
-      const novosEventos = await criarEvento(dadosEvento);
+      const novosEventos = await criarEventoNoCalendario(dadosEvento);
 
       if (componenteMontadoRef.current) {
         setEventos((eventosAtuais) => [...eventosAtuais, ...novosEventos]);
@@ -273,8 +225,8 @@ function Calendario() {
       if (componenteMontadoRef.current) {
         setErroCriacaoEvento(
           erro instanceof Error
-            ? erro.message
-            : "Não foi possível salvar o evento. Tente novamente."
+            ? `${erro.message}${erro.codigo ? ` (${erro.codigo})` : ""}`
+            : "Não foi possível salvar o evento. Tente novamente.",
         );
       }
     } finally {
@@ -319,14 +271,16 @@ function aplicarAnimacao(tipo, callback) {
 
         {/*lado esquerdo do topo*/}
         <div className={estiloCalendario.topoEsquerda}>
-          <button 
-            ref={botaoCriarRef}
-            className={estiloCalendario.botaoCriar}
-            onClick={handleCriar}
-            disabled={carregandoEventos || Boolean(erroEventos) || salvandoEvento || removendoEvento}
-          >
-            <FaPlus size={20}/> Marcar
-          </button>
+          {podeGerenciar && (
+            <button
+              ref={botaoCriarRef}
+              className={estiloCalendario.botaoCriar}
+              onClick={handleCriar}
+              disabled={carregandoEventos || Boolean(erroEventos) || salvandoEvento || removendoEvento}
+            >
+              <FaPlus size={20}/> Marcar
+            </button>
+          )}
 
           <span className={estiloCalendario.dataGrande}>
             {formatarData()}
@@ -381,10 +335,15 @@ function aplicarAnimacao(tipo, callback) {
               {erroEventos}
             </p>
           )}
+          {!carregandoEventos && !erroEventos && eventos.length === 0 && (
+            <p className={estiloCalendario.estadoEventos}>
+              Nenhum evento encontrado.
+            </p>
+          )}
           <FullCalendar
             key="Calendar-instance"
             dateClick={(info) => {
-              if (!carregandoEventos && !erroEventos && !salvandoEvento && !removendoEvento) {
+              if (podeGerenciar && !carregandoEventos && !erroEventos && !salvandoEvento && !removendoEvento) {
                 setErroCriacaoEvento("");
                 setEventoSelecionado(null);
                 setCardAberto(info.dateStr);
@@ -534,22 +493,22 @@ function aplicarAnimacao(tipo, callback) {
             erro={erroCriacaoEvento}
           />
         )}
-        {(carregandoDetalhesEvento || erroDetalhesEvento || eventoSelecionado) && (
+        {eventoSelecionado && (
           <CardDetalhesEvento
             evento={eventoSelecionado}
-            etapa={etapaRemocao}
-            carregando={carregandoDetalhesEvento}
-            erroDetalhes={erroDetalhesEvento}
+            confirmandoRemocao={confirmandoRemocao}
             removendo={removendoEvento}
             erroRemocao={erroRemocaoEvento}
+            podeExcluir={podeGerenciar}
             onFechar={handleFecharDetalhes}
-            onRemover={() => {
+            onSolicitarRemocao={() => {
               setErroRemocaoEvento("");
-              setEtapaRemocao("confirmacao");
+              setConfirmandoRemocao(true);
             }}
-            onContinuar={handleContinuarRemocao}
-            onRemoverOcorrencia={() => executarRemocao(false)}
-            onRemoverSerie={() => executarRemocao(true)}
+            onCancelarRemocao={() => {
+              if (!removendoEvento) setConfirmandoRemocao(false);
+            }}
+            onConfirmarRemocao={executarRemocao}
           />
         )}
       </div>

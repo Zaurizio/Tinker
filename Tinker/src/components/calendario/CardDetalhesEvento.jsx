@@ -4,27 +4,23 @@ function formatarData(data) {
   if (!data) return "";
   const [ano, mes, dia] = data.split("-").map(Number);
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "long" }).format(
-    new Date(ano, mes - 1, dia, 12)
+    new Date(ano, mes - 1, dia, 12),
   );
 }
 
 export default function CardDetalhesEvento({
   evento,
-  etapa,
-  carregando,
-  erroDetalhes,
+  confirmandoRemocao,
   removendo,
   erroRemocao,
+  podeExcluir,
   onFechar,
-  onRemover,
-  onContinuar,
-  onRemoverOcorrencia,
-  onRemoverSerie,
+  onSolicitarRemocao,
+  onCancelarRemocao,
+  onConfirmarRemocao,
 }) {
-  const operacaoEmAndamento = carregando || removendo;
-
   function handleCliqueOverlay(event) {
-    if (event.target === event.currentTarget && !operacaoEmAndamento) onFechar();
+    if (event.target === event.currentTarget && !removendo) onFechar();
   }
 
   return (
@@ -33,20 +29,9 @@ export default function CardDetalhesEvento({
         className={estilos.card}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={evento ? "titulo-evento-selecionado" : undefined}
+        aria-labelledby="titulo-evento-selecionado"
       >
-        {carregando && <p className={estilos.estado}>Carregando evento...</p>}
-
-        {!carregando && erroDetalhes && (
-          <>
-            <p className={estilos.erro} role="alert">{erroDetalhes}</p>
-            <div className={estilos.acoes}>
-              <button className={estilos.botaoSecundario} onClick={onFechar}>Fechar</button>
-            </div>
-          </>
-        )}
-
-        {!carregando && evento && etapa === "detalhes" && (
+        {!confirmandoRemocao ? (
           <>
             <h2 id="titulo-evento-selecionado" className={estilos.titulo}>
               <span
@@ -57,55 +42,74 @@ export default function CardDetalhesEvento({
               {evento.titulo}
             </h2>
             <dl className={estilos.detalhes}>
-              <div><dt>Data:</dt><dd>{formatarData(evento.data)}</dd></div>
-              {evento.tipo === "dia_inteiro" ? (
-                <div><dt>Horário:</dt><dd>Dia inteiro</dd></div>
+              <div>
+                <dt>Data:</dt>
+                <dd>{formatarData(evento.data)}</dd>
+              </div>
+              {evento.diaInteiro ? (
+                <div>
+                  <dt>Horário:</dt>
+                  <dd>Dia inteiro</dd>
+                </div>
               ) : (
                 <div>
                   <dt>Horário:</dt>
-                  <dd>{evento.horarioInicio} – {evento.horarioFim}</dd>
+                  <dd>
+                    {evento.horarioInicio} – {evento.horarioFim}
+                  </dd>
                 </div>
               )}
-              {evento.recorrencia && (
-                <div><dt>Recorrência:</dt><dd>{evento.recorrencia}</dd></div>
-              )}
+              <div>
+                <dt>Cor:</dt>
+                <dd>{evento.cor}</dd>
+              </div>
             </dl>
-            {erroRemocao && <p className={estilos.erro} role="alert">{erroRemocao}</p>}
+            {erroRemocao && (
+              <p className={estilos.erro} role="alert">
+                {erroRemocao}
+              </p>
+            )}
             <div className={estilos.acoes}>
-              <button className={estilos.botaoSecundario} onClick={onFechar}>Fechar</button>
-              <button className={estilos.botaoPerigo} onClick={onRemover}>Remover</button>
-            </div>
-          </>
-        )}
-
-        {!carregando && evento && etapa === "confirmacao" && (
-          <>
-            <h2 id="titulo-evento-selecionado" className={estilos.titulo}>Remover evento</h2>
-            <p className={estilos.mensagem}>Tem certeza que deseja remover este evento?</p>
-            {erroRemocao && <p className={estilos.erro} role="alert">{erroRemocao}</p>}
-            <div className={estilos.acoes}>
-              <button className={estilos.botaoSecundario} onClick={onFechar} disabled={operacaoEmAndamento}>Cancelar</button>
-              <button className={estilos.botaoPerigo} onClick={onContinuar} disabled={operacaoEmAndamento}>
-                {removendo ? "Removendo..." : "Continuar"}
+              <button className={estilos.botaoSecundario} onClick={onFechar}>
+                Fechar
               </button>
+              {podeExcluir && (
+                <button
+                  className={estilos.botaoPerigo}
+                  onClick={onSolicitarRemocao}
+                >
+                  Remover
+                </button>
+              )}
             </div>
           </>
-        )}
-
-        {!carregando && evento && etapa === "escolhaSerie" && (
+        ) : (
           <>
-            <h2 id="titulo-evento-selecionado" className={estilos.titulo}>Remover evento recorrente</h2>
+            <h2 id="titulo-evento-selecionado" className={estilos.titulo}>
+              Remover evento
+            </h2>
             <p className={estilos.mensagem}>
-              Deseja remover somente este evento ou todos os eventos desta sequência?
+              Tem certeza que deseja remover esta ocorrência?
             </p>
-            {erroRemocao && <p className={estilos.erro} role="alert">{erroRemocao}</p>}
+            {erroRemocao && (
+              <p className={estilos.erro} role="alert">
+                {erroRemocao}
+              </p>
+            )}
             <div className={estilos.acoes}>
-              <button className={estilos.botaoSecundario} onClick={onFechar} disabled={operacaoEmAndamento}>Cancelar</button>
-              <button className={estilos.botaoSecundario} onClick={onRemoverOcorrencia} disabled={operacaoEmAndamento}>
-                {removendo ? "Removendo..." : "Somente este"}
+              <button
+                className={estilos.botaoSecundario}
+                onClick={onCancelarRemocao}
+                disabled={removendo}
+              >
+                Cancelar
               </button>
-              <button className={estilos.botaoPerigo} onClick={onRemoverSerie} disabled={operacaoEmAndamento}>
-                {removendo ? "Removendo..." : "Todos"}
+              <button
+                className={estilos.botaoPerigo}
+                onClick={onConfirmarRemocao}
+                disabled={removendo}
+              >
+                {removendo ? "Removendo..." : "Remover"}
               </button>
             </div>
           </>

@@ -71,8 +71,7 @@ export default function CardEvento({
     'Não se repete',
     'Todos os dias',
     'Semanal',
-    'Mensal',
-    'Anual'
+    'Mensal'
     ];
 
 /*estados com h definidos*/
