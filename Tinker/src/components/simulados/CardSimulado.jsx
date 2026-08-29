@@ -8,6 +8,7 @@ const CardSimulado = ({
     onRenomear,
     onBaixar,
     onExcluir,
+    onVerQuestoes,
     somenteLeitura = false,
 }) => {
     const [showMenu, setShowMenu] = useState(false);
@@ -99,6 +100,13 @@ const CardSimulado = ({
                     {simulado.tempo !== null && ` · ${simulado.tempo} min`}
                 </p>
                 <div className={styles.acoesSomenteLeitura}>
+                    <button
+                        type="button"
+                        className={styles.botaoVerQuestoes}
+                        onClick={() => onVerQuestoes(simulado)}
+                    >
+                        Ver questões
+                    </button>
                     <button
                         type="button"
                         className={styles.botaoRenomear}

@@ -1,14 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router";
-import CardQuestao from "../components/questoes/CardQuestao";
-import { responderQuestao } from "../services/questoesService";
+import { obterSessao } from "../services/autenticacaoService";
 import {
-  atualizarQuestaoNosSimulados,
-  listarQuestoesDoSimulado,
-  listarSimuladosDoUsuario,
-  obterSimuladoPorId,
-} from "../services/simuladosService";
+  listarQuestoesDoSimuladoDoProfessor,
+  obterSimuladoDoProfessor,
+} from "../services/simuladosApiService";
 import estilos from "./DetalhesSimulado.module.css";
 
 function DetalhesSimulado() {
@@ -18,120 +15,53 @@ function DetalhesSimulado() {
   const [questoes, setQuestoes] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
-  const [simulados, setSimulados] = useState([]);
-  const [carregandoSimulados, setCarregandoSimulados] = useState(true);
-  const [erroSimulados, setErroSimulados] = useState("");
-  const [simuladosPorQuestao, setSimuladosPorQuestao] = useState({});
-  const [erroSalvamento, setErroSalvamento] = useState("");
-  const [erroResposta, setErroResposta] = useState("");
-  const carregamentoAtualRef = useRef(0);
+  const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
+  const eProfessor = tipoUsuario === "PROFESSOR";
 
   useEffect(() => {
-    carregamentoAtualRef.current += 1;
-    const idCarregamento = carregamentoAtualRef.current;
-    let carregamentoAtivo = true;
+    let componenteMontado = true;
 
     async function carregarSimulado() {
+      if (!eProfessor) {
+        if (componenteMontado) setCarregando(false);
+        return;
+      }
+
       setCarregando(true);
       setErro("");
       setSimulado(null);
       setQuestoes([]);
-      setSimuladosPorQuestao({});
 
       try {
-        const resumo = await obterSimuladoPorId(simuladoId);
-        const questoesAssociadas = await listarQuestoesDoSimulado(simuladoId);
+        const dadosSimulado = await obterSimuladoDoProfessor(simuladoId);
+        const questoesAssociadas = await listarQuestoesDoSimuladoDoProfessor(
+          simuladoId
+        );
 
-        if (
-          carregamentoAtivo &&
-          idCarregamento === carregamentoAtualRef.current
-        ) {
-          setSimulado(resumo);
+        if (componenteMontado) {
+          setSimulado(dadosSimulado);
           setQuestoes(questoesAssociadas);
         }
       } catch (erroCarregamento) {
-        if (
-          carregamentoAtivo &&
-          idCarregamento === carregamentoAtualRef.current
-        ) {
-          setErro(
-            erroCarregamento?.codigo === "SIMULADO_NAO_ENCONTRADO"
-              ? "Simulado não encontrado."
+        if (!componenteMontado) return;
+
+        setErro(
+          erroCarregamento?.codigo === "SIMULADO_NAO_ENCONTRADO"
+            ? "Simulado não encontrado."
+            : erroCarregamento instanceof Error
+              ? erroCarregamento.message
               : "Não foi possível carregar o simulado. Tente novamente."
-          );
-        }
+        );
       } finally {
-        if (
-          carregamentoAtivo &&
-          idCarregamento === carregamentoAtualRef.current
-        ) {
-          setCarregando(false);
-        }
+        if (componenteMontado) setCarregando(false);
       }
     }
 
     carregarSimulado();
-
     return () => {
-      carregamentoAtivo = false;
+      componenteMontado = false;
     };
-  }, [simuladoId]);
-
-  useEffect(() => {
-    let carregamentoAtivo = true;
-
-    async function carregarSimulados() {
-      setCarregandoSimulados(true);
-      setErroSimulados("");
-
-      try {
-        const simuladosDoUsuario = await listarSimuladosDoUsuario();
-        if (carregamentoAtivo) setSimulados(simuladosDoUsuario);
-      } catch {
-        if (carregamentoAtivo) {
-          setErroSimulados("Não foi possível carregar os simulados.");
-        }
-      } finally {
-        if (carregamentoAtivo) setCarregandoSimulados(false);
-      }
-    }
-
-    carregarSimulados();
-    return () => {
-      carregamentoAtivo = false;
-    };
-  }, []);
-
-  async function handleSalvarSimulados(questaoId, simuladosIds) {
-    setErroSalvamento("");
-
-    try {
-      const simuladosAtualizados = await atualizarQuestaoNosSimulados(
-        questaoId,
-        simuladosIds
-      );
-
-      setSimuladosPorQuestao((associacoesAtuais) => ({
-        ...associacoesAtuais,
-        [questaoId]: [...simuladosAtualizados],
-      }));
-      return simuladosAtualizados;
-    } catch (erroSalvar) {
-      setErroSalvamento("Não foi possível salvar a questão. Tente novamente.");
-      throw erroSalvar;
-    }
-  }
-
-  async function handleEnviarResposta(questaoId, alternativaId) {
-    setErroResposta("");
-
-    try {
-      return await responderQuestao(questaoId, alternativaId);
-    } catch (erroEnviar) {
-      setErroResposta("Não foi possível enviar a resposta. Tente novamente.");
-      throw erroEnviar;
-    }
-  }
+  }, [eProfessor, simuladoId]);
 
   return (
     <section className={estilos.pagina}>
@@ -149,36 +79,48 @@ function DetalhesSimulado() {
       </header>
 
       <div className={estilos.conteudo}>
-        {carregando ? (
+        {!eProfessor ? (
+          <p className={estilos.estado}>
+            Esta área está disponível somente para professores.
+          </p>
+        ) : carregando ? (
           <p className={estilos.estado}>Carregando simulado...</p>
         ) : erro ? (
           <p className={estilos.erro} role="alert">{erro}</p>
-        ) : questoes.length === 0 ? (
-          <p className={estilos.estado}>Este simulado ainda não possui questões.</p>
         ) : (
           <>
-            {erroSalvamento && <p className={estilos.erro}>{erroSalvamento}</p>}
-            {erroResposta && <p className={estilos.erro}>{erroResposta}</p>}
-            <div className={estilos.listaQuestoes}>
-              {questoes.map((questao) => {
-                const idsAssociados = simuladosPorQuestao[questao.id] ?? [
-                  ...(questao.simuladosIds ?? []),
-                  simulado.id,
-                ];
+            <section className={estilos.resumo}>
+              {simulado.descricao && <p>{simulado.descricao}</p>}
+              <div className={estilos.metadados}>
+                <span>{simulado.quantidadeQuestoes} questões</span>
+                {simulado.tempo !== null && <span>{simulado.tempo} min</span>}
+              </div>
+            </section>
 
-                return (
-                  <CardQuestao
-                    key={`${simulado.id}-${questao.id}`}
-                    questao={{ ...questao, simuladosIds: [...new Set(idsAssociados)] }}
-                    simulados={simulados}
-                    carregandoSimulados={carregandoSimulados}
-                    erroSimulados={erroSimulados}
-                    onSalvarSimulados={handleSalvarSimulados}
-                    onEnviarResposta={handleEnviarResposta}
-                  />
-                );
-              })}
-            </div>
+            {questoes.length === 0 ? (
+              <p className={estilos.estado}>
+                Este simulado ainda não possui questões.
+              </p>
+            ) : (
+              <div className={estilos.listaQuestoes}>
+                {questoes.map((questao) => (
+                  <article className={estilos.questao} key={questao.id}>
+                    <div className={estilos.metadadosQuestao}>
+                      <span>{questao.disciplina}</span>
+                      <span>{questao.conteudo}</span>
+                      <span>{questao.vestibular}</span>
+                      <span>{questao.ano}</span>
+                    </div>
+                    <p className={estilos.enunciado}>{questao.enunciado}</p>
+                    <ol className={estilos.alternativas} type="A">
+                      {questao.alternativas.map((alternativa) => (
+                        <li key={alternativa.id}>{alternativa.texto}</li>
+                      ))}
+                    </ol>
+                  </article>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>

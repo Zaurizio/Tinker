@@ -86,7 +86,8 @@
 }
 
 .botaoRenomear,
-.botaoExcluir {
+.botaoExcluir,
+.botaoVerQuestoes {
     min-height: 36px;
     padding: 0 14px;
     border: 1px solid var(--cor-borda-controle);
@@ -104,5 +105,9 @@
 }
 
 .botaoExcluir {
-    color: var(--cor-alerta);
+  color: var(--cor-alerta);
+}
+
+.botaoVerQuestoes {
+  color: var(--cor-primaria-destaque);
 }

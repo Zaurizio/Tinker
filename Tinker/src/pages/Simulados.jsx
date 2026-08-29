@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import BarraBusca from "../components/ui/BarraBusca";
 import CardSimulado from "../components/simulados/CardSimulado";
 import ModalCriarSimulado from "../components/simulados/ModalCriarSimulado";
@@ -17,6 +18,7 @@ const normalizarTexto = (texto) =>
   texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 function Simulados() {
+  const navigate = useNavigate();
   const [busca, setBusca] = useState("");
   const [simulados, setSimulados] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -181,6 +183,9 @@ function Simulados() {
           setErroExclusao("");
           setSimuladoParaExcluir(simuladoSelecionado);
         }}
+        onVerQuestoes={(simuladoSelecionado) =>
+          navigate(`/simulados/${simuladoSelecionado.id}`)
+        }
       />
     ));
   }
