@@ -10,6 +10,7 @@ import Tinker.demo.model.Simulado;
 import Tinker.demo.repository.QuestaoSimuRepository;
 import Tinker.demo.repository.QuestaoRepository;
 import Tinker.demo.mapper.QuestaoMapper;
+import Tinker.demo.repository.RelatorioRepository;
 import Tinker.demo.repository.RelatorioSimuladoRepository;
 import Tinker.demo.repository.SimuladoRepository;
 import Tinker.demo.repository.TurmaSimuladoRepository;
@@ -44,6 +45,7 @@ class SimuladoServiceTest {
     private TurmaSimuladoRepository turmaSimuladoRepository;
     private SimuladoService simuladoService;
     private QuestaoRepository questaoRepository;
+    private RelatorioRepository relatorioRepository;
 
     @BeforeEach
     void configurar() {
@@ -52,13 +54,17 @@ class SimuladoServiceTest {
         relatorioSimuladoRepository = mock(RelatorioSimuladoRepository.class);
         turmaSimuladoRepository = mock(TurmaSimuladoRepository.class);
         questaoRepository = mock(QuestaoRepository.class);
+        relatorioRepository = mock(RelatorioRepository.class);
         simuladoService = new SimuladoService(
                 simuladoRepository,
                 questaoSimuRepository,
                 relatorioSimuladoRepository,
                 turmaSimuladoRepository,
                 questaoRepository,
-                new QuestaoMapper());
+                new QuestaoMapper(),
+                relatorioRepository);
+        when(relatorioSimuladoRepository.findByEmailAlunoAndCodSimuladoIn(any(), any()))
+                .thenReturn(List.of());
 
         when(simuladoRepository.save(any(Simulado.class))).thenAnswer(invocacao -> {
             Simulado simulado = invocacao.getArgument(0);

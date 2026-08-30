@@ -5,5 +5,7 @@ public record SimuladoResumoDTO(
         String titulo,
         String descricao,
         Float tempo,
-        long quantidadeQuestoes) {
+        long quantidadeQuestoes,
+        boolean concluido,
+        Integer acertos) {
 }

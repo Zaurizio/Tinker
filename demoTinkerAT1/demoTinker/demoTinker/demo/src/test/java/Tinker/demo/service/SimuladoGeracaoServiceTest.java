@@ -64,7 +64,8 @@ class SimuladoGeracaoServiceTest {
                 mock(RelatorioSimuladoRepository.class),
                 mock(TurmaSimuladoRepository.class),
                 questaoRepository,
-                new QuestaoMapper());
+                new QuestaoMapper(),
+                mock(Tinker.demo.repository.RelatorioRepository.class));
         when(simuladoRepository.save(any(Simulado.class))).thenAnswer(invocacao -> {
             Simulado simulado = invocacao.getArgument(0);
             simulado.setCodSimulado(25);
