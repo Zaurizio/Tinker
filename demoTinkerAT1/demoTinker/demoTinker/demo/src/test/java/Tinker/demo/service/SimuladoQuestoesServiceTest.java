@@ -5,7 +5,6 @@ import Tinker.demo.dto.simulado.QuantidadeQuestoesSimuladoDTO;
 import Tinker.demo.dto.simulado.QuestoesIdsDTO;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.exception.DadosInvalidosException;
-import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.mapper.QuestaoMapper;
 import Tinker.demo.model.Questao;
 import Tinker.demo.model.QuestaoSimu;
@@ -92,17 +91,41 @@ class SimuladoQuestoesServiceTest {
     }
 
     @Test
-    void alunoNaoListaAdicionaOuRemoveQuestoes() {
+    void alunoListaAdicionaERemoveQuestoesDoProprioSimulado() {
         UsuarioAutenticado aluno = new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO);
+        when(simuladoRepository.findById(10)).thenReturn(Optional.of(simuladoDoAluno()));
+        when(questaoSimuRepository.findCodQuestoesByCodSimulado(10))
+                .thenReturn(List.of(), List.of());
+        when(questaoRepository.findByCodQuestaoInAndAtivoOrderByCodQuestaoAsc(Set.of(1), 1))
+                .thenReturn(List.of(questao(1, 1)));
+        QuestaoSimuid associacao = new QuestaoSimuid(10, 1);
+        when(questaoSimuRepository.existsById(associacao)).thenReturn(true);
 
-        assertThrows(AcessoNegadoException.class,
+        assertEquals(List.of(), simuladoService.listarQuestoes(aluno, 10));
+        simuladoService.adicionarQuestoes(aluno, 10, ids(1));
+        simuladoService.removerQuestao(aluno, 10, 1);
+
+        verify(questaoSimuRepository).saveAll(any());
+        verify(questaoSimuRepository).deleteById(associacao);
+    }
+
+    @Test
+    void contasComMesmoEmailETiposDiferentesNaoCompartilhamAssociacoes() {
+        String mesmoEmail = "mesmo@tinker.com";
+        Simulado doProfessor = simuladoDoDono();
+        doProfessor.setEmailProf(mesmoEmail);
+        when(simuladoRepository.findById(10)).thenReturn(Optional.of(doProfessor));
+        UsuarioAutenticado aluno = new UsuarioAutenticado(mesmoEmail, TipoUsuario.ALUNO);
+
+        assertThrows(RecursoNaoEncontradoException.class,
                 () -> simuladoService.listarQuestoes(aluno, 10));
-        assertThrows(AcessoNegadoException.class,
+        assertThrows(RecursoNaoEncontradoException.class,
                 () -> simuladoService.adicionarQuestoes(aluno, 10, ids(1)));
-        assertThrows(AcessoNegadoException.class,
+        assertThrows(RecursoNaoEncontradoException.class,
                 () -> simuladoService.removerQuestao(aluno, 10, 1));
 
-        verify(simuladoRepository, never()).findById(any());
+        verify(questaoSimuRepository, never()).saveAll(any());
+        verify(questaoSimuRepository, never()).deleteById(any());
     }
 
     @Test
@@ -242,6 +265,14 @@ class SimuladoQuestoesServiceTest {
         simulado.setTipoUsu(Simulado.TIPO_USUARIO_PROFESSOR);
         simulado.setNome("Simulado");
         simulado.setConclusao(0);
+        return simulado;
+    }
+
+    private Simulado simuladoDoAluno() {
+        Simulado simulado = simuladoDoDono();
+        simulado.setEmailAluno("aluno@tinker.com");
+        simulado.setEmailProf(null);
+        simulado.setTipoUsu(Simulado.TIPO_USUARIO_ALUNO);
         return simulado;
     }
 

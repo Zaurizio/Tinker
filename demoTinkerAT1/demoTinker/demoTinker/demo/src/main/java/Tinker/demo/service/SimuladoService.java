@@ -62,23 +62,26 @@ public class SimuladoService {
 
     @Transactional(readOnly = true)
     public List<SimuladoResumoDTO> listar(UsuarioAutenticado usuario) {
-        exigirProfessor(usuario);
-        List<Simulado> simulados =
-                simuladoRepository.findByEmailProfOrderByCodSimuladoAsc(usuario.email());
+        exigirUsuarioDeSimulado(usuario);
+        List<Simulado> simulados = usuario.tipoUsuario() == TipoUsuario.ALUNO
+                ? simuladoRepository.findByEmailAlunoAndTipoUsuOrderByCodSimuladoAsc(
+                        usuario.email(), Simulado.TIPO_USUARIO_ALUNO)
+                : simuladoRepository.findByEmailProfAndTipoUsuOrderByCodSimuladoAsc(
+                        usuario.email(), Simulado.TIPO_USUARIO_PROFESSOR);
 
         return simulados.stream().map(this::resumo).toList();
     }
 
     @Transactional
     public SimuladoDetalheDTO criar(UsuarioAutenticado usuario, CriarSimuladoDTO dados) {
-        exigirProfessor(usuario);
+        exigirUsuarioDeSimulado(usuario);
         Simulado simulado = new Simulado();
         simulado.setNome(dados.getTitulo().trim());
         simulado.setDescricao(dados.getDescricao());
         simulado.setTempo(dados.getTempo());
         simulado.setConclusao(0);
 
-        preencherProprietarioProfessor(simulado, usuario);
+        preencherProprietario(simulado, usuario);
 
         Simulado salvo = simuladoRepository.save(simulado);
         return detalhe(salvo, List.of());
@@ -86,7 +89,7 @@ public class SimuladoService {
 
     @Transactional
     public SimuladoGeradoDTO gerar(UsuarioAutenticado usuario, GerarSimuladoDTO dados) {
-        exigirProfessor(usuario);
+        exigirUsuarioDeSimulado(usuario);
         validarQuantidade(dados.getQuantidadeQuestoes());
 
         Page<Questao> resultado = questaoRepository.findAll(
@@ -113,7 +116,7 @@ public class SimuladoService {
         simulado.setDescricao(dados.getDescricao());
         simulado.setTempo(dados.getTempo());
         simulado.setConclusao(0);
-        preencherProprietarioProfessor(simulado, usuario);
+        preencherProprietario(simulado, usuario);
 
         Simulado salvo = simuladoRepository.save(simulado);
         List<QuestaoSimu> associacoes = resultado.getContent().stream()
@@ -250,20 +253,34 @@ public class SimuladoService {
     }
 
     private Simulado buscarDoUsuario(UsuarioAutenticado usuario, Integer id) {
-        exigirProfessor(usuario);
+        exigirUsuarioDeSimulado(usuario);
         Simulado simulado = simuladoRepository.findById(id).orElseThrow(this::naoEncontrado);
-        if (!usuario.email().equals(simulado.getEmailProf())) {
+        if (!pertenceAoUsuario(simulado, usuario)) {
             throw naoEncontrado();
         }
         return simulado;
     }
 
-    private void preencherProprietarioProfessor(
-            Simulado simulado,
-            UsuarioAutenticado usuario) {
+    private void preencherProprietario(Simulado simulado, UsuarioAutenticado usuario) {
+        if (usuario.tipoUsuario() == TipoUsuario.ALUNO) {
+            simulado.setEmailAluno(usuario.email());
+            simulado.setEmailProf(null);
+            simulado.setTipoUsu(Simulado.TIPO_USUARIO_ALUNO);
+            return;
+        }
+
         simulado.setEmailAluno(null);
         simulado.setEmailProf(usuario.email());
         simulado.setTipoUsu(Simulado.TIPO_USUARIO_PROFESSOR);
+    }
+
+    private boolean pertenceAoUsuario(Simulado simulado, UsuarioAutenticado usuario) {
+        if (usuario.tipoUsuario() == TipoUsuario.ALUNO) {
+            return Simulado.TIPO_USUARIO_ALUNO.equals(simulado.getTipoUsu())
+                    && usuario.email().equals(simulado.getEmailAluno());
+        }
+        return Simulado.TIPO_USUARIO_PROFESSOR.equals(simulado.getTipoUsu())
+                && usuario.email().equals(simulado.getEmailProf());
     }
 
     private SimuladoResumoDTO resumo(Simulado simulado) {
@@ -291,11 +308,11 @@ public class SimuladoService {
                 "O simulado nao foi encontrado.");
     }
 
-    private void exigirProfessor(UsuarioAutenticado usuario) {
-        if (usuario.tipoUsuario() != TipoUsuario.PROFESSOR) {
+    private void exigirUsuarioDeSimulado(UsuarioAutenticado usuario) {
+        if (usuario.tipoUsuario() == TipoUsuario.ADMINISTRADOR) {
             throw new AcessoNegadoException(
                     "ACESSO_NEGADO",
-                    "Esta operacao de simulado e permitida somente para professor.");
+                    "Administrador nao pode administrar simulados pessoais.");
         }
     }
 

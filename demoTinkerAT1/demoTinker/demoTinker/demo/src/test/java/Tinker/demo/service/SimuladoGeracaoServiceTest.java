@@ -73,15 +73,17 @@ class SimuladoGeracaoServiceTest {
     }
 
     @Test
-    void alunoNaoGeraSimulado() {
-        AcessoNegadoException erro = assertThrows(
-                AcessoNegadoException.class,
-                () -> simuladoService.gerar(
-                        new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO), dados(3)));
+    void alunoGeraSimuladoComSomenteSeuDono() {
+        prepararQuestoes(3);
 
-        assertEquals(403, erro.getStatus().value());
-        verify(questaoRepository, never()).findAll(any(Specification.class), any(Pageable.class));
-        verify(simuladoRepository, never()).save(any());
+        simuladoService.gerar(
+                new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO), dados(3));
+
+        Simulado salvo = capturarSimulado();
+        assertEquals("aluno@tinker.com", salvo.getEmailAluno());
+        assertNull(salvo.getEmailProf());
+        assertEquals(Simulado.TIPO_USUARIO_ALUNO, salvo.getTipoUsu());
+        assertEquals(0, salvo.getConclusao());
     }
 
     @Test

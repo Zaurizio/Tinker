@@ -70,19 +70,23 @@ class SimuladoServiceTest {
     }
 
     @Test
-    void alunoNaoListaSimuladosProprios() {
-        AcessoNegadoException erro = assertThrows(
-                AcessoNegadoException.class,
-                () -> simuladoService.listar(usuarioAluno()));
+    void alunoListaSomenteSeusSimulados() {
+        Simulado proprio = simuladoAluno(3, EMAIL_ALUNO);
+        when(simuladoRepository.findByEmailAlunoAndTipoUsuOrderByCodSimuladoAsc(
+                EMAIL_ALUNO, Simulado.TIPO_USUARIO_ALUNO)).thenReturn(List.of(proprio));
 
-        assertEquals(403, erro.getStatus().value());
-        verify(simuladoRepository, never()).findByEmailProfOrderByCodSimuladoAsc(any());
+        List<SimuladoResumoDTO> resposta = simuladoService.listar(usuarioAluno());
+
+        assertEquals(List.of(3), resposta.stream().map(SimuladoResumoDTO::id).toList());
+        verify(simuladoRepository, never())
+                .findByEmailProfAndTipoUsuOrderByCodSimuladoAsc(any(), any());
     }
 
     @Test
     void professorListaSomenteSeusSimulados() {
         Simulado proprio = simuladoProfessor(2, EMAIL_PROFESSOR);
-        when(simuladoRepository.findByEmailProfOrderByCodSimuladoAsc(EMAIL_PROFESSOR))
+        when(simuladoRepository.findByEmailProfAndTipoUsuOrderByCodSimuladoAsc(
+                EMAIL_PROFESSOR, Simulado.TIPO_USUARIO_PROFESSOR))
                 .thenReturn(List.of(proprio));
 
         List<SimuladoResumoDTO> resposta = simuladoService.listar(usuarioProfessor());
@@ -103,13 +107,14 @@ class SimuladoServiceTest {
     }
 
     @Test
-    void alunoNaoCriaSimulado() {
-        AcessoNegadoException erro = assertThrows(
-                AcessoNegadoException.class,
-                () -> simuladoService.criar(usuarioAluno(), criar()));
+    void alunoCriaSimuladoComProprietarioCompativel() {
+        SimuladoDetalheDTO criado = simuladoService.criar(usuarioAluno(), criar());
+        Simulado alunoSalvo = capturarUltimoSimuladoSalvo();
 
-        assertEquals(403, erro.getStatus().value());
-        verify(simuladoRepository, never()).save(any());
+        assertEquals(EMAIL_ALUNO, alunoSalvo.getEmailAluno());
+        assertNull(alunoSalvo.getEmailProf());
+        assertEquals(Simulado.TIPO_USUARIO_ALUNO, alunoSalvo.getTipoUsu());
+        assertEquals(0, criado.quantidadeQuestoes());
     }
 
     @Test
@@ -180,17 +185,50 @@ class SimuladoServiceTest {
     }
 
     @Test
-    void alunoNaoEditaNemExcluiSimulado() {
+    void alunoEditaEExcluiSimuladoProprio() {
+        Simulado existente = simuladoAluno(1, EMAIL_ALUNO);
+        when(simuladoRepository.findById(1)).thenReturn(Optional.of(existente));
         AtualizarSimuladoDTO dados = new AtualizarSimuladoDTO();
-        dados.setTitulo("Negado");
+        dados.setTitulo("Editado pelo aluno");
+
+        SimuladoDetalheDTO atualizado = simuladoService.atualizar(usuarioAluno(), 1, dados);
+        simuladoService.excluir(usuarioAluno(), 1);
+
+        assertEquals("Editado pelo aluno", atualizado.titulo());
+        verify(simuladoRepository).delete(existente);
+    }
+
+    @Test
+    void mesmoEmailEmTiposDiferentesNaoCompartilhaSimulados() {
+        String mesmoEmail = "mesmo@tinker.com";
+        Simulado doAluno = simuladoAluno(1, mesmoEmail);
+        Simulado doProfessor = simuladoProfessor(2, mesmoEmail);
+        UsuarioAutenticado aluno = new UsuarioAutenticado(mesmoEmail, TipoUsuario.ALUNO);
+        UsuarioAutenticado professor = new UsuarioAutenticado(mesmoEmail, TipoUsuario.PROFESSOR);
+
+        when(simuladoRepository.findById(1)).thenReturn(Optional.of(doAluno));
+        when(simuladoRepository.findById(2)).thenReturn(Optional.of(doProfessor));
+
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> simuladoService.detalhar(professor, 1));
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> simuladoService.detalhar(aluno, 2));
+        simuladoService.detalhar(aluno, 1);
+        simuladoService.detalhar(professor, 2);
+    }
+
+    @Test
+    void administradorContinuaSemAcesso() {
+        UsuarioAutenticado administrador =
+                new UsuarioAutenticado("adm@tinker.com", TipoUsuario.ADMINISTRADOR);
 
         assertThrows(AcessoNegadoException.class,
-                () -> simuladoService.atualizar(usuarioAluno(), 1, dados));
+                () -> simuladoService.listar(administrador));
         assertThrows(AcessoNegadoException.class,
-                () -> simuladoService.excluir(usuarioAluno(), 1));
-
+                () -> simuladoService.criar(administrador, criar()));
+        assertThrows(AcessoNegadoException.class,
+                () -> simuladoService.detalhar(administrador, 1));
         verify(simuladoRepository, never()).findById(any());
-        verify(simuladoRepository, never()).delete(any());
     }
 
     @Test
@@ -231,6 +269,14 @@ class SimuladoServiceTest {
         simulado.setEmailProf(email);
         simulado.setEmailAluno(null);
         simulado.setTipoUsu(Simulado.TIPO_USUARIO_PROFESSOR);
+        return simulado;
+    }
+
+    private Simulado simuladoAluno(Integer id, String email) {
+        Simulado simulado = base(id);
+        simulado.setEmailAluno(email);
+        simulado.setEmailProf(null);
+        simulado.setTipoUsu(Simulado.TIPO_USUARIO_ALUNO);
         return simulado;
     }
 

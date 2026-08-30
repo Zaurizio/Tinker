@@ -7,6 +7,7 @@ import java.util.Objects;
 @Table(name = "Simulado")
 public class Simulado {
 
+    public static final String TIPO_USUARIO_ALUNO = "ALUNO";
     public static final String TIPO_USUARIO_PROFESSOR = "PROF";
 
     @Id

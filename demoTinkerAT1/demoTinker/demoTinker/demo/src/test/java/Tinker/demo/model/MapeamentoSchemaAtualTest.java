@@ -63,6 +63,7 @@ class MapeamentoSchemaAtualTest {
         assertFalse(tipoRelatorio.getAnnotation(Column.class).nullable());
         assertTrue(tipoRelatorio.isAnnotationPresent(jakarta.persistence.Id.class));
         assertEquals(3, quantidadeDeIds(Relatorio.class));
+        assertEquals("ALUNO", Simulado.TIPO_USUARIO_ALUNO);
         assertEquals("PROF", Simulado.TIPO_USUARIO_PROFESSOR);
     }
 
