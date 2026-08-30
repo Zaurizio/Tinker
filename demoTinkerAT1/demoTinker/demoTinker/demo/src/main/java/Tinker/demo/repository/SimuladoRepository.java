@@ -8,5 +8,9 @@ import java.util.List;
 
 @Repository
 public interface SimuladoRepository extends JpaRepository<Simulado, Integer> {
-    List<Simulado> findByEmailProfOrderByCodSimuladoAsc(String emailProf);
+    List<Simulado> findByEmailAlunoAndTipoUsuOrderByCodSimuladoAsc(
+            String emailAluno, String tipoUsu);
+
+    List<Simulado> findByEmailProfAndTipoUsuOrderByCodSimuladoAsc(
+            String emailProf, String tipoUsu);
 }
