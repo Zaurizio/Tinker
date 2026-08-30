@@ -202,6 +202,7 @@ export async function corrigirQuestaoDoSimuladoPublicado(
     questaoId: resposta.questaoId,
     alternativaSelecionadaId: alternativa,
     acertou: resposta.acertou,
+    alternativaCorreta: resposta.alternativaCorreta,
   };
 }
 

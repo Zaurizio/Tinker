@@ -1,4 +1,6 @@
 .cardQuestao {
+  --cor-resposta-correta: #2e7d32;
+  --cor-fundo-resposta-correta: #edf7ee;
   padding: 22px;
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 14px;
@@ -53,7 +55,7 @@
 
 .mensagemSucesso {
   margin: 10px 0 0;
-  color: #2e7d32;
+  color: var(--cor-resposta-correta);
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -97,12 +99,14 @@
 
 .alternativa.correta,
 .alternativa.correta:hover {
-  border-color: #2e7d32;
+  border-color: var(--cor-resposta-correta);
+  background: var(--cor-fundo-resposta-correta);
 }
 
 .alternativa.incorreta,
 .alternativa.incorreta:hover {
   border-color: var(--cor-alerta);
+  background: var(--cor-fundo-erro-suave);
 }
 
 .conteudoAlternativa {
@@ -116,6 +120,26 @@
 
 .conteudoAlternativa span {
   line-height: 1.45;
+}
+
+.indicadorResultado {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.correta .indicadorResultado {
+  color: var(--cor-resposta-correta);
+}
+
+.incorreta .indicadorResultado {
+  color: var(--cor-alerta);
+}
+
+:global(.dark-mode) .cardQuestao {
+  --cor-resposta-correta: #7edc87;
+  --cor-fundo-resposta-correta: rgba(62, 143, 73, 0.2);
 }
 
 .botaoEliminar {

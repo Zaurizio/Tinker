@@ -32,6 +32,7 @@ export default function CardQuestao({
     () => new Set(),
   );
   const seletorSimuladosRef = useRef(null);
+  const enviandoRespostaRef = useRef(false);
 
   const simuladosFiltrados = useMemo(() => {
     const buscaNormalizada = normalizarTexto(buscaSimulado);
@@ -152,11 +153,12 @@ export default function CardQuestao({
     if (
       alternativaSelecionada === null ||
       questaoRespondida ||
-      enviandoResposta
+      enviandoRespostaRef.current
     ) {
       return;
     }
 
+    enviandoRespostaRef.current = true;
     setEnviandoResposta(true);
     setErroResposta("");
 
@@ -175,6 +177,7 @@ export default function CardQuestao({
           : "Não foi possível enviar a resposta. Tente novamente.",
       );
     } finally {
+      enviandoRespostaRef.current = false;
       setEnviandoResposta(false);
     }
   }
@@ -312,9 +315,18 @@ export default function CardQuestao({
           const alternativaRespondida =
             resultadoResposta?.alternativaSelecionadaId === alternativa.id;
           const alternativaCorreta =
-            alternativaRespondida && resultadoResposta?.acertou;
+            (alternativaRespondida && resultadoResposta?.acertou === true) ||
+            (resultadoResposta?.acertou === false &&
+              resultadoResposta.alternativaCorreta === alternativa.id);
           const alternativaIncorretaSelecionada =
             alternativaRespondida && resultadoResposta?.acertou === false;
+          const textoResultado = alternativaCorreta
+            ? alternativaRespondida
+              ? "Resposta correta"
+              : "Alternativa correta"
+            : alternativaIncorretaSelecionada
+              ? "Sua resposta"
+              : "";
 
           return (
             <div
@@ -342,6 +354,11 @@ export default function CardQuestao({
                 />
 
                 <span>{alternativa.texto}</span>
+                {textoResultado && (
+                  <span className={styles.indicadorResultado}>
+                    {textoResultado}
+                  </span>
+                )}
               </label>
 
               <button

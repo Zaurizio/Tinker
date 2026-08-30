@@ -171,5 +171,6 @@ export async function responderQuestao(questaoId, alternativaSelecionadaId) {
     questaoId: resposta.questaoId,
     alternativaSelecionadaId,
     acertou: resposta.acertou,
+    alternativaCorreta: resposta.alternativaCorreta,
   };
 }
