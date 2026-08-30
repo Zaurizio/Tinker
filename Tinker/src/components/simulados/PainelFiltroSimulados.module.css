@@ -70,6 +70,24 @@
   font-size: 0.875rem;
 }
 
+.botaoTentarNovamente {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 999px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.botaoTentarNovamente:hover {
+  background: var(--cor-fundo-hover);
+  border-color: var(--cor-borda-hover);
+}
+
 .linhaAcoes {
   display: flex;
   justify-content: flex-end;
@@ -98,6 +116,11 @@
 
 .botaoPrimario:hover {
   background: var(--cor-botao-primario-hover);
+}
+
+.botaoPrimario:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .botaoSecundario {

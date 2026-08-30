@@ -1,26 +1,62 @@
 // src/components/simulados/PainelFiltroSimulados.jsx
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Card from "../ui/Card"; // Caminho correto: ../ui/Card
 import CampoSelecaoMultipla from "../questoes/CampoSelecaoMultipla"; // Caminho correto: ../questoes/CampoSelecaoMultipla
 import estiloPainel from "./PainelFiltroSimulados.module.css"; // Novo CSS para este componente
+import { obterConteudosDisponiveis } from "../../utils/opcoesFiltrosQuestoes";
 
-// Importe os dados de filtro. O caminho parece ser ../../data/filtrosQuestoes
-import {
-  disciplinas,
-  conteudos,
-  instituicoes,
-  anos,
-} from "../../data/filtrosQuestoes";
+const FILTROS_INICIAIS = {
+  disciplinas: [],
+  conteudos: [],
+  instituicoes: [],
+  anos: [],
+  quantidadeQuestoes: "", // Novo campo para quantidade de questões
+};
 
-function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
+function formatarErroOpcoes(erro) {
+  if (!(erro instanceof Error)) return "Não foi possível carregar as opções de filtro.";
+  return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
+}
+
+function PainelFiltroSimulados({
+  onGerarSimulado,
+  onLimparFiltros,
+  opcoesFiltros,
+  carregandoOpcoes,
+  erroOpcoes,
+  onTentarNovamenteOpcoes,
+}) {
   const [erroQuantidade, setErroQuantidade] = useState("");
-  const [filtros, setFiltros] = useState({
-    disciplinas: [],
-    conteudos: [],
-    instituicoes: [],
-    anos: [],
-    quantidadeQuestoes: "", // Novo campo para quantidade de questões
-  });
+  const [filtros, setFiltros] = useState(FILTROS_INICIAIS);
+
+  const disciplinasDisponiveis = useMemo(
+    () => opcoesFiltros.disciplinas.map((disciplina) => disciplina.nome),
+    [opcoesFiltros.disciplinas]
+  );
+  const conteudosDisponiveis = useMemo(
+    () =>
+      obterConteudosDisponiveis(opcoesFiltros.disciplinas, filtros.disciplinas),
+    [opcoesFiltros.disciplinas, filtros.disciplinas]
+  );
+  const anosDisponiveis = useMemo(
+    () => opcoesFiltros.anos.map(String),
+    [opcoesFiltros.anos]
+  );
+
+  const [conteudosDisponiveisSincronizados, setConteudosDisponiveisSincronizados] =
+    useState(conteudosDisponiveis);
+  if (conteudosDisponiveis !== conteudosDisponiveisSincronizados) {
+    setConteudosDisponiveisSincronizados(conteudosDisponiveis);
+    setFiltros((estadoAtual) => {
+      const conteudosValidos = estadoAtual.conteudos.filter((conteudo) =>
+        conteudosDisponiveis.includes(conteudo)
+      );
+      if (conteudosValidos.length === estadoAtual.conteudos.length) {
+        return estadoAtual;
+      }
+      return { ...estadoAtual, conteudos: conteudosValidos };
+    });
+  }
 
   function atualizarFiltro(campo, valor) {
     if (campo === "quantidadeQuestoes") setErroQuantidade("");
@@ -32,13 +68,7 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
 
   function limparFiltrosInterno() {
     setErroQuantidade("");
-    setFiltros({
-      disciplinas: [],
-      conteudos: [],
-      instituicoes: [],
-      anos: [],
-      quantidadeQuestoes: "",
-    });
+    setFiltros(FILTROS_INICIAIS);
     if (onLimparFiltros) {
       onLimparFiltros(); // Chama a função externa se existir
     }
@@ -69,6 +99,9 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
     }
   }
 
+  const placeholderCampos = carregandoOpcoes ? "Carregando..." : "Todas";
+  const geracaoBloqueada = carregandoOpcoes || Boolean(erroOpcoes);
+
   return (
     <Card className={estiloPainel.cardBusca}>
       <form className={estiloPainel.formulario} onSubmit={handleSubmit}>
@@ -76,27 +109,42 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
           Mostrar apenas questões:
         </p>
 
+        {erroOpcoes && (
+          <p className={estiloPainel.erro} role="alert">
+            {formatarErroOpcoes(erroOpcoes)}{" "}
+            <button
+              type="button"
+              className={estiloPainel.botaoTentarNovamente}
+              onClick={onTentarNovamenteOpcoes}
+            >
+              Tentar novamente
+            </button>
+          </p>
+        )}
+
         <div className={estiloPainel.linhaDuasColunas}>
           {/*Disciplinas*/}
           <CampoSelecaoMultipla
             label="Disciplina"
-            placeholder="Todas"
-            opcoes={disciplinas}
+            placeholder={placeholderCampos}
+            opcoes={disciplinasDisponiveis}
             selecionadas={filtros.disciplinas}
             onChange={(novasDisciplinas) =>
               atualizarFiltro("disciplinas", novasDisciplinas)
             }
+            desabilitado={carregandoOpcoes}
           />
 
           {/*Conteúdos*/}
           <CampoSelecaoMultipla
             label="Conteúdo"
-            placeholder="Todas"
-            opcoes={conteudos}
+            placeholder={placeholderCampos}
+            opcoes={conteudosDisponiveis}
             selecionadas={filtros.conteudos}
             onChange={(novosConteudos) =>
               atualizarFiltro("conteudos", novosConteudos)
             }
+            desabilitado={carregandoOpcoes}
           />
         </div>
 
@@ -104,12 +152,13 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
           {/*Instituições*/}
           <CampoSelecaoMultipla
             label="Instituição"
-            placeholder="Todas"
-            opcoes={instituicoes}
+            placeholder={placeholderCampos}
+            opcoes={opcoesFiltros.vestibulares}
             selecionadas={filtros.instituicoes}
             onChange={(novasInstituicoes) =>
               atualizarFiltro("instituicoes", novasInstituicoes)
             }
+            desabilitado={carregandoOpcoes}
           />
 
           {/* Anos e Quantidade de Questões na mesma linha */}
@@ -117,12 +166,13 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
           <div className={estiloPainel.grupoAnosQuantidade}>
             <CampoSelecaoMultipla
               label="Anos"
-              placeholder="Todas"
-              opcoes={anos}
+              placeholder={placeholderCampos}
+              opcoes={anosDisponiveis}
               selecionadas={filtros.anos}
               onChange={(novosAnos) =>
                 atualizarFiltro("anos", novosAnos)
               }
+              desabilitado={carregandoOpcoes}
             />
             <div className={estiloPainel.campo}>
               <label htmlFor="quantidadeQuestoes">Número de Questões</label>
@@ -158,7 +208,11 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
             Limpar filtros
           </button>
 
-          <button type="submit" className={estiloPainel.botaoPrimario}>
+          <button
+            type="submit"
+            className={estiloPainel.botaoPrimario}
+            disabled={geracaoBloqueada}
+          >
             Gerar simulado
           </button>
         </div>

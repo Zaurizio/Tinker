@@ -8,24 +8,27 @@ import Checkbox from "@mui/material/Checkbox";
 */}
 import estiloCampoSelM from "./CampoSelecaoMultipla.module.css";
 
-function CampoSelecaoMultipla({ 
+function CampoSelecaoMultipla({
   /*props que vem de */
   label,
   placeholder,
   opcoes = [],
   selecionadas = [],
   onChange,
+  desabilitado = false,
 }) {
   const [aberto, setAberto] = useState(false); {/*se o painel está aberto*/}
   const [busca, setBusca] = useState(""); {/*guarda o que usuario digitou em busca*/}
   const [selecionadasTemporarias, setSelecionadasTemporarias] = useState(selecionadas);
   {/*guarda opções marcadas no painel*/}
+  const [selecionadasSincronizadas, setSelecionadasSincronizadas] = useState(selecionadas);
 
   const containerRef = useRef(null); {/*cria referencia pra area do campo (se clicou dentro ou fora) ?*/}
 
-  useEffect(() => {
+  if (selecionadas !== selecionadasSincronizadas) {
+    setSelecionadasSincronizadas(selecionadas);
     setSelecionadasTemporarias(selecionadas);
-  }, [selecionadas]); {/*selecionadas temporarias = selecionadas (?)*/}
+  } {/*selecionadas temporarias = selecionadas (?)*/}
 
   {/*se clicar fora sai do painel*/}
   useEffect(() => {
@@ -58,6 +61,7 @@ function CampoSelecaoMultipla({
   {/*cria nova lista opcoesFiltradas*/}
 
   function abrirPainel() {
+    if (desabilitado) return;
     setSelecionadasTemporarias(selecionadas);
     setAberto(true);
   }
@@ -120,8 +124,12 @@ function CampoSelecaoMultipla({
       <div className={estiloCampoSelM.areaCampo} ref={containerRef}>
         <button
           type="button"
-          className={`${estiloCampoSelM.botaoCampo} ${aberto ? estiloCampoSelM.botaoCampoAberto : ""}`}
+          className={`${estiloCampoSelM.botaoCampo} ${aberto ? estiloCampoSelM.botaoCampoAberto : ""} ${
+            desabilitado ? estiloCampoSelM.botaoCampoDesabilitado : ""
+          }`}
           onClick={() => (aberto ? fecharPainel() : abrirPainel())}
+          disabled={desabilitado}
+          aria-busy={desabilitado}
         >
           <span
             className={`${estiloCampoSelM.valorCampo} ${
@@ -138,7 +146,7 @@ function CampoSelecaoMultipla({
           </span>
         </button>
 
-        {aberto && (
+        {aberto && !desabilitado && (
           <div className={estiloCampoSelM.painelSelecao}>
             <div className={estiloCampoSelM.topoPainel}>
               <input

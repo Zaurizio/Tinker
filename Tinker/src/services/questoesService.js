@@ -32,6 +32,10 @@ function prepararQuestaoDaApi(questao) {
   };
 }
 
+export async function buscarOpcoesFiltrosQuestoes() {
+  return apiService.get("/api/questoes/filtros", { autenticada: true });
+}
+
 export async function buscarQuestoes(filtros, { pagina, tamanho }) {
   const parametros = montarParametrosBusca(filtros, { pagina, tamanho });
   const resposta = await apiService.get(

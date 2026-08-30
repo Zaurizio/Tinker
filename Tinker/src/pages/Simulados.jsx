@@ -16,6 +16,7 @@ import {
   renomearSimuladoDaConta,
 } from "../services/simuladosApiService";
 import estiloSimulados from "./Simulados.module.css";
+import { useOpcoesFiltrosQuestoes } from "../hooks/useOpcoesFiltrosQuestoes";
 
 const normalizarTexto = (texto) =>
   texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -41,6 +42,19 @@ function Simulados() {
   const [erroExclusao, setErroExclusao] = useState("");
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
   const podeAdministrarSimulados = ["ALUNO", "PROFESSOR"].includes(tipoUsuario);
+  const {
+    disciplinas: disciplinasFiltros,
+    vestibulares: vestibularesFiltros,
+    anos: anosFiltros,
+    carregando: carregandoOpcoesFiltros,
+    erro: erroOpcoesFiltros,
+    recarregar: recarregarOpcoesFiltros,
+  } = useOpcoesFiltrosQuestoes(podeAdministrarSimulados);
+  const opcoesFiltros = {
+    disciplinas: disciplinasFiltros,
+    vestibulares: vestibularesFiltros,
+    anos: anosFiltros,
+  };
 
   useEffect(() => {
     let componenteMontado = true;
@@ -267,6 +281,10 @@ function Simulados() {
                   setErroGeracao("");
                   setFiltrosGeracao(filtros);
                 }}
+                opcoesFiltros={opcoesFiltros}
+                carregandoOpcoes={carregandoOpcoesFiltros}
+                erroOpcoes={erroOpcoesFiltros}
+                onTentarNovamenteOpcoes={recarregarOpcoesFiltros}
               />
             ) : (
               <>

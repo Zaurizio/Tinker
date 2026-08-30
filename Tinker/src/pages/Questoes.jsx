@@ -12,6 +12,7 @@ import {
   removerQuestaoDoSimuladoDaConta,
 } from "../services/simuladosApiService";
 import { obterSessao } from "../services/autenticacaoService";
+import { useOpcoesFiltrosQuestoes } from "../hooks/useOpcoesFiltrosQuestoes";
 
 const TAMANHO_LOTE = 10;
 
@@ -47,6 +48,19 @@ function Questoes() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
   const buscaAtivaRef = useRef(0);
+  const {
+    disciplinas: disciplinasFiltros,
+    vestibulares: vestibularesFiltros,
+    anos: anosFiltros,
+    carregando: carregandoOpcoesFiltros,
+    erro: erroOpcoesFiltros,
+    recarregar: recarregarOpcoesFiltros,
+  } = useOpcoesFiltrosQuestoes();
+  const opcoesFiltros = {
+    disciplinas: disciplinasFiltros,
+    vestibulares: vestibularesFiltros,
+    anos: anosFiltros,
+  };
 
   useEffect(() => {
     let carregamentoAtivo = true;
@@ -230,7 +244,13 @@ function Questoes() {
         <h1 className={estiloQuest.titulo}>Buscar Questões</h1>
       </header>
 
-      <PainelBuscaQuestoes onBuscarQuestoes={handleBuscarQuestoes} />
+      <PainelBuscaQuestoes
+        onBuscarQuestoes={handleBuscarQuestoes}
+        opcoesFiltros={opcoesFiltros}
+        carregandoOpcoes={carregandoOpcoesFiltros}
+        erroOpcoes={erroOpcoesFiltros}
+        onTentarNovamenteOpcoes={recarregarOpcoesFiltros}
+      />
 
       {resultados !== null && (
         <div className={estiloQuest.resultados}>
