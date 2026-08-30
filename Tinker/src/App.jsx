@@ -10,7 +10,6 @@ import RotaProtegida from "./components/rotas/RotaProtegida";
 import Introducao from "./pages/publico/Introducao";
 import Login from "./pages/publico/Login";
 import Cadastro from "./pages/publico/Cadastro";
-//import Planos from "./pages/publico/Planos";
 
 // Páginas privadas
 import Home from "./pages/Home";
@@ -38,9 +37,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           
           <Route path="/cadastro" element={<Cadastro />} />
-          {/*
-          <Route path="/planos" element={<Planos />} />
-          */}
         </Route>
 
         <Route element={<RotaProtegida />}>
