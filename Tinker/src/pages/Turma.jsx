@@ -91,32 +91,34 @@ function Turma() {
       <div className={estiloTurma.conteudo}>
         <h1 className={estiloTurma.titulo}>Minhas Turmas</h1>
 
-        <BarraBusca
-          placeholder="Pesquisar turma..."
-          value={busca}
-          onChange={setBusca}
-        />
+        <div className={estiloTurma.ferramentasLista}>
+          <BarraBusca
+            placeholder="Pesquisar turma..."
+            value={busca}
+            onChange={setBusca}
+          />
 
-        {(eProfessor || eAluno) && (
-          <div className={estiloTurma.acoes}>
-            {eAluno && (
-              <button
-                className={estiloTurma.botaoSecundario}
-                onClick={() => setModalAberto("entrar")}
-              >
-                Entrar em turma
-              </button>
-            )}
-            {eProfessor && (
-              <button
-                className={estiloTurma.botaoPrimario}
-                onClick={() => setModalAberto("criar")}
-              >
-                Criar turma
-              </button>
-            )}
-          </div>
-        )}
+          {(eProfessor || eAluno) && (
+            <div className={estiloTurma.acoes}>
+              {eAluno && (
+                <button
+                  className={estiloTurma.botaoSecundario}
+                  onClick={() => setModalAberto("entrar")}
+                >
+                  Entrar em turma
+                </button>
+              )}
+              {eProfessor && (
+                <button
+                  className={estiloTurma.botaoSecundario}
+                  onClick={() => setModalAberto("criar")}
+                >
+                  Criar turma
+                </button>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className={estiloTurma.listaTurmas}>
           {carregando ? (
