@@ -5,29 +5,6 @@
   gap: 20px;
 }
 
-.botaoNovo {
-  min-height: 44px;
-  padding: 0 18px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 14px;
-  background: var(--cor-primaria);
-  color: var(--cor-texto-claro);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.botaoNovo:hover {
-  background: var(--cor-botao-primario-hover);
-}
-
-.botaoNovo:focus-visible {
-  outline: 3px solid var(--cor-foco-primario);
-  outline-offset: 2px;
-}
-
 .busca {
   margin-top: 24px;
 }

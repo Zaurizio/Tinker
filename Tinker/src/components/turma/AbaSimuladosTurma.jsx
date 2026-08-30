@@ -22,12 +22,17 @@ function formatarErroApi(erro, mensagemPadrao) {
   return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
 }
 
-function AbaSimuladosTurma({ codigo, usuarioAdministrador, usuarioAluno }) {
+function AbaSimuladosTurma({
+  codigo,
+  usuarioAdministrador,
+  usuarioAluno,
+  modalPublicacaoAberto,
+  onFecharModalPublicacao,
+}) {
   const [busca, setBusca] = useState("");
   const [simulados, setSimulados] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
-  const [modalPublicacaoAberto, setModalPublicacaoAberto] = useState(false);
   const [publicacaoParaRemover, setPublicacaoParaRemover] = useState(null);
   const [removendo, setRemovendo] = useState(false);
   const [erroRemocao, setErroRemocao] = useState("");
@@ -170,16 +175,6 @@ function AbaSimuladosTurma({ codigo, usuarioAdministrador, usuarioAluno }) {
           <h2 id="titulo-simulados-turma">Simulados</h2>
           <p>Simulados publicados para esta turma.</p>
         </div>
-
-        {usuarioAdministrador && (
-          <button
-            type="button"
-            className={estiloSimulados.botaoNovo}
-            onClick={() => setModalPublicacaoAberto(true)}
-          >
-            + Novo simulado
-          </button>
-        )}
       </div>
 
       <div className={estiloSimulados.busca}>
@@ -195,7 +190,7 @@ function AbaSimuladosTurma({ codigo, usuarioAdministrador, usuarioAluno }) {
       {usuarioAdministrador && modalPublicacaoAberto && (
         <ModalPublicarSimulado
           onPublicar={handlePublicarSimulado}
-          onFechar={() => setModalPublicacaoAberto(false)}
+          onFechar={onFecharModalPublicacao}
         />
       )}
 

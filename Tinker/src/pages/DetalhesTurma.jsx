@@ -9,11 +9,13 @@ import {
 } from "react-router";
 import AbaMembrosTurma from "../components/turma/AbaMembrosTurma";
 import AbaSimuladosTurma from "../components/turma/AbaSimuladosTurma";
+import ModalConfiguracoesTurma from "../components/turma/ModalConfiguracoesTurma";
 import ModalConfirmarAcaoTurma from "../components/turma/ModalConfirmarAcaoTurma";
 import { obterSessao } from "../services/autenticacaoService";
 import {
   excluirTurmaDaConta,
   obterTurmaDaConta,
+  renomearTurmaDaConta,
   sairDaTurmaDaConta,
 } from "../services/turmasApiService";
 import estiloDetalhes from "./DetalhesTurma.module.css";
@@ -44,6 +46,9 @@ function DetalhesTurma() {
   const [acaoConfirmacao, setAcaoConfirmacao] = useState(null);
   const [processando, setProcessando] = useState(false);
   const [erroOperacao, setErroOperacao] = useState("");
+  const [modalSimuladoAberto, setModalSimuladoAberto] = useState(false);
+  const [modalConfiguracoesAberto, setModalConfiguracoesAberto] =
+    useState(false);
   const processandoRef = useRef(false);
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
   const eProfessor = tipoUsuario === "PROFESSOR";
@@ -81,6 +86,24 @@ function DetalhesTurma() {
 
   const abaAtual = pathname.split("/").at(-1);
   const conteudoAtual = CONTEUDO_ABAS[abaAtual] ?? CONTEUDO_ABAS.simulados;
+
+  function handleAbrirAdicionarSimulado() {
+    if (abaAtual !== "simulados") {
+      navigate(`/turma/${codigo}/simulados`);
+    }
+    setModalSimuladoAberto(true);
+  }
+
+  async function handleRenomear(novoNome) {
+    const turmaAtualizada = await renomearTurmaDaConta(codigo, novoNome);
+    setTurma(turmaAtualizada);
+  }
+
+  function handleSolicitarExclusaoPelasConfiguracoes() {
+    setModalConfiguracoesAberto(false);
+    setErroOperacao("");
+    setAcaoConfirmacao("excluir");
+  }
 
   async function handleConfirmarAcao() {
     if (!acaoConfirmacao || processandoRef.current) return;
@@ -135,19 +158,65 @@ function DetalhesTurma() {
           className={estiloDetalhes.faixa}
           style={{ backgroundColor: turma.cor }}
         >
-          <Link
-            to="/turma"
-            className={estiloDetalhes.voltar}
-            aria-label="Voltar para minhas turmas"
-          >
-            <MdArrowBack aria-hidden="true" />
-          </Link>
+          <div className={estiloDetalhes.topoFaixa}>
+            <Link
+              to="/turma"
+              className={estiloDetalhes.voltar}
+              aria-label="Voltar para minhas turmas"
+            >
+              <MdArrowBack aria-hidden="true" />
+            </Link>
 
-          <div className={estiloDetalhes.identidadeTurma}>
-            <div className={estiloDetalhes.fotoTurma}>
-              <MdGroups aria-hidden="true" />
+            {eProfessor && (
+              <div className={estiloDetalhes.codigoTurma}>
+                <span>Código</span>
+                <strong>{turma.codigo}</strong>
+              </div>
+            )}
+          </div>
+
+          <div className={estiloDetalhes.cabecalhoConteudo}>
+            <div className={estiloDetalhes.identidadeTurma}>
+              <div className={estiloDetalhes.fotoTurma}>
+                <MdGroups aria-hidden="true" />
+              </div>
+              <h1>{turma.nome}</h1>
             </div>
-            <h1>{turma.nome}</h1>
+
+            {eProfessor && (
+              <div className={estiloDetalhes.acoesTurma}>
+                <button
+                  type="button"
+                  className={estiloDetalhes.botaoSecundario}
+                  onClick={handleAbrirAdicionarSimulado}
+                >
+                  Adicionar simulado
+                </button>
+                <button
+                  type="button"
+                  className={estiloDetalhes.botaoSecundario}
+                  onClick={() => setModalConfiguracoesAberto(true)}
+                >
+                  Configurações
+                </button>
+              </div>
+            )}
+
+            {eAluno && (
+              <div className={estiloDetalhes.acoesTurma}>
+                <button
+                  type="button"
+                  className={estiloDetalhes.botaoDestrutivo}
+                  onClick={() => {
+                    setErroOperacao("");
+                    setAcaoConfirmacao("sair");
+                  }}
+                  disabled={processando}
+                >
+                  Sair da turma
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -165,28 +234,14 @@ function DetalhesTurma() {
           ))}
         </nav>
 
-        {(eProfessor || eAluno) && (
-          <div className={estiloDetalhes.acoesTurma}>
-            <button
-              type="button"
-              className={estiloDetalhes.botaoDestrutivo}
-              onClick={() => {
-                setErroOperacao("");
-                setAcaoConfirmacao(eProfessor ? "excluir" : "sair");
-              }}
-              disabled={processando}
-            >
-              {eProfessor ? "Excluir turma" : "Sair da turma"}
-            </button>
-          </div>
-        )}
-
         <div className={estiloDetalhes.conteudoAba}>
           {abaAtual === "simulados" ? (
             <AbaSimuladosTurma
               codigo={turma.codigo}
               usuarioAdministrador={eProfessor}
               usuarioAluno={eAluno}
+              modalPublicacaoAberto={modalSimuladoAberto}
+              onFecharModalPublicacao={() => setModalSimuladoAberto(false)}
             />
           ) : abaAtual === "membros" ? (
             <AbaMembrosTurma
@@ -201,6 +256,15 @@ function DetalhesTurma() {
           )}
         </div>
       </section>
+
+      {eProfessor && modalConfiguracoesAberto && (
+        <ModalConfiguracoesTurma
+          turma={turma}
+          onFechar={() => setModalConfiguracoesAberto(false)}
+          onRenomear={handleRenomear}
+          onSolicitarExclusao={handleSolicitarExclusaoPelasConfiguracoes}
+        />
+      )}
 
       {acaoConfirmacao && (
         <ModalConfirmarAcaoTurma

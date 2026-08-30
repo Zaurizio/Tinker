@@ -1,0 +1,68 @@
+.identidade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0 4px;
+}
+
+.foto {
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cor-fundo-hover);
+  color: var(--cor-texto-secundario);
+  font-size: 2.4rem;
+}
+
+.nomeTurma {
+  margin: 0;
+  text-align: center;
+  color: var(--cor-texto-principal);
+  font-size: 1.1rem;
+}
+
+.formNome {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acoesNome {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.opcao {
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.opcao:hover {
+  background: var(--cor-fundo-hover);
+}
+
+.opcaoDestrutiva {
+  border-color: var(--cor-acao-destrutiva);
+  color: var(--cor-acao-destrutiva);
+}

@@ -133,6 +133,16 @@ export async function removerMembroDaTurmaDaConta(codigo, emailAluno) {
   );
 }
 
+export async function renomearTurmaDaConta(codigo, nome) {
+  const turma = await apiService.put(
+    `/api/turmas/${validarCodigo(codigo)}`,
+    { nome },
+    { autenticada: true }
+  );
+
+  return prepararTurma(turma);
+}
+
 export async function excluirTurmaDaConta(codigo) {
   await apiService.delete(`/api/turmas/${validarCodigo(codigo)}`, {
     autenticada: true,
