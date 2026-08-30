@@ -103,7 +103,10 @@ public class QuestaoService {
         relatorio.setTipoUsu(tipo);
         relatorio.setAcertouErrou(acertou ? 1 : 0);
         relatorioRepository.save(relatorio);
-        return new CorrecaoQuestaoDTO(id, acertou);
+        return new CorrecaoQuestaoDTO(
+                id,
+                acertou,
+                acertou ? null : CorretorQuestao.alternativaCorreta(questao));
     }
 
     private void validarPagina(int pagina, int tamanho) {

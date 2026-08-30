@@ -158,7 +158,10 @@ public class TurmaSimuladoService {
         relatorio.setTipoUsu(tipoUsuario);
         relatorioRepository.save(relatorio);
 
-        return new CorrecaoQuestaoSimuladoDTO(questaoId, acertou);
+        return new CorrecaoQuestaoSimuladoDTO(
+                questaoId,
+                acertou,
+                acertou ? null : CorretorQuestao.alternativaCorreta(questao));
     }
 
     @Transactional
