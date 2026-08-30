@@ -7,6 +7,8 @@ function prepararSimulado(simulado) {
     descricao: simulado.descricao ?? "",
     tempo: simulado.tempo ?? null,
     quantidadeQuestoes: simulado.quantidadeQuestoes,
+    concluido: Boolean(simulado.concluido),
+    acertos: simulado.acertos ?? null,
   };
 
   if (Array.isArray(simulado.questoesIds)) {
@@ -117,4 +119,17 @@ export async function listarQuestoesDoSimuladoDaConta(id) {
   return apiService.get(`/api/simulados/${id}/questoes`, {
     autenticada: true,
   });
+}
+
+export async function concluirSimuladoDaConta(id, respostas) {
+  return apiService.post(
+    `/api/simulados/${id}/conclusoes`,
+    {
+      respostas: respostas.map(({ questaoId, alternativa }) => ({
+        questaoId,
+        alternativa,
+      })),
+    },
+    { autenticada: true }
+  );
 }

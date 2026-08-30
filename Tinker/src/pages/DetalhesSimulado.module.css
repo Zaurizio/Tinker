@@ -100,6 +100,34 @@
   color: var(--cor-alerta);
 }
 
+.erroConclusao {
+  margin: 18px 0 0;
+  color: var(--cor-alerta);
+  text-align: center;
+}
+
+.acoes {
+  margin-top: 22px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.acoes button {
+  min-height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 12px;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.acoes button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 @media (max-width: 600px) {
   .pagina {
     padding: 24px 16px;
@@ -116,5 +144,9 @@
 
   .titulo {
     font-size: 1.4rem;
+  }
+
+  .acoes button {
+    width: 100%;
   }
 }
