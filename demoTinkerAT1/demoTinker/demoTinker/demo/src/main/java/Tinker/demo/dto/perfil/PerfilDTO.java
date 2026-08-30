@@ -10,5 +10,6 @@ public record PerfilDTO(
         String sobrenome,
         TipoUsuario tipoUsuario,
         LocalDate nascimento,
-        Integer ativo) {
+        Integer ativo,
+        String foto) {
 }

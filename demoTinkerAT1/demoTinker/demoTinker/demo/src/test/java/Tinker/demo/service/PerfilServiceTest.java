@@ -12,6 +12,7 @@ import Tinker.demo.security.TipoUsuario;
 import Tinker.demo.security.UsuarioAutenticado;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -35,6 +36,10 @@ class PerfilServiceTest {
 
     private static final String EMAIL_ALUNO = "aluno@tinker.com";
     private static final String EMAIL_PROFESSOR = "professor@tinker.com";
+    private static final byte[] BYTES_JPEG =
+            { (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, 0x00, 0x01, 0x02 };
+    private static final byte[] BYTES_PNG =
+            { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00 };
 
     private AlunoRepository alunoRepository;
     private ProfessorRepository professorRepository;
@@ -169,13 +174,80 @@ class PerfilServiceTest {
     }
 
     @Test
-    void respostaDePerfilNaoContemSenhaHashOuFoto() {
+    void respostaDePerfilNaoContemSenhaOuHash() {
         assertFalse(possuiCampo(PerfilDTO.class, "senha"));
         assertFalse(possuiCampo(PerfilDTO.class, "hash"));
-        assertFalse(possuiCampo(PerfilDTO.class, "foto"));
         assertEquals(
-                Arrays.asList("email", "nome", "sobrenome", "tipoUsuario", "nascimento", "ativo"),
+                Arrays.asList(
+                        "email", "nome", "sobrenome", "tipoUsuario", "nascimento", "ativo", "foto"),
                 Arrays.stream(PerfilDTO.class.getRecordComponents()).map(c -> c.getName()).toList());
+    }
+
+    @Test
+    void alunoSemFotoTemFotoNulaNoPerfil() {
+        when(alunoRepository.findById(EMAIL_ALUNO)).thenReturn(Optional.of(aluno()));
+
+        PerfilDTO perfil = perfilService.consultar(usuarioAluno());
+
+        assertNull(perfil.foto());
+    }
+
+    @Test
+    void alunoEnviaFotoJpegEPassaAExpoLaComoDataUri() {
+        Aluno aluno = aluno();
+        when(alunoRepository.findById(EMAIL_ALUNO)).thenReturn(Optional.of(aluno));
+
+        PerfilDTO perfil = perfilService.enviarFoto(usuarioAluno(), fotoJpeg());
+
+        assertTrue(perfil.foto().startsWith("data:image/jpeg;base64,"));
+        assertTrue(Arrays.equals(BYTES_JPEG, aluno.getFoto()));
+        verify(alunoRepository).save(aluno);
+    }
+
+    @Test
+    void professorEnviaFotoPngEPassaAExpoLaComoDataUri() {
+        Professor professor = professor();
+        when(professorRepository.findById(EMAIL_PROFESSOR)).thenReturn(Optional.of(professor));
+
+        PerfilDTO perfil = perfilService.enviarFoto(usuarioProfessor(), fotoPng());
+
+        assertTrue(perfil.foto().startsWith("data:image/png;base64,"));
+        assertTrue(Arrays.equals(BYTES_PNG, professor.getFoto()));
+        verify(professorRepository).save(professor);
+    }
+
+    @Test
+    void rejeitaFotoVazia() {
+        DadosInvalidosException erro = assertThrows(DadosInvalidosException.class, () ->
+                perfilService.enviarFoto(
+                        usuarioAluno(),
+                        new MockMultipartFile("foto", "vazia.jpg", "image/jpeg", new byte[0])));
+
+        assertEquals("FOTO_OBRIGATORIA", erro.getCodigo());
+        verify(alunoRepository, never()).save(any());
+    }
+
+    @Test
+    void rejeitaFormatoQueNaoEhJpgOuPng() {
+        MockMultipartFile arquivo = new MockMultipartFile(
+                "foto", "arquivo.gif", "image/gif", "GIF89a".getBytes());
+
+        DadosInvalidosException erro = assertThrows(DadosInvalidosException.class, () ->
+                perfilService.enviarFoto(usuarioAluno(), arquivo));
+
+        assertEquals("FOTO_FORMATO_INVALIDO", erro.getCodigo());
+        verify(alunoRepository, never()).save(any());
+    }
+
+    @Test
+    void naoConfiaNoContentTypeInformadoPeloCliente() {
+        MockMultipartFile arquivo = new MockMultipartFile(
+                "foto", "falsa.jpg", "image/jpeg", "GIF89a".getBytes());
+
+        DadosInvalidosException erro = assertThrows(DadosInvalidosException.class, () ->
+                perfilService.enviarFoto(usuarioAluno(), arquivo));
+
+        assertEquals("FOTO_FORMATO_INVALIDO", erro.getCodigo());
     }
 
     private UsuarioAutenticado usuarioAluno() {
@@ -218,6 +290,14 @@ class PerfilServiceTest {
         professor.setSobrenome("Professor");
         professor.setAtivo(1);
         return professor;
+    }
+
+    private MockMultipartFile fotoJpeg() {
+        return new MockMultipartFile("foto", "foto.jpg", "image/jpeg", BYTES_JPEG);
+    }
+
+    private MockMultipartFile fotoPng() {
+        return new MockMultipartFile("foto", "foto.png", "image/png", BYTES_PNG);
     }
 
     private boolean possuiCampo(Class<?> tipo, String nome) {
