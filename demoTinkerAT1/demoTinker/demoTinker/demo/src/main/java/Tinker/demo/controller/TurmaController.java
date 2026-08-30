@@ -3,6 +3,7 @@ package Tinker.demo.controller;
 import Tinker.demo.dto.turma.CriarTurmaDTO;
 import Tinker.demo.dto.turma.EntrarTurmaDTO;
 import Tinker.demo.dto.turma.MembroTurmaDTO;
+import Tinker.demo.dto.turma.RenomearTurmaDTO;
 import Tinker.demo.dto.turma.TurmaDTO;
 import Tinker.demo.dto.turma.PublicacaoSimuladoDTO;
 import Tinker.demo.dto.turma.PublicarSimuladoDTO;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -158,6 +160,14 @@ public class TurmaController {
             @PathVariable String emailAluno) {
         turmaService.removerMembro(usuario, codigo, emailAluno);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{codigo}")
+    public TurmaDTO renomear(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable @Pattern(regexp = CODIGO_VALIDO) String codigo,
+            @Valid @RequestBody RenomearTurmaDTO dados) {
+        return turmaService.renomear(usuario, codigo, dados);
     }
 
     @DeleteMapping("/{codigo}")
