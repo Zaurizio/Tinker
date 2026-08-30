@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -45,6 +46,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErroDTO> tratarJsonInvalido() {
         return ResponseEntity.badRequest()
                 .body(new ErroDTO("JSON_INVALIDO", "O corpo da requisição é inválido."));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErroDTO> tratarArquivoMuitoGrande() {
+        return ResponseEntity.badRequest()
+                .body(new ErroDTO(
+                        "FOTO_TAMANHO_EXCEDIDO",
+                        "O arquivo enviado excede o tamanho máximo permitido."));
     }
 
     @ExceptionHandler(Exception.class)

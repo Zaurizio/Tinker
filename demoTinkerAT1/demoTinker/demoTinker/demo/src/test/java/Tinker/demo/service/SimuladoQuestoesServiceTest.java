@@ -56,7 +56,8 @@ class SimuladoQuestoesServiceTest {
                 mock(RelatorioSimuladoRepository.class),
                 mock(TurmaSimuladoRepository.class),
                 questaoRepository,
-                new QuestaoMapper());
+                new QuestaoMapper(),
+                mock(Tinker.demo.repository.RelatorioRepository.class));
         when(simuladoRepository.findById(10)).thenReturn(Optional.of(simuladoDoDono()));
     }
 

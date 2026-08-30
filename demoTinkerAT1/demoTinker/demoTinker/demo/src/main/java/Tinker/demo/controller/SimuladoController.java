@@ -1,6 +1,8 @@
 package Tinker.demo.controller;
 
 import Tinker.demo.dto.simulado.AtualizarSimuladoDTO;
+import Tinker.demo.dto.simulado.ConcluirSimuladoDTO;
+import Tinker.demo.dto.simulado.ConclusaoSimuladoDTO;
 import Tinker.demo.dto.simulado.CriarSimuladoDTO;
 import Tinker.demo.dto.simulado.SimuladoDetalheDTO;
 import Tinker.demo.dto.simulado.SimuladoResumoDTO;
@@ -99,5 +101,13 @@ public class SimuladoController {
             @PathVariable Integer id) {
         simuladoService.excluir(usuario, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/conclusoes")
+    public ConclusaoSimuladoDTO concluir(
+            @AuthenticationPrincipal UsuarioAutenticado usuario,
+            @PathVariable Integer id,
+            @Valid @RequestBody ConcluirSimuladoDTO dados) {
+        return simuladoService.concluir(usuario, id, dados);
     }
 }
