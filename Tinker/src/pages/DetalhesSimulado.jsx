@@ -124,7 +124,7 @@ function DetalhesSimulado() {
   return (
     <section className={estilos.pagina}>
       <div className={estilos.envoltorio}>
-        <header className={estilos.topo}>
+        <div className={estilos.linha}>
           <button
             type="button"
             className={estilos.botaoVoltar}
@@ -133,62 +133,64 @@ function DetalhesSimulado() {
           >
             <IoIosArrowBack />
           </button>
-        </header>
 
-        {!podeAdministrarSimulados ? (
-          <p className={estilos.estado}>
-            Esta área não está disponível para este tipo de conta.
-          </p>
-        ) : carregando ? (
-          <p className={estilos.estado}>Carregando simulado...</p>
-        ) : erro ? (
-          <p className={estilos.erro} role="alert">{erro}</p>
-        ) : (
-          <div className={estilos.card}>
-            <h1 className={estilos.titulo}>{simulado.titulo}</h1>
-            {simulado.descricao && (
-              <p className={estilos.descricao}>{simulado.descricao}</p>
-            )}
-            <div className={estilos.metadados}>
-              <span>{simulado.quantidadeQuestoes} questões</span>
-              {simulado.tempo !== null && <span>{simulado.tempo} min</span>}
-            </div>
-
-            {questoes.length === 0 ? (
+          <div className={estilos.conteudoPrincipal}>
+            {!podeAdministrarSimulados ? (
               <p className={estilos.estado}>
-                Este simulado ainda não possui questões.
+                Esta área não está disponível para este tipo de conta.
               </p>
+            ) : carregando ? (
+              <p className={estilos.estado}>Carregando simulado...</p>
+            ) : erro ? (
+              <p className={estilos.erro} role="alert">{erro}</p>
             ) : (
-              <>
-                <div className={estilos.listaQuestoes}>
-                  {questoes.map((questao) => (
-                    <CardQuestao
-                      key={questao.id}
-                      questao={{ ...questao, instituicao: questao.vestibular }}
-                      onEnviarResposta={handleEnviarResposta}
-                    />
-                  ))}
-                </div>
-
-                {erroConclusao && (
-                  <p className={estilos.erroConclusao} role="alert">
-                    {erroConclusao}
-                  </p>
+              <div className={estilos.card}>
+                <h1 className={estilos.titulo}>{simulado.titulo}</h1>
+                {simulado.descricao && (
+                  <p className={estilos.descricao}>{simulado.descricao}</p>
                 )}
-
-                <div className={estilos.acoes}>
-                  <button
-                    type="button"
-                    onClick={handleFinalizar}
-                    disabled={!todasRespondidas || concluindo}
-                  >
-                    {concluindo ? "Finalizando..." : "Finalizar simulado"}
-                  </button>
+                <div className={estilos.metadados}>
+                  <span>{simulado.quantidadeQuestoes} questões</span>
+                  {simulado.tempo !== null && <span>{simulado.tempo} min</span>}
                 </div>
-              </>
+
+                {questoes.length === 0 ? (
+                  <p className={estilos.estado}>
+                    Este simulado ainda não possui questões.
+                  </p>
+                ) : (
+                  <>
+                    <div className={estilos.listaQuestoes}>
+                      {questoes.map((questao) => (
+                        <CardQuestao
+                          key={questao.id}
+                          questao={{ ...questao, instituicao: questao.vestibular }}
+                          onEnviarResposta={handleEnviarResposta}
+                        />
+                      ))}
+                    </div>
+
+                    {erroConclusao && (
+                      <p className={estilos.erroConclusao} role="alert">
+                        {erroConclusao}
+                      </p>
+                    )}
+
+                    <div className={estilos.acoes}>
+                      <button
+                        type="button"
+                        onClick={handleFinalizar}
+                        disabled={!todasRespondidas || concluindo}
+                      >
+                        {concluindo ? "Finalizando..." : "Finalizar simulado"}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </section>
   );

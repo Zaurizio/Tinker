@@ -8,35 +8,40 @@
 
 .envoltorio {
   width: 100%;
-  max-width: 850px;
+  max-width: 910px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
 }
 
-.topo {
+.linha {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.conteudoPrincipal {
+  flex: 1;
+  min-width: 0;
 }
 
 .botaoVoltar {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 48px;
   height: 48px;
   padding: 0;
-  border: 1px solid var(--cor-borda-controle);
-  border-radius: 14px;
-  background: var(--cor-fundo-card);
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
   color: var(--cor-texto-principal);
   font-size: 1.6rem;
   cursor: pointer;
 }
 
 .botaoVoltar:hover {
-  background: var(--cor-fundo-hover);
+  color: var(--cor-primaria);
 }
 
 .botaoVoltar:focus-visible {
@@ -131,6 +136,15 @@
 @media (max-width: 600px) {
   .pagina {
     padding: 24px 16px;
+  }
+
+  .linha {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .conteudoPrincipal {
+    width: 100%;
   }
 
   .botaoVoltar {
