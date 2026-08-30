@@ -22,7 +22,7 @@ import Calendario from "./pages/Calendario";
 import Turma from "./pages/Turma";
 import DetalhesTurma from "./pages/DetalhesTurma";
 import ExecutarSimuladoTurma from "./pages/ExecutarSimuladoTurma";
-import Suporte from "./pages/Suporte";
+import Conta from "./pages/Conta";
 
 function App() {
   useEffect(() => {
@@ -67,7 +67,7 @@ function App() {
               element={<Navigate to="../simulados" relative="path" replace />}
             />
             <Route path="/turma/:codigo/membros" element={<DetalhesTurma />} />
-            <Route path="/suporte" element={<Suporte />} />
+            <Route path="/conta" element={<Conta />} />
           </Route>
         </Route>
 

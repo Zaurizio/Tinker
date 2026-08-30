@@ -1,5 +1,5 @@
 import { FaUsers } from "react-icons/fa";
-import estiloSuporte from "../../pages/Suporte.module.css";
+import estiloConta from "../../pages/Conta.module.css";
 
 const integrantes = [
   "Gustavo Zaurizio",
@@ -10,18 +10,18 @@ const integrantes = [
 
 function SecaoSobre() {
   return (
-    <article className={estiloSuporte.card}>
-      <div className={estiloSuporte.cabecalhoCard}>
-        <h2 className={estiloSuporte.tituloCard}>Sobre o Tinker</h2>
-        <p className={estiloSuporte.textoCard}>
+    <article className={estiloConta.card}>
+      <div className={estiloConta.cabecalhoCard}>
+        <h2 className={estiloConta.tituloCard}>Sobre o Tinker</h2>
+        <p className={estiloConta.textoCard}>
           Plataforma de apoio a vestibulares, simulados e organização de estudos.
         </p>
       </div>
 
-      <div className={estiloSuporte.integrantesGrid}>
+      <div className={estiloConta.integrantesGrid}>
         {integrantes.map((integrante) => (
-          <div key={integrante} className={estiloSuporte.integrante}>
-            <span className={estiloSuporte.iconeIntegrante}>
+          <div key={integrante} className={estiloConta.integrante}>
+            <span className={estiloConta.iconeIntegrante}>
               <FaUsers />
             </span>
             <strong>{integrante}</strong>

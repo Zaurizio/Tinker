@@ -1,5 +1,5 @@
 import { FaBug, FaLightbulb } from "react-icons/fa";
-import estiloSuporte from "../../pages/Suporte.module.css";
+import estiloConta from "../../pages/Conta.module.css";
 
 function SecaoContato() {
   function handleRelatarProblema() {
@@ -11,15 +11,15 @@ function SecaoContato() {
   }
 
   return (
-    <article className={estiloSuporte.card}>
-      <div className={estiloSuporte.cabecalhoCard}>
-        <h2 className={estiloSuporte.tituloCard}>Fale Conosco</h2>
-        <p className={estiloSuporte.textoCard}>Queremos ouvir você!</p>
+    <article className={estiloConta.card}>
+      <div className={estiloConta.cabecalhoCard}>
+        <h2 className={estiloConta.tituloCard}>Fale Conosco</h2>
+        <p className={estiloConta.textoCard}>Queremos ouvir você!</p>
       </div>
 
-      <div className={estiloSuporte.contatoGrid}>
-        <div className={estiloSuporte.itemContato}>
-          <span className={estiloSuporte.iconeContato}>
+      <div className={estiloConta.contatoGrid}>
+        <div className={estiloConta.itemContato}>
+          <span className={estiloConta.iconeContato}>
             <FaBug />
           </span>
           <div>
@@ -28,15 +28,15 @@ function SecaoContato() {
           </div>
           <button
             type="button"
-            className={estiloSuporte.botaoContorno}
+            className={estiloConta.botaoContorno}
             onClick={handleRelatarProblema}
           >
             Relatar problema
           </button>
         </div>
 
-        <div className={estiloSuporte.itemContato}>
-          <span className={estiloSuporte.iconeContato}>
+        <div className={estiloConta.itemContato}>
+          <span className={estiloConta.iconeContato}>
             <FaLightbulb />
           </span>
           <div>
@@ -45,7 +45,7 @@ function SecaoContato() {
           </div>
           <button
             type="button"
-            className={estiloSuporte.botaoContorno}
+            className={estiloConta.botaoContorno}
             onClick={handleEnviarSugestao}
           >
             Enviar sugestão

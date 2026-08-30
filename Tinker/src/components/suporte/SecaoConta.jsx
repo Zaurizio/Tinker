@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaPen } from "react-icons/fa";
-import estiloSuporte from "../../pages/Suporte.module.css";
+import estiloConta from "../../pages/Conta.module.css";
 import {
   atualizarPerfil,
   ehProfessor,
@@ -104,21 +104,21 @@ function SecaoConta() {
   }
 
   return (
-    <article className={estiloSuporte.card}>
-      <h2 className={estiloSuporte.tituloCard}>Minha Conta</h2>
+    <article className={estiloConta.card}>
+      <h2 className={estiloConta.tituloCard}>Minha Conta</h2>
 
       {carregando ? (
-        <p className={estiloSuporte.mensagemConta} role="status">
+        <p className={estiloConta.mensagemConta} role="status">
           Carregando dados da conta...
         </p>
       ) : (
-        <div className={estiloSuporte.contaConteudo}>
-          <div className={estiloSuporte.fotoColuna}>
-            <div className={estiloSuporte.avatar}>{iniciais}</div>
+        <div className={estiloConta.contaConteudo}>
+          <div className={estiloConta.fotoColuna}>
+            <div className={estiloConta.avatar}>{iniciais}</div>
           </div>
 
-          <form className={estiloSuporte.formularioConta} onSubmit={handleSalvar}>
-            <label className={estiloSuporte.campo}>
+          <form className={estiloConta.formularioConta} onSubmit={handleSalvar}>
+            <label className={estiloConta.campo}>
               <span>Nome</span>
               <input
                 type="text"
@@ -128,7 +128,7 @@ function SecaoConta() {
               />
             </label>
 
-            <label className={estiloSuporte.campo}>
+            <label className={estiloConta.campo}>
               <span>Sobrenome</span>
               <input
                 type="text"
@@ -138,35 +138,23 @@ function SecaoConta() {
               />
             </label>
 
-            <label className={estiloSuporte.campo}>
+            <label className={estiloConta.campo}>
               <span>E-mail</span>
               <input type="email" value={perfil.email} readOnly />
             </label>
 
-            <label className={estiloSuporte.campo}>
+            <label className={estiloConta.campo}>
               <span>Tipo de conta</span>
               <input type="text" value={formatarTipoUsuario(perfil.tipoUsuario)} readOnly />
             </label>
 
-            {!eProfessor && (
-              <label className={estiloSuporte.campo}>
-                <span>Data de nascimento</span>
-                <input
-                  type="date"
-                  value={perfil.nascimento}
-                  disabled={salvando}
-                  onChange={(evento) => atualizarCampo("nascimento", evento.target.value)}
-                />
-              </label>
-            )}
+            {erro && <p className={estiloConta.mensagemErro} role="alert">{erro}</p>}
+            {sucesso && <p className={estiloConta.mensagemSucesso} role="status">{sucesso}</p>}
 
-            {erro && <p className={estiloSuporte.mensagemErro} role="alert">{erro}</p>}
-            {sucesso && <p className={estiloSuporte.mensagemSucesso} role="status">{sucesso}</p>}
-
-            <div className={estiloSuporte.acoesConta}>
+            <div className={estiloConta.acoesConta}>
               <button
                 type="submit"
-                className={estiloSuporte.botaoPrimario}
+                className={estiloConta.botaoPrimario}
                 disabled={salvando}
               >
                 {salvando ? "Salvando..." : "Salvar alterações"}

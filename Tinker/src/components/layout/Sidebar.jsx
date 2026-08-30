@@ -7,7 +7,7 @@ import { NavLink } from "react-router"
 /*desempenho*/ import { SiGoogleanalytics } from "react-icons/si"; //<SiGoogleanalytics />
 /*calendario*/ import { TbCalendarEvent } from "react-icons/tb"; //<TbCalendarEvent />
 /*turma*/ import { MdGroups } from "react-icons/md"; //<MdGroups />
-/*suporte*/ import { FaQuestionCircle } from "react-icons/fa"; //<FaQuestionCircle />
+/*conta*/ import { FaUserCircle } from "react-icons/fa"; //<FaUserCircle />
 
 import { RiBarChartFill } from "react-icons/ri";
 import { TbTargetArrow } from "react-icons/tb";
@@ -122,9 +122,9 @@ function Sidebar() {
                 <span className={estiloSidebar.texto}>Turma</span>
                 </NavLink>
 
-                {/*SUPORTE*/}
+                {/*CONTA*/}
                 <NavLink
-                to="/suporte"
+                to="/conta"
                 className={({ isActive }) =>
                     isActive
                     ? `${estiloSidebar.link} ${estiloSidebar.ativo}`
@@ -132,9 +132,9 @@ function Sidebar() {
                 }
                 >
                 <span className={estiloSidebar.icone}>
-                    <FaQuestionCircle />
+                    <FaUserCircle />
                 </span>
-                <span className={estiloSidebar.texto}>Suporte</span>
+                <span className={estiloSidebar.texto}>Conta</span>
                 </NavLink>
             </nav>
         </aside>

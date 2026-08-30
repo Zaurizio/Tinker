@@ -3,13 +3,13 @@ import SecaoConta from "../components/suporte/SecaoConta";
 import SecaoAparencia from "../components/suporte/SecaoAparencia";
 import SecaoContato from "../components/suporte/SecaoContato";
 import SecaoSobre from "../components/suporte/SecaoSobre";
-import estiloSuporte from "./Suporte.module.css";
+import estiloConta from "./Conta.module.css";
 
 function obterTemaInicial() {
   return localStorage.getItem("tema") === "escuro" ? "escuro" : "claro";
 }
 
-function Suporte() {
+function Conta() {
   const [tema, setTema] = useState(obterTemaInicial);
 
   useEffect(() => {
@@ -19,12 +19,12 @@ function Suporte() {
   }, [tema]);
 
   return (
-    <section className={estiloSuporte.pagina}>
-      <div className={estiloSuporte.conteudo}>
-        <header className={estiloSuporte.topo}>
-          <h1 className={estiloSuporte.titulo}>Suporte e Configurações</h1>
-          <p className={estiloSuporte.subtitulo}>
-            Gerencie sua conta, preferências e obtenha ajuda.
+    <section className={estiloConta.pagina}>
+      <div className={estiloConta.conteudo}>
+        <header className={estiloConta.topo}>
+          <h1 className={estiloConta.titulo}>Conta</h1>
+          <p className={estiloConta.subtitulo}>
+            Gerencie seus dados e preferências.
           </p>
         </header>
 
@@ -37,4 +37,4 @@ function Suporte() {
   );
 }
 
-export default Suporte;
+export default Conta;

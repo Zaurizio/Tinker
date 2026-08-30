@@ -154,7 +154,7 @@ const Home = () => {
     { icon: TbFileText, title: "Simulados", to: "/simulados" },
     { icon: TbCalendarEvent, title: "Calendário", to: "/calendario" },
     { icon: FaUsers, title: "Turma", to: "/turma" },
-    { icon: FaUserCircle, title: "Conta", to: "/suporte" },
+    { icon: FaUserCircle, title: "Conta", to: "/conta" },
   ];
 
   return (
