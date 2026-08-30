@@ -1,4 +1,5 @@
-import { NavLink } from "react-router"
+import { useState } from "react"
+import { NavLink, useNavigate } from "react-router"
 /*menu*/ import { TiThMenu } from "react-icons/ti"; //<TiThMenu />
 /*setinha*/ import { MdKeyboardArrowRight } from "react-icons/md"; //<MdKeyboardArrowRight />
 /*home*/ import { FaHome } from "react-icons/fa"; //<FaHome />
@@ -8,6 +9,7 @@ import { NavLink } from "react-router"
 /*calendario*/ import { TbCalendarEvent } from "react-icons/tb"; //<TbCalendarEvent />
 /*turma*/ import { MdGroups } from "react-icons/md"; //<MdGroups />
 /*conta*/ import { FaUserCircle } from "react-icons/fa"; //<FaUserCircle />
+/*sair*/ import { IoIosLogOut } from "react-icons/io"; //<IoIosLogOut />
 
 import { RiBarChartFill } from "react-icons/ri";
 import { TbTargetArrow } from "react-icons/tb";
@@ -15,10 +17,20 @@ import { FaRegNoteSticky } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { FaRegCircleCheck } from "react-icons/fa6";
 
+import ModalConfirmarAcaoTurma from "../turma/ModalConfirmarAcaoTurma";
+import { encerrarSessao } from "../../services/autenticacaoService";
 
 import estiloSidebar from './Sidebar.module.css'
 
 function Sidebar() {
+    const navigate = useNavigate();
+    const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+    function handleSair() {
+        encerrarSessao();
+        navigate("/login");
+    }
+
     return(
         <aside className={estiloSidebar.sidebar}> {/*conteudo lateral*/}
             <div className={estiloSidebar.topo}>
@@ -136,7 +148,29 @@ function Sidebar() {
                 </span>
                 <span className={estiloSidebar.texto}>Conta</span>
                 </NavLink>
+
+                {/*SAIR*/}
+                <button
+                type="button"
+                className={`${estiloSidebar.linkButton} ${estiloSidebar.linkSair}`}
+                onClick={() => setConfirmandoSaida(true)}
+                >
+                <span className={estiloSidebar.icone}>
+                    <IoIosLogOut />
+                </span>
+                <span className={estiloSidebar.texto}>Sair</span>
+                </button>
             </nav>
+
+            {confirmandoSaida && (
+                <ModalConfirmarAcaoTurma
+                titulo="Sair"
+                descricao="Tem certeza que deseja sair da sua conta?"
+                textoConfirmar="Sair"
+                onFechar={() => setConfirmandoSaida(false)}
+                onConfirmar={handleSair}
+                />
+            )}
         </aside>
     )
 }

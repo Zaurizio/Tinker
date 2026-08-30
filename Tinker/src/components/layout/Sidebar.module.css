@@ -51,6 +51,8 @@
   display: flex;
   flex-direction: column; /*empilha links*/
   gap: 6px; /*espaço entre itens*/
+  flex: 1; /*ocupa o restante da altura da sidebar*/
+  min-height: 0;
 }
 
 .link,
@@ -75,7 +77,16 @@
 .linkButton:hover {
   background: var(--cor-fundo-hover);
 }
- 
+
+.linkSair {
+  margin-top: auto; /*empurra o item pro final da sidebar*/
+}
+
+.linkSair:hover {
+  background: var(--cor-desempenho-alerta-fundo); /*vermelho bem discreto*/
+  color: var(--cor-acao-destrutiva);
+}
+
 .ativo { /*página atual*/
   color: #F1F5F9;
   font-weight: 700;
