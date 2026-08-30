@@ -31,6 +31,26 @@ final class CorretorQuestao {
         return textoSelecionado.trim().equals(respostaNormalizada);
     }
 
+    static String alternativaCorreta(Questao questao) {
+        String resposta = questao.getResposta();
+        if (resposta == null) {
+            return null;
+        }
+
+        String respostaNormalizada = resposta.trim();
+        if (respostaNormalizada.matches("(?i)[A-E]")) {
+            return respostaNormalizada.toUpperCase(Locale.ROOT);
+        }
+
+        for (String alternativa : Set.of("A", "B", "C", "D", "E")) {
+            String texto = textoAlternativa(questao, alternativa);
+            if (texto != null && texto.trim().equals(respostaNormalizada)) {
+                return alternativa;
+            }
+        }
+        return null;
+    }
+
     private static String normalizar(String alternativa) {
         if (alternativa == null) {
             throw alternativaInvalida();

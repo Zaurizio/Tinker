@@ -166,7 +166,8 @@ class QuestaoServiceTest {
 
         assertEquals(1, resposta.questaoId());
         assertTrue(resposta.acertou());
-        assertEquals(List.of("questaoId", "acertou"),
+        assertEquals(null, resposta.alternativaCorreta());
+        assertEquals(List.of("questaoId", "acertou", "alternativaCorreta"),
                 java.util.Arrays.stream(CorrecaoQuestaoDTO.class.getRecordComponents())
                         .map(c -> c.getName()).toList());
         Relatorio salvo = relatorioSalvo();
@@ -185,7 +186,22 @@ class QuestaoServiceTest {
                 usuario("aluno@teste.com", TipoUsuario.ALUNO), 1, new CorrigirQuestaoDTO("B"));
 
         assertFalse(resposta.acertou());
+        assertEquals("A", resposta.alternativaCorreta());
         assertEquals(0, relatorioSalvo().getAcertouErrou());
+    }
+
+    @Test
+    void respostaAvulsaIncorretaConverteGabaritoTextualEmLetra() {
+        Questao questao = questaoAtiva();
+        questao.setAlternativaC("Texto correto");
+        questao.setResposta("  Texto correto  ");
+        when(questaoRepository.findById(1)).thenReturn(Optional.of(questao));
+
+        CorrecaoQuestaoDTO resposta = questaoService.corrigir(
+                usuario("aluno@teste.com", TipoUsuario.ALUNO), 1, new CorrigirQuestaoDTO("B"));
+
+        assertFalse(resposta.acertou());
+        assertEquals("C", resposta.alternativaCorreta());
     }
 
     @Test

@@ -79,6 +79,7 @@ class TurmaSimuladoCorrecaoServiceTest {
         CorrecaoQuestaoSimuladoDTO resposta = corrigir("A");
 
         assertTrue(resposta.acertou());
+        assertEquals(null, resposta.alternativaCorreta());
         Relatorio salvo = relatorioSalvo();
         assertEquals(QUESTAO_ID, salvo.getCodQuest());
         assertEquals(EMAIL_ALUNO, salvo.getEmail());
@@ -93,6 +94,7 @@ class TurmaSimuladoCorrecaoServiceTest {
         CorrecaoQuestaoSimuladoDTO resposta = corrigir("B");
 
         assertFalse(resposta.acertou());
+        assertEquals("A", resposta.alternativaCorreta());
         assertEquals(0, relatorioSalvo().getAcertouErrou());
     }
 
@@ -219,14 +221,16 @@ class TurmaSimuladoCorrecaoServiceTest {
     }
 
     @Test
-    void respostaNaoExpoeGabarito() {
-        prepararCorrecao(questao("GABARITO_SECRETO", 1));
+    void respostaNaoExpoeTextoDoGabarito() {
+        Questao questao = questao("GABARITO_SECRETO", 1);
+        prepararCorrecao(questao);
 
         CorrecaoQuestaoSimuladoDTO resposta = corrigir("A");
         assertEquals(
-                Arrays.asList("questaoId", "acertou"),
+                Arrays.asList("questaoId", "acertou", "alternativaCorreta"),
                 Arrays.stream(CorrecaoQuestaoSimuladoDTO.class.getRecordComponents())
                         .map(componente -> componente.getName()).toList());
+        assertEquals("C", resposta.alternativaCorreta());
         assertFalse(resposta.toString().contains("GABARITO_SECRETO"));
     }
 
