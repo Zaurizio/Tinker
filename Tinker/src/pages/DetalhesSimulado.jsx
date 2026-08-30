@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router";
+import CardQuestao from "../components/questoes/CardQuestao";
 import { obterSessao } from "../services/autenticacaoService";
+import { responderQuestao } from "../services/questoesService";
 import {
   listarQuestoesDoSimuladoDaConta,
   obterSimuladoDaConta,
@@ -63,6 +65,10 @@ function DetalhesSimulado() {
     };
   }, [podeAdministrarSimulados, simuladoId]);
 
+  async function handleEnviarResposta(questaoId, alternativaSelecionadaId) {
+    return responderQuestao(questaoId, alternativaSelecionadaId);
+  }
+
   return (
     <section className={estilos.pagina}>
       <div className={estilos.envoltorio}>
@@ -103,20 +109,11 @@ function DetalhesSimulado() {
             ) : (
               <div className={estilos.listaQuestoes}>
                 {questoes.map((questao) => (
-                  <article className={estilos.questao} key={questao.id}>
-                    <div className={estilos.metadadosQuestao}>
-                      <span>{questao.disciplina}</span>
-                      <span>{questao.conteudo}</span>
-                      <span>{questao.vestibular}</span>
-                      <span>{questao.ano}</span>
-                    </div>
-                    <p className={estilos.enunciado}>{questao.enunciado}</p>
-                    <ol className={estilos.alternativas} type="A">
-                      {questao.alternativas.map((alternativa) => (
-                        <li key={alternativa.id}>{alternativa.texto}</li>
-                      ))}
-                    </ol>
-                  </article>
+                  <CardQuestao
+                    key={questao.id}
+                    questao={{ ...questao, instituicao: questao.vestibular }}
+                    onEnviarResposta={handleEnviarResposta}
+                  />
                 ))}
               </div>
             )}

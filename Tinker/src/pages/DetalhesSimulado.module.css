@@ -74,55 +74,18 @@
 }
 
 .metadados {
-  margin-bottom: 22px;
-}
-
-.metadados,
-.metadadosQuestao {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-bottom: 22px;
 }
 
-.metadados span,
-.metadadosQuestao span {
+.metadados span {
   border-radius: 999px;
   background: var(--cor-fundo-input-suave);
   color: var(--cor-texto-secundario);
   font-size: 0.82rem;
   padding: 5px 9px;
-}
-
-.questao {
-  box-sizing: border-box;
-  padding: 18px;
-  border: 1px solid var(--cor-borda-padrao);
-  border-radius: 14px;
-  background: var(--cor-fundo-input-suave);
-}
-
-.enunciado {
-  margin: 16px 0;
-  color: var(--cor-texto-principal);
-  line-height: 1.55;
-  white-space: pre-wrap;
-}
-
-.alternativas {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 0;
-  padding-left: 28px;
-  color: var(--cor-texto-principal);
-}
-
-.alternativas li {
-  padding: 11px 12px;
-  border: 1px solid var(--cor-borda-padrao);
-  border-radius: 10px;
-  background: var(--cor-fundo-card);
-  line-height: 1.4;
 }
 
 .estado,
