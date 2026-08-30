@@ -72,6 +72,9 @@ function PainelFiltroSimulados({ onGerarSimulado, onLimparFiltros }) {
   return (
     <Card className={estiloPainel.cardBusca}>
       <form className={estiloPainel.formulario} onSubmit={handleSubmit}>
+        <p className={estiloPainel.rotuloFiltros}>
+          Mostrar apenas questões:
+        </p>
 
         <div className={estiloPainel.linhaDuasColunas}>
           {/*Disciplinas*/}

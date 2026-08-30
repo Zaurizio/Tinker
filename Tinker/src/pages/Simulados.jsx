@@ -29,7 +29,7 @@ function Simulados() {
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
   const [criando, setCriando] = useState(false);
   const [erroCriacao, setErroCriacao] = useState("");
-  const [painelGeracaoAberto, setPainelGeracaoAberto] = useState(false);
+  const [modoGeracao, setModoGeracao] = useState(false);
   const [filtrosGeracao, setFiltrosGeracao] = useState(null);
   const [gerando, setGerando] = useState(false);
   const [erroGeracao, setErroGeracao] = useState("");
@@ -151,7 +151,7 @@ function Simulados() {
       });
       adicionarOuAtualizarSimulado(novoSimulado);
       setFiltrosGeracao(null);
-      setPainelGeracaoAberto(false);
+      setModoGeracao(false);
     } catch (erroGerar) {
       setErroGeracao(
         erroGerar instanceof Error
@@ -206,7 +206,9 @@ function Simulados() {
       <CardSimulado
         key={simulado.id}
         simulado={simulado}
-        somenteLeitura
+        onAbrir={(simuladoSelecionado) =>
+          navigate(`/simulados/${simuladoSelecionado.id}`)
+        }
         onRenomear={(simuladoSelecionado) => {
           setErroRenomeacao("");
           setSimuladoParaRenomear(simuladoSelecionado);
@@ -215,9 +217,6 @@ function Simulados() {
           setErroExclusao("");
           setSimuladoParaExcluir(simuladoSelecionado);
         }}
-        onVerQuestoes={(simuladoSelecionado) =>
-          navigate(`/simulados/${simuladoSelecionado.id}`)
-        }
       />
     ));
   }
@@ -233,42 +232,66 @@ function Simulados() {
           </p>
         ) : (
           <>
-            <BarraBusca
-              placeholder="Pesquisar simulados..."
-              value={busca}
-              onChange={setBusca}
-            />
-            <div className={estiloSimulados.acoes}>
+            <div
+              className={estiloSimulados.seletorModo}
+              aria-label="Modo de visualização dos simulados"
+            >
               <button
                 type="button"
-                className={estiloSimulados.botaoCriarSimulado}
-                onClick={() => {
-                  setErroCriacao("");
-                  setModalCriarAberto(true);
-                }}
+                className={`${estiloSimulados.botaoModo} ${
+                  !modoGeracao ? estiloSimulados.botaoModoAtivo : ""
+                }`}
+                aria-pressed={!modoGeracao}
+                onClick={() => setModoGeracao(false)}
               >
-                Criar Simulado
+                Meus simulados
               </button>
               <button
                 type="button"
-                className={estiloSimulados.botaoFiltrarSimulados}
+                className={`${estiloSimulados.botaoModo} ${
+                  modoGeracao ? estiloSimulados.botaoModoAtivo : ""
+                }`}
+                aria-pressed={modoGeracao}
                 onClick={() => {
                   setErroGeracao("");
-                  setPainelGeracaoAberto((aberto) => !aberto);
+                  setModoGeracao(true);
                 }}
               >
-                Gerar Simulado
+                Gerar simulado
               </button>
             </div>
-            {painelGeracaoAberto && (
+
+            {modoGeracao ? (
               <PainelFiltroSimulados
                 onGerarSimulado={(filtros) => {
                   setErroGeracao("");
                   setFiltrosGeracao(filtros);
                 }}
               />
+            ) : (
+              <>
+                <div className={estiloSimulados.ferramentasLista}>
+                  <BarraBusca
+                    placeholder="Pesquisar simulados..."
+                    value={busca}
+                    onChange={setBusca}
+                  />
+                  <button
+                    type="button"
+                    className={estiloSimulados.botaoCriarSimulado}
+                    onClick={() => {
+                      setErroCriacao("");
+                      setModalCriarAberto(true);
+                    }}
+                  >
+                    Criar Simulado
+                  </button>
+                </div>
+                <div className={estiloSimulados.listaSimulados}>
+                  {renderizarLista()}
+                </div>
+              </>
             )}
-            <div className={estiloSimulados.listaSimulados}>{renderizarLista()}</div>
           </>
         )}
       </div>

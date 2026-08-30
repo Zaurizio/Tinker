@@ -1,17 +1,31 @@
 .cardBusca {
-  width: 100%; /*ocupa toda largura*/
-  max-width: 1100px; /*ninca passa de 980px*/
+  width: 100%;
+  max-width: none;
+  box-shadow: none;
 }
 
-.formulario { /*em coluna*/
+.formulario {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.linhaDuasColunas { /*linha com dois itens*/
+.rotuloFiltros {
+  margin: 0;
+  color: var(--cor-texto-principal);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.linhaDuasColunas {
   display: grid;
-  grid-template-columns: 1fr 1fr; /*metade pra cada lado*/
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.grupoAnosQuantidade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
 
@@ -21,35 +35,29 @@
   gap: 8px;
 }
 
-.campo label { /*rótulos dos campos*/
+.campo label {
+  color: var(--cor-texto-principal);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--cor-texto-principal);
 }
 
-.campo select,
 .campo input {
   width: 100%;
   height: 50px;
   padding: 0 16px;
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 14px;
-  background: var(--cor-fundo-card); /*ver fundo dos campos*/
+  outline: none;
+  box-sizing: border-box;
+  background: var(--cor-fundo-card);
   color: var(--cor-texto-principal);
   font-size: 1rem;
-  box-sizing: border-box;
-  outline: none; /*remove o contorno padrão do navegador*/
-  transition: border-color 0.2s ease, box-shadow 0.2s ease; /*mudança de foco suave*/
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.campo select:focus,
-.campo input:focus { /*campo selecionado*/
+.campo input:focus {
   border-color: var(--cor-primaria);
   box-shadow: 0 0 0 3px var(--cor-foco-primario);
-}
-
-.campo select {
-  cursor: pointer;
 }
 
 .campo input::placeholder {
@@ -58,48 +66,8 @@
 
 .erro {
   margin: -8px 0 0;
-  color: var(--cor-erro, #b42318);
+  color: var(--cor-alerta);
   font-size: 0.875rem;
-}
-
-.linhaStatus { /*linha botões*/
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.rotuloStatus { /*texto botões*/
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--cor-texto-principal);
-}
-
-.grupoBotoesStatus { /*onde ficam*/
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap; /*se faltar espaço quebra linha*/
-}
-
-.botaoStatus { /*como são*/
-  height: 42px;
-  padding: 0 18px; /*dos lados*/
-  border: 1px solid var(--cor-borda-controle);
-  border-radius: 999px;
-  background: var(--cor-fundo-card); /*ver cor fundo dos botões*/
-  color: var(--cor-texto-principal);
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.botaoStatus:hover {
-  background: var(--cor-fundo-hover);
-  border-color: var(--cor-borda-hover);
-}
-
-.botaoStatusAtivo {
-  background: #132845;
-  border-color: #2F5D95;
 }
 
 .linhaAcoes {
@@ -112,16 +80,17 @@
 
 .botaoPrimario,
 .botaoSecundario {
-  height: 48px;
+  min-height: 48px;
   padding: 0 22px;
   border-radius: 14px;
+  font: inherit;
   font-size: 0.98rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.botaoPrimario { /*botão buscar*/
+.botaoPrimario {
   border: none;
   background: var(--cor-primaria);
   color: var(--cor-texto-claro);
@@ -131,31 +100,26 @@
   background: var(--cor-botao-primario-hover);
 }
 
-.botaoSecundario { /*botão limpar filtros*/
+.botaoSecundario {
   border: 1px solid var(--cor-borda-controle);
   background: var(--cor-fundo-card);
   color: var(--cor-texto-principal);
 }
 
 .botaoSecundario:hover {
+  border-color: var(--cor-borda-hover);
   background: var(--cor-fundo-hover);
 }
 
-/*anos e qtd de questoes*/
-.grupoAnosQuantidade {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Divide o espaço igualmente */
-  gap: 20px; /* Espaçamento entre os campos */
+.botaoPrimario:focus-visible,
+.botaoSecundario:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
 }
 
-/* --- Media Queries --- */
 @media (max-width: 860px) {
-  .linhaDuasColunas {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .grupoAnosQuantidade { /* Também empilha em telas pequenas */
+  .linhaDuasColunas,
+  .grupoAnosQuantidade {
     grid-template-columns: 1fr;
     gap: 16px;
   }

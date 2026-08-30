@@ -6,14 +6,18 @@
   background: var(--cor-fundo-pagina);
 }
 
-.topo {
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 48px;
-  align-items: center;
-  gap: 12px;
+.envoltorio {
   width: 100%;
   max-width: 850px;
-  margin: 0 auto 28px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
 }
 
 .botaoVoltar {
@@ -40,20 +44,27 @@
   outline-offset: 2px;
 }
 
-.titulo {
-  min-width: 0;
-  margin: 0;
-  overflow-wrap: anywhere;
-  color: var(--cor-texto-principal);
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
+.card {
+  box-sizing: border-box;
+  padding: 28px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  box-shadow: 0 2px 4px var(--cor-sombra-preta-suave);
 }
 
-.conteudo {
-  width: 100%;
-  max-width: 850px;
-  margin: 0 auto;
+.titulo {
+  min-width: 0;
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto-principal);
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.descricao {
+  margin: 0 0 12px;
+  color: var(--cor-texto-secundario);
 }
 
 .listaQuestoes {
@@ -62,23 +73,8 @@
   gap: 18px;
 }
 
-.resumo,
-.questao {
-  box-sizing: border-box;
-  border: 1px solid var(--cor-borda-padrao);
-  border-radius: 14px;
-  background: var(--cor-fundo-card);
-  box-shadow: 0 2px 4px var(--cor-sombra-preta-suave);
-}
-
-.resumo {
-  margin-bottom: 18px;
-  padding: 18px;
-  color: var(--cor-texto-secundario);
-}
-
-.resumo p {
-  margin: 0 0 12px;
+.metadados {
+  margin-bottom: 22px;
 }
 
 .metadados,
@@ -98,7 +94,11 @@
 }
 
 .questao {
+  box-sizing: border-box;
   padding: 18px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-input-suave);
 }
 
 .enunciado {
@@ -121,7 +121,7 @@
   padding: 11px 12px;
   border: 1px solid var(--cor-borda-padrao);
   border-radius: 10px;
-  background: var(--cor-fundo-input-suave);
+  background: var(--cor-fundo-card);
   line-height: 1.4;
 }
 
@@ -142,17 +142,16 @@
     padding: 24px 16px;
   }
 
-  .topo {
-    grid-template-columns: 42px minmax(0, 1fr) 42px;
-    gap: 8px;
-  }
-
   .botaoVoltar {
     width: 42px;
     height: 42px;
   }
 
+  .card {
+    padding: 18px;
+  }
+
   .titulo {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 }

@@ -65,20 +65,18 @@ function DetalhesSimulado() {
 
   return (
     <section className={estilos.pagina}>
-      <header className={estilos.topo}>
-        <button
-          type="button"
-          className={estilos.botaoVoltar}
-          onClick={() => navigate("/simulados")}
-          aria-label="Voltar para meus simulados"
-        >
-          <IoIosArrowBack />
-        </button>
-        <h1 className={estilos.titulo}>{simulado?.titulo ?? "Simulado"}</h1>
-        <div aria-hidden="true" />
-      </header>
+      <div className={estilos.envoltorio}>
+        <header className={estilos.topo}>
+          <button
+            type="button"
+            className={estilos.botaoVoltar}
+            onClick={() => navigate("/simulados")}
+            aria-label="Voltar para meus simulados"
+          >
+            <IoIosArrowBack />
+          </button>
+        </header>
 
-      <div className={estilos.conteudo}>
         {!podeAdministrarSimulados ? (
           <p className={estilos.estado}>
             Esta área não está disponível para este tipo de conta.
@@ -88,14 +86,15 @@ function DetalhesSimulado() {
         ) : erro ? (
           <p className={estilos.erro} role="alert">{erro}</p>
         ) : (
-          <>
-            <section className={estilos.resumo}>
-              {simulado.descricao && <p>{simulado.descricao}</p>}
-              <div className={estilos.metadados}>
-                <span>{simulado.quantidadeQuestoes} questões</span>
-                {simulado.tempo !== null && <span>{simulado.tempo} min</span>}
-              </div>
-            </section>
+          <div className={estilos.card}>
+            <h1 className={estilos.titulo}>{simulado.titulo}</h1>
+            {simulado.descricao && (
+              <p className={estilos.descricao}>{simulado.descricao}</p>
+            )}
+            <div className={estilos.metadados}>
+              <span>{simulado.quantidadeQuestoes} questões</span>
+              {simulado.tempo !== null && <span>{simulado.tempo} min</span>}
+            </div>
 
             {questoes.length === 0 ? (
               <p className={estilos.estado}>
@@ -121,7 +120,7 @@ function DetalhesSimulado() {
                 ))}
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </section>

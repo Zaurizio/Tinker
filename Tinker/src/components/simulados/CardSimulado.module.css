@@ -1,113 +1,110 @@
 .cardSimulado {
-    background-color: var(--cor-fundo-card);
-    border: 1px solid var(--cor-borda-antiga);
-    border-radius: 8px;
-    padding: 15px;
-    position: relative; /* Essencial para posicionar o menu de opções */
-    box-shadow: 0 2px 4px var(--cor-sombra-preta-suave);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 120px; /* Garante que todos os cards tenham uma altura mínima consistente */
-    cursor: pointer; /* Indica que o card é interativo */
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  min-width: 0;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 12px;
+  background: var(--cor-fundo-input-suave);
+  color: var(--cor-texto-principal);
+  transition: background 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .cardSimulado:hover {
-    border-color: var(--cor-borda-hover);
-    box-shadow: 0 4px 16px var(--cor-sombra-card-media);
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+  box-shadow: 0 5px 14px var(--cor-sombra-card-suave);
+  transform: translateY(-1px);
 }
 
-.cardSimulado:focus-visible {
-    outline: 3px solid var(--cor-foco-primario);
-    outline-offset: 2px;
+.conteudo {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
 }
 
-.cardSomenteLeitura {
-    cursor: default;
+.conteudo:focus-visible {
+  border-radius: 8px;
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 4px;
 }
 
-.cardSomenteLeitura:hover {
-    border-color: var(--cor-borda-antiga);
-    box-shadow: 0 2px 4px var(--cor-sombra-preta-suave);
+.titulo {
+  margin: 0;
+  color: var(--cor-texto-principal);
+  font-size: 1.05rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Alinha o título e o botão no topo */
-    margin-bottom: 10px;
+.descricao {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
-.simuladoTitle {
-    font-size: 1.1em;
-    font-weight: 600;
-    color: var(--cor-texto-antigo);
-    margin: 0;
-    flex-grow: 1; /* Permite que o título ocupe o espaço restante */
-    word-break: break-word; /* Quebra palavras longas */
+.metadados {
+  margin: 0;
+  color: var(--cor-texto-placeholder);
+  font-size: 0.82rem;
 }
 
-.menuButton {
-    background: none;
-    border: none;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: var(--cor-texto-antigo-secundario);
-    cursor: pointer;
-    padding: 0 5px;
-    line-height: 1; /* Garante que os três pontinhos fiquem bem alinhados */
-    align-self: flex-start; /* Alinha o botão no topo do header */
-    z-index: 2; /* Garante que o botão esteja acima de outros elementos se houver sobreposição */
-}
-
-.menuButton:hover {
-    color: var(--cor-link); /* Exemplo de cor ao passar o mouse */
-}
-
-.simuladoDescription {
-    font-size: 0.9em;
-    color: var(--cor-texto-antigo-muted);
-    margin: 0;
-    flex-grow: 1; /* Permite que a descrição ocupe o espaço restante */
-}
-
-.simuladoMeta {
-    font-size: 0.86em;
-    color: var(--cor-texto-antigo-muted);
-    margin: 10px 0 0;
-}
-
-.acoesSomenteLeitura {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 14px;
+.acoes {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
 }
 
 .botaoRenomear,
-.botaoExcluir,
-.botaoVerQuestoes {
-    min-height: 36px;
-    padding: 0 14px;
-    border: 1px solid var(--cor-borda-controle);
-    border-radius: 10px;
-    background: var(--cor-fundo-card);
-    color: var(--cor-primaria-destaque);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
+.botaoExcluir {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 9px;
+  background: var(--cor-fundo-card);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.botaoRenomear:hover {
-    background: var(--cor-fundo-hover);
-    border-color: var(--cor-borda-hover);
+.botaoRenomear {
+  color: var(--cor-primaria-destaque);
 }
 
 .botaoExcluir {
   color: var(--cor-alerta);
 }
 
-.botaoVerQuestoes {
-  color: var(--cor-primaria-destaque);
+.botaoRenomear:hover,
+.botaoExcluir:hover {
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+}
+
+.botaoRenomear:focus-visible,
+.botaoExcluir:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .cardSimulado {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .acoes {
+    justify-content: flex-end;
+  }
 }
