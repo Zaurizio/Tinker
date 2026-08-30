@@ -3,6 +3,8 @@ package Tinker.demo.service;
 import Tinker.demo.dto.questao.PaginaQuestaoDTO;
 import Tinker.demo.dto.questao.CorrigirQuestaoDTO;
 import Tinker.demo.dto.questao.CorrecaoQuestaoDTO;
+import Tinker.demo.dto.questao.ConteudosPorDisciplinaDTO;
+import Tinker.demo.dto.questao.FiltrosQuestaoDTO;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
@@ -266,6 +268,190 @@ class QuestaoServiceTest {
                 usuario("adm@teste.com", TipoUsuario.ADMINISTRADOR),
                 1, new CorrigirQuestaoDTO("A")));
         verify(questaoRepository, never()).findById(any());
+    }
+
+    @Test
+    void disciplinasNaoSeRepetemEConteudosFicamAgrupadosNaDisciplinaCorreta() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of(
+                par("Matematica", "Geometria"),
+                par("Matematica", "Algebra"),
+                par("Fisica", "Mecanica")));
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of());
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals(2, filtros.disciplinas().size());
+        assertEquals(List.of("Fisica", "Matematica"),
+                filtros.disciplinas().stream().map(ConteudosPorDisciplinaDTO::nome).toList());
+        ConteudosPorDisciplinaDTO matematica = disciplina(filtros, "Matematica");
+        assertEquals(List.of("Algebra", "Geometria"), matematica.conteudos());
+        ConteudosPorDisciplinaDTO fisica = disciplina(filtros, "Fisica");
+        assertEquals(List.of("Mecanica"), fisica.conteudos());
+    }
+
+    @Test
+    void conteudoNaoEAssociadoAOutraDisciplinaPorEngano() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of(
+                par("Matematica", "Algebra"),
+                par("Fisica", "Mecanica")));
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of());
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertFalse(disciplina(filtros, "Fisica").conteudos().contains("Algebra"));
+        assertFalse(disciplina(filtros, "Matematica").conteudos().contains("Mecanica"));
+    }
+
+    @Test
+    void conteudosDuplicadosNaMesmaDisciplinaSaoRemovidos() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of(
+                par("Matematica", "Algebra"),
+                par("Matematica", "Algebra"),
+                par(" Matematica ", " Algebra ")));
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of());
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals(1, filtros.disciplinas().size());
+        assertEquals(List.of("Algebra"), disciplina(filtros, "Matematica").conteudos());
+    }
+
+    @Test
+    void mesmoConteudoPodeExistirEmDisciplinasDiferentesSemQuebrarOAgrupamento() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of(
+                par("Matematica", "Estatistica"),
+                par("Fisica", "Estatistica")));
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of());
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals(List.of("Estatistica"), disciplina(filtros, "Matematica").conteudos());
+        assertEquals(List.of("Estatistica"), disciplina(filtros, "Fisica").conteudos());
+    }
+
+    @Test
+    void valoresNulosVaziosOuComEspacosSaoIgnorados() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(java.util.Arrays.asList(
+                par(null, "Algebra"),
+                par("Matematica", null),
+                par("", "Algebra"),
+                par("Matematica", "   "),
+                par("Matematica", "Algebra")));
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(
+                java.util.Arrays.asList(null, "", "   ", "ENEM"));
+        when(questaoRepository.findAnosAtivos()).thenReturn(
+                java.util.Arrays.asList((Integer) null, 2025));
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals(1, filtros.disciplinas().size());
+        assertEquals(List.of("Algebra"), disciplina(filtros, "Matematica").conteudos());
+        assertEquals(List.of("ENEM"), filtros.vestibulares());
+        assertEquals(List.of(2025), filtros.anos());
+    }
+
+    @Test
+    void espacosExternosSaoRemovidosDeDisciplinaConteudoEVestibular() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos())
+                .thenReturn(List.of(par("  Matematica  ", "  Algebra  ")));
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of("  ENEM  "));
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals("Matematica", filtros.disciplinas().get(0).nome());
+        assertEquals("Algebra", filtros.disciplinas().get(0).conteudos().get(0));
+        assertEquals("ENEM", filtros.vestibulares().get(0));
+    }
+
+    @Test
+    void disciplinasEConteudosFicamOrdenadosAlfabeticamente() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of(
+                par("Fisica", "Termodinamica"),
+                par("Fisica", "Mecanica"),
+                par("Matematica", "Probabilidade"),
+                par("Matematica", "Algebra")));
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of());
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals(List.of("Fisica", "Matematica"),
+                filtros.disciplinas().stream().map(ConteudosPorDisciplinaDTO::nome).toList());
+        assertEquals(List.of("Mecanica", "Termodinamica"), disciplina(filtros, "Fisica").conteudos());
+        assertEquals(List.of("Algebra", "Probabilidade"), disciplina(filtros, "Matematica").conteudos());
+    }
+
+    @Test
+    void vestibularesFicamDistintosEOrdenadosAlfabeticamente() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of());
+        when(questaoRepository.findVestibularesAtivos())
+                .thenReturn(List.of("FUVEST", "ENEM", "ENEM", "  FUVEST  "));
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals(List.of("ENEM", "FUVEST"), filtros.vestibulares());
+    }
+
+    @Test
+    void anosFicamDistintosEEmOrdemDecrescente() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of());
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of());
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of(2024, 2026, 2025, 2025));
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertEquals(List.of(2026, 2025, 2024), filtros.anos());
+    }
+
+    @Test
+    void ausenciaDeOpcoesRetornaListasVazias() {
+        when(questaoRepository.findDisciplinasEConteudosAtivos()).thenReturn(List.of());
+        when(questaoRepository.findVestibularesAtivos()).thenReturn(List.of());
+        when(questaoRepository.findAnosAtivos()).thenReturn(List.of());
+
+        FiltrosQuestaoDTO filtros = questaoService.filtros();
+
+        assertTrue(filtros.disciplinas().isEmpty());
+        assertTrue(filtros.vestibulares().isEmpty());
+        assertTrue(filtros.anos().isEmpty());
+    }
+
+    @Test
+    void respostaDeFiltrosNaoExpoeQuestaoEnunciadoAlternativaOuGabarito() {
+        assertEquals(List.of("disciplinas", "vestibulares", "anos"),
+                java.util.Arrays.stream(FiltrosQuestaoDTO.class.getRecordComponents())
+                        .map(java.lang.reflect.RecordComponent::getName).toList());
+        assertEquals(List.of("nome", "conteudos"),
+                java.util.Arrays.stream(ConteudosPorDisciplinaDTO.class.getRecordComponents())
+                        .map(java.lang.reflect.RecordComponent::getName).toList());
+    }
+
+    private ConteudosPorDisciplinaDTO disciplina(FiltrosQuestaoDTO filtros, String nome) {
+        return filtros.disciplinas().stream()
+                .filter(item -> item.nome().equals(nome))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private Tinker.demo.repository.QuestaoRepository.DisciplinaConteudoProjecao par(
+            String disciplina, String conteudo) {
+        return new Tinker.demo.repository.QuestaoRepository.DisciplinaConteudoProjecao() {
+            @Override
+            public String getDisciplina() {
+                return disciplina;
+            }
+
+            @Override
+            public String getConteudo() {
+                return conteudo;
+            }
+        };
     }
 
     private Relatorio relatorioSalvo() {

@@ -4,6 +4,7 @@ import Tinker.demo.dto.questao.PaginaQuestaoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.dto.questao.CorrigirQuestaoDTO;
 import Tinker.demo.dto.questao.CorrecaoQuestaoDTO;
+import Tinker.demo.dto.questao.FiltrosQuestaoDTO;
 import Tinker.demo.security.UsuarioAutenticado;
 import Tinker.demo.service.QuestaoService;
 import jakarta.validation.Valid;
@@ -39,6 +40,11 @@ public class QuestaoController {
             @RequestParam(defaultValue = "10") int tamanho) {
         return questaoService.listar(
                 disciplinas, conteudos, vestibulares, anos, trecho, pagina, tamanho);
+    }
+
+    @GetMapping("/filtros")
+    public FiltrosQuestaoDTO filtros() {
+        return questaoService.filtros();
     }
 
     @GetMapping("/{id}")

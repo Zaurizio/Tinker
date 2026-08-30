@@ -4,6 +4,8 @@ import Tinker.demo.dto.questao.PaginaQuestaoDTO;
 import Tinker.demo.dto.questao.QuestaoDTO;
 import Tinker.demo.dto.questao.CorrigirQuestaoDTO;
 import Tinker.demo.dto.questao.CorrecaoQuestaoDTO;
+import Tinker.demo.dto.questao.ConteudosPorDisciplinaDTO;
+import Tinker.demo.dto.questao.FiltrosQuestaoDTO;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
@@ -22,7 +24,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import Tinker.demo.specification.QuestaoSpecifications;
 
 @Service
@@ -70,6 +77,50 @@ public class QuestaoService {
                 resultado.getTotalElements(),
                 pagina,
                 tamanho);
+    }
+
+    @Transactional(readOnly = true)
+    public FiltrosQuestaoDTO filtros() {
+        Map<String, TreeSet<String>> conteudosPorDisciplina = new TreeMap<>();
+        for (QuestaoRepository.DisciplinaConteudoProjecao par
+                : questaoRepository.findDisciplinasEConteudosAtivos()) {
+            String disciplina = limpar(par.getDisciplina());
+            String conteudo = limpar(par.getConteudo());
+            if (disciplina == null || conteudo == null) {
+                continue;
+            }
+            conteudosPorDisciplina
+                    .computeIfAbsent(disciplina, chave -> new TreeSet<>())
+                    .add(conteudo);
+        }
+
+        List<ConteudosPorDisciplinaDTO> disciplinas = conteudosPorDisciplina.entrySet().stream()
+                .map(entrada -> new ConteudosPorDisciplinaDTO(
+                        entrada.getKey(), List.copyOf(entrada.getValue())))
+                .toList();
+
+        List<String> vestibulares = questaoRepository.findVestibularesAtivos().stream()
+                .map(this::limpar)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted()
+                .toList();
+
+        List<Integer> anos = questaoRepository.findAnosAtivos().stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .toList();
+
+        return new FiltrosQuestaoDTO(disciplinas, vestibulares, anos);
+    }
+
+    private String limpar(String valor) {
+        if (valor == null) {
+            return null;
+        }
+        String tratado = valor.trim();
+        return tratado.isEmpty() ? null : tratado;
     }
 
     @Transactional(readOnly = true)
