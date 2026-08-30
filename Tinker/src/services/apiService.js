@@ -35,7 +35,9 @@ export async function requisicao(caminho, opcoes = {}) {
   const { autenticada = false, corpo, headers, ...fetchOptions } = opcoes
   const requestHeaders = new Headers(headers)
 
-  if (corpo !== undefined && corpo !== null) {
+  const ehFormData = corpo instanceof FormData
+
+  if (corpo !== undefined && corpo !== null && !ehFormData) {
     requestHeaders.set('Content-Type', 'application/json')
   }
 
@@ -47,7 +49,12 @@ export async function requisicao(caminho, opcoes = {}) {
   const response = await fetch(`${API_URL}${caminho.startsWith('/') ? caminho : `/${caminho}`}`, {
     ...fetchOptions,
     headers: requestHeaders,
-    body: corpo === undefined || corpo === null ? undefined : JSON.stringify(corpo),
+    body:
+      corpo === undefined || corpo === null
+        ? undefined
+        : ehFormData
+          ? corpo
+          : JSON.stringify(corpo),
   })
   const dados = await lerResposta(response)
 

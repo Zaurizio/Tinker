@@ -9,8 +9,17 @@ function atualizarSessaoComPerfil({ nome, sobrenome }) {
   atualizarSessao({ nome, sobrenome });
 }
 
+export const TAMANHO_MAXIMO_FOTO = 2 * 1024 * 1024;
+export const TIPOS_FOTO_PERMITIDOS = ["image/jpeg", "image/png"];
+
 export async function obterPerfil() {
   return apiService.get("/api/me", { autenticada: true });
+}
+
+export async function enviarFotoPerfil(arquivo) {
+  const formData = new FormData();
+  formData.append("foto", arquivo);
+  return apiService.post("/api/me/foto", formData, { autenticada: true });
 }
 
 export async function atualizarPerfil({ nome, sobrenome, nascimento, tipoUsuario }) {

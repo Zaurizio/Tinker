@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import estiloConta from "../../pages/Conta.module.css";
 import {
   atualizarPerfil,
   ehProfessor,
+  enviarFotoPerfil,
   obterPerfil,
+  TAMANHO_MAXIMO_FOTO,
+  TIPOS_FOTO_PERMITIDOS,
 } from "../../services/perfilService";
 
 const perfilVazio = {
@@ -13,6 +16,7 @@ const perfilVazio = {
   email: "",
   tipoUsuario: "",
   nascimento: "",
+  foto: null,
 };
 
 function formatarTipoUsuario(tipoUsuario) {
@@ -25,6 +29,9 @@ function SecaoConta() {
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
+  const [enviandoFoto, setEnviandoFoto] = useState(false);
+  const [erroFoto, setErroFoto] = useState("");
+  const inputFotoRef = useRef(null);
   const eProfessor = ehProfessor(perfil.tipoUsuario);
 
   const iniciais = useMemo(() => {
@@ -48,6 +55,7 @@ function SecaoConta() {
             email: dadosPerfil.email ?? "",
             tipoUsuario: dadosPerfil.tipoUsuario ?? "",
             nascimento: dadosPerfil.nascimento ?? "",
+            foto: dadosPerfil.foto ?? null,
           });
         }
       } catch (erroPerfil) {
@@ -103,6 +111,45 @@ function SecaoConta() {
     }
   }
 
+  function handleEscolherFoto() {
+    inputFotoRef.current?.click();
+  }
+
+  async function handleFotoSelecionada(evento) {
+    const arquivo = evento.target.files?.[0];
+    evento.target.value = "";
+    if (!arquivo || enviandoFoto) return;
+
+    setErroFoto("");
+
+    if (!TIPOS_FOTO_PERMITIDOS.includes(arquivo.type)) {
+      setErroFoto("A foto deve estar no formato JPG ou PNG.");
+      return;
+    }
+    if (arquivo.size > TAMANHO_MAXIMO_FOTO) {
+      setErroFoto("A foto deve ter no máximo 2MB.");
+      return;
+    }
+
+    setEnviandoFoto(true);
+
+    try {
+      const perfilAtualizado = await enviarFotoPerfil(arquivo);
+      setPerfil((perfilAtual) => ({
+        ...perfilAtual,
+        foto: perfilAtualizado?.foto ?? perfilAtual.foto,
+      }));
+    } catch (erroEnvio) {
+      setErroFoto(
+        erroEnvio instanceof Error
+          ? erroEnvio.message
+          : "Não foi possível enviar a foto."
+      );
+    } finally {
+      setEnviandoFoto(false);
+    }
+  }
+
   return (
     <article className={estiloConta.card}>
       <h2 className={estiloConta.tituloCard}>Minha Conta</h2>
@@ -114,7 +161,35 @@ function SecaoConta() {
       ) : (
         <div className={estiloConta.contaConteudo}>
           <div className={estiloConta.fotoColuna}>
-            <div className={estiloConta.avatar}>{iniciais}</div>
+            <div className={estiloConta.avatar}>
+              {perfil.foto ? (
+                <img src={perfil.foto} alt="Foto de perfil" />
+              ) : (
+                iniciais
+              )}
+            </div>
+
+            <input
+              type="file"
+              ref={inputFotoRef}
+              accept="image/jpeg,image/png"
+              onChange={handleFotoSelecionada}
+              hidden
+            />
+            <button
+              type="button"
+              className={estiloConta.botaoSecundario}
+              onClick={handleEscolherFoto}
+              disabled={enviandoFoto}
+            >
+              {enviandoFoto ? "Enviando..." : "Escolher foto"}
+            </button>
+
+            {erroFoto && (
+              <p className={estiloConta.mensagemErro} role="alert">
+                {erroFoto}
+              </p>
+            )}
           </div>
 
           <form className={estiloConta.formularioConta} onSubmit={handleSalvar}>
