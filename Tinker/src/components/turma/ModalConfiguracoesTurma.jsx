@@ -14,27 +14,27 @@ function ModalConfiguracoesTurma({
   onRenomear,
   onSolicitarExclusao,
 }) {
-  const [editandoNome, setEditandoNome] = useState(false);
   const [nome, setNome] = useState(turma.nome);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 
-  async function handleSalvarNome(evento) {
+  const nomeTratado = nome.trim();
+  const houveAlteracao = nomeTratado !== "" && nomeTratado !== turma.nome;
+
+  async function handleSalvar(evento) {
     evento.preventDefault();
-    const nomeTratado = nome.trim();
-    if (!nomeTratado || salvando) return;
+    if (!houveAlteracao || salvando) return;
 
     setSalvando(true);
     setErro("");
 
     try {
       await onRenomear(nomeTratado);
-      setEditandoNome(false);
+      onFechar();
     } catch (erroRenomeacao) {
       setErro(
         formatarErroApi(erroRenomeacao, "Não foi possível renomear a turma."),
       );
-    } finally {
       setSalvando(false);
     }
   }
@@ -52,67 +52,32 @@ function ModalConfiguracoesTurma({
           Configurações da turma
         </h2>
 
-        <div className={estiloConfig.identidade}>
-          <div className={estiloConfig.foto}>
-            <MdGroups aria-hidden="true" />
+        <form onSubmit={handleSalvar}>
+          <div className={estiloConfig.identidade}>
+            <div className={estiloConfig.foto}>
+              <MdGroups aria-hidden="true" />
+            </div>
+
+            <input
+              type="text"
+              className={`${estiloModal.input} ${estiloConfig.inputNome}`}
+              value={nome}
+              onChange={(evento) => setNome(evento.target.value)}
+              maxLength={45}
+              disabled={salvando}
+              aria-label="Nome da turma"
+            />
           </div>
 
-          {editandoNome ? (
-            <form
-              className={estiloConfig.formNome}
-              onSubmit={handleSalvarNome}
-            >
-              <input
-                type="text"
-                className={estiloModal.input}
-                value={nome}
-                onChange={(evento) => setNome(evento.target.value)}
-                maxLength={45}
-                autoFocus
-                disabled={salvando}
-              />
-              <div className={estiloConfig.acoesNome}>
-                <button
-                  type="button"
-                  className={estiloModal.botaoSecundario}
-                  onClick={() => {
-                    setNome(turma.nome);
-                    setErro("");
-                    setEditandoNome(false);
-                  }}
-                  disabled={salvando}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className={estiloModal.botaoPrimario}
-                  disabled={salvando}
-                >
-                  {salvando ? "Salvando..." : "Salvar"}
-                </button>
-              </div>
-            </form>
-          ) : (
-            <h3 className={estiloConfig.nomeTurma}>{turma.nome}</h3>
+          {erro && (
+            <p className={estiloModal.erro} role="alert">
+              {erro}
+            </p>
           )}
-        </div>
 
-        {erro && (
-          <p className={estiloModal.erro} role="alert">
-            {erro}
-          </p>
-        )}
-
-        {!editandoNome && (
-          <div className={estiloConfig.opcoes}>
-            <button
-              type="button"
-              className={estiloConfig.opcao}
-              onClick={() => setEditandoNome(true)}
-            >
-              Renomear turma
-            </button>
+          <div
+            className={`${estiloModal.acoes} ${estiloConfig.acoesConfiguracoes}`}
+          >
             <button
               type="button"
               className={`${estiloConfig.opcao} ${estiloConfig.opcaoDestrutiva}`}
@@ -120,18 +85,23 @@ function ModalConfiguracoesTurma({
             >
               Excluir turma
             </button>
+            <button
+              type="button"
+              className={estiloModal.botaoSecundario}
+              onClick={onFechar}
+              disabled={salvando}
+            >
+              Fechar
+            </button>
+            <button
+              type="submit"
+              className={estiloModal.botaoPrimario}
+              disabled={salvando || !houveAlteracao}
+            >
+              {salvando ? "Salvando..." : "Salvar"}
+            </button>
           </div>
-        )}
-
-        <div className={estiloModal.acoes}>
-          <button
-            type="button"
-            className={estiloModal.botaoSecundario}
-            onClick={onFechar}
-          >
-            Fechar
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   );
