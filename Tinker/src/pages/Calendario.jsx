@@ -335,11 +335,6 @@ function aplicarAnimacao(tipo, callback) {
               {erroEventos}
             </p>
           )}
-          {!carregandoEventos && !erroEventos && eventos.length === 0 && (
-            <p className={estiloCalendario.estadoEventos}>
-              Nenhum evento encontrado.
-            </p>
-          )}
           <FullCalendar
             key="Calendar-instance"
             dateClick={(info) => {
