@@ -3,6 +3,7 @@ package Tinker.demo.service;
 import Tinker.demo.dto.turma.CriarTurmaDTO;
 import Tinker.demo.dto.turma.EntrarTurmaDTO;
 import Tinker.demo.dto.turma.MembroTurmaDTO;
+import Tinker.demo.dto.turma.RenomearTurmaDTO;
 import Tinker.demo.dto.turma.TurmaDTO;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.DadosInvalidosException;
@@ -168,6 +169,17 @@ public class TurmaService {
         AlunoTurma membership = buscarMembershipAtivo(emailAluno, codigo);
         membership.setAtivo(INATIVO);
         alunoTurmaRepository.save(membership);
+    }
+
+    @Transactional
+    public TurmaDTO renomear(UsuarioAutenticado usuario, String codigo, RenomearTurmaDTO dados) {
+        exigirProfessor(usuario);
+        validarCodigo(codigo);
+        Turma turma = buscarAtiva(codigo);
+        exigirCriador(usuario, turma);
+
+        turma.setNomeTurma(dados.getNome().trim());
+        return paraDTO(turmaRepository.save(turma));
     }
 
     @Transactional

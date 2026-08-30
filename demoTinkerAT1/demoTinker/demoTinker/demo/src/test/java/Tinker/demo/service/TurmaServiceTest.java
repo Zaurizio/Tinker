@@ -3,6 +3,7 @@ package Tinker.demo.service;
 import Tinker.demo.dto.turma.CriarTurmaDTO;
 import Tinker.demo.dto.turma.EntrarTurmaDTO;
 import Tinker.demo.dto.turma.MembroTurmaDTO;
+import Tinker.demo.dto.turma.RenomearTurmaDTO;
 import Tinker.demo.dto.turma.TurmaDTO;
 import Tinker.demo.exception.AcessoNegadoException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
@@ -304,6 +305,38 @@ class TurmaServiceTest {
         ordem.verify(turmaRepository).save(turma);
         verify(turmaRepository, never()).delete(any());
         verify(alunoTurmaRepository, never()).delete(any());
+    }
+
+    @Test
+    void professorCriadorRenomeiaTurma() {
+        prepararTurmaAtiva();
+
+        TurmaDTO resposta = service.renomear(professorAutenticado(), CODIGO, renomearDTO("Turma de Fisica"));
+
+        assertEquals("Turma de Fisica", resposta.nome());
+        var captor = org.mockito.ArgumentCaptor.forClass(Turma.class);
+        verify(turmaRepository).save(captor.capture());
+        assertEquals("Turma de Fisica", captor.getValue().getNomeTurma());
+    }
+
+    @Test
+    void alunoEOutroProfessorNaoRenomeiamTurma() {
+        prepararTurmaAtiva();
+
+        assertThrows(AcessoNegadoException.class,
+                () -> service.renomear(alunoAutenticado(), CODIGO, renomearDTO("Novo Nome")));
+        assertThrows(RecursoNaoEncontradoException.class,
+                () -> service.renomear(
+                        usuario("outro@tinker.com", TipoUsuario.PROFESSOR),
+                        CODIGO,
+                        renomearDTO("Novo Nome")));
+        verify(turmaRepository, never()).save(any());
+    }
+
+    private RenomearTurmaDTO renomearDTO(String nome) {
+        RenomearTurmaDTO dto = new RenomearTurmaDTO();
+        dto.setNome(nome);
+        return dto;
     }
 
     private void prepararTurmaAtiva() {
