@@ -4,6 +4,7 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Radio from "@mui/material/Radio";
+import { IoClose } from "react-icons/io5";
 import estilosSelecao from "./CampoSelecaoMultipla.module.css";
 import styles from "./CardQuestao.module.css";
 
@@ -369,7 +370,7 @@ export default function CardQuestao({
                 aria-label={`${eliminada ? "Restaurar" : "Eliminar"} alternativa`}
                 aria-pressed={eliminada}
               >
-                X
+                <IoClose />
               </button>
             </div>
           );
