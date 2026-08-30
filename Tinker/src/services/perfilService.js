@@ -1,20 +1,12 @@
 import { apiService } from "./apiService";
-import { obterSessao } from "./autenticacaoService";
-
-const CHAVE_SESSAO = "tinker:sessao";
+import { atualizarSessao } from "./autenticacaoService";
 
 function ehProfessor(tipoUsuario) {
   return String(tipoUsuario ?? "").toUpperCase().startsWith("PROFESSOR");
 }
 
 function atualizarSessaoComPerfil({ nome, sobrenome }) {
-  const sessao = obterSessao();
-  if (!sessao) return;
-
-  localStorage.setItem(
-    CHAVE_SESSAO,
-    JSON.stringify({ ...sessao, nome, sobrenome })
-  );
+  atualizarSessao({ nome, sobrenome });
 }
 
 export async function obterPerfil() {

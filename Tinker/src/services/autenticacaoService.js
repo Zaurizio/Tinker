@@ -1,6 +1,10 @@
 import { apiService } from './apiService'
-
-const CHAVE_SESSAO = 'tinker:sessao'
+import {
+  atualizarSessaoArmazenada,
+  obterSessaoArmazenada,
+  removerSessaoArmazenada,
+  salvarSessaoArmazenada,
+} from './sessaoStorage'
 
 export function fazerLogin({ email, senha, tipoUsuario }) {
   return apiService.post('/api/auth/login', { email, senha, tipoUsuario })
@@ -26,20 +30,11 @@ export function salvarSessao(dadosLogin) {
     tipoUsuario: dadosLogin.tipoUsuario,
   }
 
-  localStorage.setItem(CHAVE_SESSAO, JSON.stringify(sessao))
-  return sessao
+  return salvarSessaoArmazenada(sessao)
 }
 
 export function obterSessao() {
-  const sessaoSalva = localStorage.getItem(CHAVE_SESSAO)
-  if (!sessaoSalva) return null
-
-  try {
-    return JSON.parse(sessaoSalva)
-  } catch {
-    localStorage.removeItem(CHAVE_SESSAO)
-    return null
-  }
+  return obterSessaoArmazenada()
 }
 
 export function obterToken() {
@@ -51,5 +46,9 @@ export function estaAutenticado() {
 }
 
 export function encerrarSessao() {
-  localStorage.removeItem(CHAVE_SESSAO)
+  removerSessaoArmazenada()
+}
+
+export function atualizarSessao(dados) {
+  return atualizarSessaoArmazenada(dados)
 }

@@ -1,5 +1,9 @@
+import {
+  obterSessaoArmazenada,
+  removerSessaoArmazenada,
+} from './sessaoStorage'
+
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '')
-const CHAVE_SESSAO = 'tinker:sessao'
 
 export class ApiError extends Error {
   constructor(status, codigo, mensagem) {
@@ -11,11 +15,7 @@ export class ApiError extends Error {
 }
 
 function obterTokenSalvo() {
-  try {
-    return JSON.parse(localStorage.getItem(CHAVE_SESSAO))?.token ?? null
-  } catch {
-    return null
-  }
+  return obterSessaoArmazenada()?.token ?? null
 }
 
 async function lerResposta(response) {
@@ -54,7 +54,16 @@ export async function requisicao(caminho, opcoes = {}) {
   if (!response.ok) {
     const erroDto = dados && typeof dados === 'object' ? dados : {}
     const mensagem = erroDto.mensagem || response.statusText || 'Erro ao comunicar com a API.'
-    throw new ApiError(response.status, erroDto.codigo, mensagem)
+    const erro = new ApiError(response.status, erroDto.codigo, mensagem)
+
+    if (autenticada && response.status === 401) {
+      removerSessaoArmazenada()
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        window.location.replace('/login')
+      }
+    }
+
+    throw erro
   }
 
   return dados
