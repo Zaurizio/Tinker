@@ -16,7 +16,7 @@ function prepararSimulado(simulado) {
   return simuladoPreparado;
 }
 
-export async function listarSimuladosDoProfessor() {
+export async function listarSimuladosDaConta() {
   const simulados = await apiService.get("/api/simulados", {
     autenticada: true,
   });
@@ -34,7 +34,7 @@ export async function criarSimuladoVazio({ titulo }) {
   return prepararSimulado(simulado);
 }
 
-export async function gerarSimuladoDoProfessor({
+export async function gerarSimuladoDaConta({
   titulo,
   descricao = null,
   tempo = null,
@@ -62,7 +62,7 @@ export async function gerarSimuladoDoProfessor({
   return prepararSimulado(simulado);
 }
 
-export async function renomearSimuladoDoProfessor(id, { titulo }) {
+export async function renomearSimuladoDaConta(id, { titulo }) {
   const simulado = await apiService.patch(
     `/api/simulados/${id}`,
     { titulo },
@@ -72,11 +72,11 @@ export async function renomearSimuladoDoProfessor(id, { titulo }) {
   return prepararSimulado(simulado);
 }
 
-export async function excluirSimuladoDoProfessor(id) {
+export async function excluirSimuladoDaConta(id) {
   await apiService.delete(`/api/simulados/${id}`, { autenticada: true });
 }
 
-export async function obterSimuladoDoProfessor(id) {
+export async function obterSimuladoDaConta(id) {
   const simulado = await apiService.get(`/api/simulados/${id}`, {
     autenticada: true,
   });
@@ -84,15 +84,15 @@ export async function obterSimuladoDoProfessor(id) {
   return prepararSimulado(simulado);
 }
 
-export async function carregarSimuladosDoProfessorComQuestoes() {
-  const simulados = await listarSimuladosDoProfessor();
+export async function carregarSimuladosDaContaComQuestoes() {
+  const simulados = await listarSimuladosDaConta();
 
   return Promise.all(
-    simulados.map((simulado) => obterSimuladoDoProfessor(simulado.id))
+    simulados.map((simulado) => obterSimuladoDaConta(simulado.id))
   );
 }
 
-export async function adicionarQuestoesAoSimuladoDoProfessor(
+export async function adicionarQuestoesAoSimuladoDaConta(
   simuladoId,
   questoesIds
 ) {
@@ -103,7 +103,7 @@ export async function adicionarQuestoesAoSimuladoDoProfessor(
   );
 }
 
-export async function removerQuestaoDoSimuladoDoProfessor(
+export async function removerQuestaoDoSimuladoDaConta(
   simuladoId,
   questaoId
 ) {
@@ -113,7 +113,7 @@ export async function removerQuestaoDoSimuladoDoProfessor(
   );
 }
 
-export async function listarQuestoesDoSimuladoDoProfessor(id) {
+export async function listarQuestoesDoSimuladoDaConta(id) {
   return apiService.get(`/api/simulados/${id}/questoes`, {
     autenticada: true,
   });

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { listarSimuladosDoProfessor } from "../../services/simuladosApiService";
+import { listarSimuladosDaConta } from "../../services/simuladosApiService";
 import BarraBusca from "../ui/BarraBusca";
 import estiloModal from "./ModalPublicarSimulado.module.css";
 
@@ -30,7 +30,7 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
 
     async function carregarSimulados() {
       try {
-        const simuladosCarregados = await listarSimuladosDoProfessor();
+        const simuladosCarregados = await listarSimuladosDaConta();
         if (carregamentoAtivo) setSimulados(simuladosCarregados);
       } catch (erro) {
         if (carregamentoAtivo) {

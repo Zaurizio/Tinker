@@ -7,9 +7,9 @@ import {
   responderQuestao,
 } from "../services/questoesService";
 import {
-  adicionarQuestoesAoSimuladoDoProfessor,
-  carregarSimuladosDoProfessorComQuestoes,
-  removerQuestaoDoSimuladoDoProfessor,
+  adicionarQuestoesAoSimuladoDaConta,
+  carregarSimuladosDaContaComQuestoes,
+  removerQuestaoDoSimuladoDaConta,
 } from "../services/simuladosApiService";
 import { obterSessao } from "../services/autenticacaoService";
 
@@ -34,8 +34,10 @@ function Questoes() {
   const [resultados, setResultados] = useState(null); //busca por questoes
   const [simulados, setSimulados] = useState([]);
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
-  const eProfessor = tipoUsuario === "PROFESSOR";
-  const [carregandoSimulados, setCarregandoSimulados] = useState(eProfessor);
+  const podeAdministrarSimulados = ["ALUNO", "PROFESSOR"].includes(tipoUsuario);
+  const [carregandoSimulados, setCarregandoSimulados] = useState(
+    podeAdministrarSimulados,
+  );
   const [erroSimulados, setErroSimulados] = useState("");
   const [versaoBusca, setVersaoBusca] = useState(0);
   const [simuladosPorQuestao, setSimuladosPorQuestao] = useState({});
@@ -50,7 +52,7 @@ function Questoes() {
     let carregamentoAtivo = true;
 
     async function carregarSimulados() {
-      if (!eProfessor) {
+      if (!podeAdministrarSimulados) {
         setSimulados([]);
         setSimuladosPorQuestao({});
         setCarregandoSimulados(false);
@@ -62,7 +64,7 @@ function Questoes() {
 
       try {
         const simuladosDoUsuario =
-          await carregarSimuladosDoProfessorComQuestoes();
+          await carregarSimuladosDaContaComQuestoes();
 
         if (carregamentoAtivo) {
           setSimulados(simuladosDoUsuario);
@@ -86,7 +88,7 @@ function Questoes() {
     return () => {
       carregamentoAtivo = false;
     };
-  }, [eProfessor]);
+  }, [podeAdministrarSimulados]);
 
   async function handleBuscarQuestoes(filtros) {
     buscaAtivaRef.current += 1;
@@ -177,10 +179,10 @@ function Questoes() {
 
     const resultados = await Promise.allSettled([
       ...adicionados.map((simuladoId) =>
-        adicionarQuestoesAoSimuladoDoProfessor(simuladoId, [questaoId]),
+        adicionarQuestoesAoSimuladoDaConta(simuladoId, [questaoId]),
       ),
       ...removidos.map((simuladoId) =>
-        removerQuestaoDoSimuladoDoProfessor(simuladoId, questaoId),
+        removerQuestaoDoSimuladoDaConta(simuladoId, questaoId),
       ),
     ]);
     const falha = resultados.find(
@@ -195,7 +197,7 @@ function Questoes() {
 
       try {
         const simuladosSincronizados =
-          await carregarSimuladosDoProfessorComQuestoes();
+          await carregarSimuladosDaContaComQuestoes();
         const associacoesSincronizadas =
           construirAssociacoesPorQuestao(simuladosSincronizados);
         setSimulados(simuladosSincronizados);
@@ -250,7 +252,7 @@ function Questoes() {
                   erroSimulados={erroSimulados}
                   onSalvarSimulados={handleSalvarSimulados}
                   onEnviarResposta={handleEnviarResposta}
-                  exibirSeletorSimulados={eProfessor}
+                  exibirSeletorSimulados={podeAdministrarSimulados}
                 />
               );
             })

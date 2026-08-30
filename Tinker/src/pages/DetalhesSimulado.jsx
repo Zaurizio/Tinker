@@ -3,8 +3,8 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router";
 import { obterSessao } from "../services/autenticacaoService";
 import {
-  listarQuestoesDoSimuladoDoProfessor,
-  obterSimuladoDoProfessor,
+  listarQuestoesDoSimuladoDaConta,
+  obterSimuladoDaConta,
 } from "../services/simuladosApiService";
 import estilos from "./DetalhesSimulado.module.css";
 
@@ -16,13 +16,13 @@ function DetalhesSimulado() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
-  const eProfessor = tipoUsuario === "PROFESSOR";
+  const podeAdministrarSimulados = ["ALUNO", "PROFESSOR"].includes(tipoUsuario);
 
   useEffect(() => {
     let componenteMontado = true;
 
     async function carregarSimulado() {
-      if (!eProfessor) {
+      if (!podeAdministrarSimulados) {
         if (componenteMontado) setCarregando(false);
         return;
       }
@@ -33,8 +33,8 @@ function DetalhesSimulado() {
       setQuestoes([]);
 
       try {
-        const dadosSimulado = await obterSimuladoDoProfessor(simuladoId);
-        const questoesAssociadas = await listarQuestoesDoSimuladoDoProfessor(
+        const dadosSimulado = await obterSimuladoDaConta(simuladoId);
+        const questoesAssociadas = await listarQuestoesDoSimuladoDaConta(
           simuladoId
         );
 
@@ -61,7 +61,7 @@ function DetalhesSimulado() {
     return () => {
       componenteMontado = false;
     };
-  }, [eProfessor, simuladoId]);
+  }, [podeAdministrarSimulados, simuladoId]);
 
   return (
     <section className={estilos.pagina}>
@@ -79,9 +79,9 @@ function DetalhesSimulado() {
       </header>
 
       <div className={estilos.conteudo}>
-        {!eProfessor ? (
+        {!podeAdministrarSimulados ? (
           <p className={estilos.estado}>
-            Esta área está disponível somente para professores.
+            Esta área não está disponível para este tipo de conta.
           </p>
         ) : carregando ? (
           <p className={estilos.estado}>Carregando simulado...</p>

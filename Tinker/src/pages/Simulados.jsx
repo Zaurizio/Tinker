@@ -10,10 +10,10 @@ import PainelFiltroSimulados from "../components/simulados/PainelFiltroSimulados
 import { obterSessao } from "../services/autenticacaoService";
 import {
   criarSimuladoVazio,
-  excluirSimuladoDoProfessor,
-  gerarSimuladoDoProfessor,
-  listarSimuladosDoProfessor,
-  renomearSimuladoDoProfessor,
+  excluirSimuladoDaConta,
+  gerarSimuladoDaConta,
+  listarSimuladosDaConta,
+  renomearSimuladoDaConta,
 } from "../services/simuladosApiService";
 import estiloSimulados from "./Simulados.module.css";
 
@@ -40,13 +40,13 @@ function Simulados() {
   const [excluindo, setExcluindo] = useState(false);
   const [erroExclusao, setErroExclusao] = useState("");
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
-  const eProfessor = tipoUsuario === "PROFESSOR";
+  const podeAdministrarSimulados = ["ALUNO", "PROFESSOR"].includes(tipoUsuario);
 
   useEffect(() => {
     let componenteMontado = true;
 
     async function carregarSimulados() {
-      if (!eProfessor) {
+      if (!podeAdministrarSimulados) {
         if (componenteMontado) setCarregando(false);
         return;
       }
@@ -55,7 +55,7 @@ function Simulados() {
       setErro("");
 
       try {
-        const simuladosCarregados = await listarSimuladosDoProfessor();
+        const simuladosCarregados = await listarSimuladosDaConta();
         if (componenteMontado) setSimulados(simuladosCarregados);
       } catch {
         if (componenteMontado) {
@@ -70,7 +70,7 @@ function Simulados() {
     return () => {
       componenteMontado = false;
     };
-  }, [eProfessor]);
+  }, [podeAdministrarSimulados]);
 
   const simuladosFiltrados = useMemo(() => {
     const buscaNormalizada = normalizarTexto(busca);
@@ -121,7 +121,7 @@ function Simulados() {
     setErroRenomeacao("");
 
     try {
-      const simuladoAtualizado = await renomearSimuladoDoProfessor(
+      const simuladoAtualizado = await renomearSimuladoDaConta(
         simuladoParaRenomear.id,
         { titulo }
       );
@@ -145,7 +145,7 @@ function Simulados() {
     setErroGeracao("");
 
     try {
-      const novoSimulado = await gerarSimuladoDoProfessor({
+      const novoSimulado = await gerarSimuladoDaConta({
         titulo,
         ...filtrosGeracao,
       });
@@ -170,7 +170,7 @@ function Simulados() {
     setErroExclusao("");
 
     try {
-      await excluirSimuladoDoProfessor(simuladoParaExcluir.id);
+      await excluirSimuladoDaConta(simuladoParaExcluir.id);
       setSimulados((simuladosAtuais) =>
         simuladosAtuais.filter(
           (simulado) => simulado.id !== simuladoParaExcluir.id
@@ -227,9 +227,9 @@ function Simulados() {
       <div className={estiloSimulados.conteudo}>
         <h1 className={estiloSimulados.titulo}>Meus Simulados</h1>
 
-        {!eProfessor ? (
+        {!podeAdministrarSimulados ? (
           <p className={estiloSimulados.estadoVazio}>
-            Os simulados serão acessados pelas turmas quando essa integração estiver disponível.
+            Esta área não está disponível para este tipo de conta.
           </p>
         ) : (
           <>
@@ -273,7 +273,7 @@ function Simulados() {
         )}
       </div>
 
-      {eProfessor && modalCriarAberto && (
+      {podeAdministrarSimulados && modalCriarAberto && (
         <ModalCriarSimulado
           onFechar={() => {
             if (!criando) setModalCriarAberto(false);
@@ -284,7 +284,7 @@ function Simulados() {
         />
       )}
 
-      {eProfessor && filtrosGeracao && (
+      {podeAdministrarSimulados && filtrosGeracao && (
         <ModalGerarSimulado
           quantidadeQuestoes={filtrosGeracao.quantidadeQuestoes}
           onFechar={() => {
@@ -296,7 +296,7 @@ function Simulados() {
         />
       )}
 
-      {eProfessor && simuladoParaRenomear && (
+      {podeAdministrarSimulados && simuladoParaRenomear && (
         <ModalRenomearSimulado
           tituloAtual={simuladoParaRenomear.titulo}
           onFechar={() => {
@@ -308,7 +308,7 @@ function Simulados() {
         />
       )}
 
-      {eProfessor && simuladoParaExcluir && (
+      {podeAdministrarSimulados && simuladoParaExcluir && (
         <ModalExcluirSimulado
           onFechar={() => {
             if (!excluindo) setSimuladoParaExcluir(null);
