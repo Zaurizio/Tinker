@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useLocation, useNavigate, useParams } from "react-router";
 import CardQuestao from "../components/questoes/CardQuestao";
+import CardQuestaoSkeleton from "../components/questoes/CardQuestaoSkeleton";
+import Skeleton from "../components/ui/Skeleton";
 import { obterSessao } from "../services/autenticacaoService";
 import {
   concluirSimuladoPublicado,
@@ -9,6 +11,9 @@ import {
   listarQuestoesDoSimuladoPublicado,
   listarSimuladosPublicadosNaTurma,
 } from "../services/turmasApiService";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { chavePublicacaoTurma } from "../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../hooks/useEsqueletoAtrasado";
 import estilos from "./ExecutarSimuladoTurma.module.css";
 
 function formatarErroApi(erro, mensagemPadrao) {
@@ -25,16 +30,20 @@ function ExecutarSimuladoTurma() {
       ? state.publicacao
       : null;
   const publicacaoInicialRef = useRef(publicacaoDoCard);
-  const [publicacao, setPublicacao] = useState(publicacaoDoCard);
-  const [questoes, setQuestoes] = useState([]);
+  const cacheInicial = obterCache(chavePublicacaoTurma(codigo, idPublicacao));
+  const [publicacao, setPublicacao] = useState(
+    () => publicacaoDoCard ?? cacheInicial?.publicacao ?? null,
+  );
+  const [questoes, setQuestoes] = useState(() => cacheInicial?.questoes ?? []);
   const [respostas, setRespostas] = useState({});
-  const [carregando, setCarregando] = useState(true);
+  const [carregando, setCarregando] = useState(() => cacheInicial === undefined);
   const [erro, setErro] = useState("");
   const [concluindo, setConcluindo] = useState(false);
   const [erroConclusao, setErroConclusao] = useState("");
   const concluindoRef = useRef(false);
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
   const eAluno = tipoUsuario === "ALUNO";
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
 
   useEffect(() => {
     let carregamentoAtivo = true;
@@ -45,7 +54,16 @@ function ExecutarSimuladoTurma() {
         return;
       }
 
-      setCarregando(true);
+      const chave = chavePublicacaoTurma(codigo, idPublicacao);
+      const emCache = obterCache(chave);
+
+      if (emCache) {
+        setPublicacao(emCache.publicacao);
+        setQuestoes(emCache.questoes);
+        setCarregando(false);
+      } else {
+        setCarregando(true);
+      }
       setErro("");
 
       try {
@@ -75,9 +93,13 @@ function ExecutarSimuladoTurma() {
         if (carregamentoAtivo) {
           setPublicacao(publicacaoCarregada);
           setQuestoes(questoesCarregadas);
+          definirCache(chave, {
+            publicacao: publicacaoCarregada,
+            questoes: questoesCarregadas,
+          });
         }
       } catch (erroCarregamento) {
-        if (carregamentoAtivo) {
+        if (carregamentoAtivo && !emCache) {
           setErro(
             formatarErroApi(
               erroCarregamento,
@@ -172,9 +194,19 @@ function ExecutarSimuladoTurma() {
                 A execução de simulados da turma está disponível somente para alunos.
               </p>
             ) : carregando ? (
-              <p className={estilos.estado} role="status">
-                Carregando simulado...
-              </p>
+              mostrarEsqueleto ? (
+                <div className={estilos.card} aria-hidden="true">
+                  <Skeleton height="1.8rem" width="60%" style={{ marginBottom: 12 }} />
+                  <div className={estilos.metadados}>
+                    <Skeleton width="76px" height="22px" radius="999px" />
+                  </div>
+                  <div className={estilos.listaQuestoes}>
+                    <CardQuestaoSkeleton />
+                    <CardQuestaoSkeleton />
+                    <CardQuestaoSkeleton />
+                  </div>
+                </div>
+              ) : null
             ) : erro ? (
               <p className={estilos.erro} role="alert">
                 {erro}

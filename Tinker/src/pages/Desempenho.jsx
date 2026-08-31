@@ -3,26 +3,87 @@ import CardDesempenhoGeral from "../components/desempenho/CardDesempenhoGeral";
 import CardDesempenhoPorDisciplina from "../components/desempenho/CardDesempenhoPorDisciplina";
 import CardMateriaDestaque from "../components/desempenho/CardMateriaDestaque";
 import CardMetrica from "../components/desempenho/CardMetrica";
+import Skeleton from "../components/ui/Skeleton";
 import { obterResumoDesempenho } from "../services/desempenhoService";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { CHAVE_DESEMPENHO } from "../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../hooks/useEsqueletoAtrasado";
 import styles from "./Desempenho.module.css";
+import estiloGeral from "../components/desempenho/CardDesempenhoGeral.module.css";
+import estiloMateria from "../components/desempenho/CardMateriaDestaque.module.css";
+import estiloMetrica from "../components/desempenho/CardMetrica.module.css";
+import estiloDisciplina from "../components/desempenho/CardDesempenhoPorDisciplina.module.css";
+
+function DesempenhoSkeleton() {
+  return (
+    <>
+      <div className={styles.gridCards}>
+        <div className={styles.cardGeral}>
+          <div className={estiloGeral.card} style={{ width: "100%" }} aria-hidden="true">
+            <Skeleton height="1.5rem" width="65%" style={{ marginBottom: 7 }} />
+            <div className={estiloGeral.graficoContainer}>
+              <Skeleton width="120px" height="120px" radius="50%" />
+            </div>
+            <Skeleton height="1.2rem" width="80%" />
+          </div>
+        </div>
+
+        <div className={styles.cardsMenores}>
+          {[0, 1].map((indice) => (
+            <div className={estiloMateria.card} key={`materia-${indice}`} aria-hidden="true">
+              <Skeleton height="1.5rem" width="80%" style={{ marginBottom: 10 }} />
+              <Skeleton height="2.4rem" width="65%" radius="12px" />
+            </div>
+          ))}
+          {[0, 1].map((indice) => (
+            <div className={estiloMetrica.card} key={`metrica-${indice}`} aria-hidden="true">
+              <Skeleton height="1.1rem" width="70%" style={{ marginBottom: 8 }} />
+              <Skeleton height="1.8rem" width="40%" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.cardDisciplina}>
+        <div className={estiloDisciplina.card} aria-hidden="true">
+          <Skeleton height="1.2em" width="240px" style={{ margin: "0 auto 15px" }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 15 }}>
+            <Skeleton height="1rem" width="100%" />
+            <Skeleton height="1rem" width="100%" />
+            <Skeleton height="1rem" width="100%" />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
 
 function Desempenho() {
-  const [dadosDesempenho, setDadosDesempenho] = useState(null);
-  const [carregando, setCarregando] = useState(true);
+  const [dadosDesempenho, setDadosDesempenho] = useState(
+    () => obterCache(CHAVE_DESEMPENHO) ?? null,
+  );
+  const [carregando, setCarregando] = useState(
+    () => obterCache(CHAVE_DESEMPENHO) === undefined,
+  );
   const [erro, setErro] = useState("");
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
 
   useEffect(() => {
     let componenteMontado = true;
 
     async function carregarDesempenho() {
-      setCarregando(true);
+      const emCache = obterCache(CHAVE_DESEMPENHO);
+      setCarregando(emCache === undefined);
       setErro("");
 
       try {
         const dados = await obterResumoDesempenho();
-        if (componenteMontado) setDadosDesempenho(dados);
-      } catch {
         if (componenteMontado) {
+          setDadosDesempenho(dados);
+          definirCache(CHAVE_DESEMPENHO, dados);
+        }
+      } catch {
+        if (componenteMontado && emCache === undefined) {
           setErro("Não foi possível carregar seu desempenho. Tente novamente.");
         }
       } finally {
@@ -41,7 +102,7 @@ function Desempenho() {
       <h1 className={styles.tituloPagina}>Meu Desempenho</h1>
 
       {carregando ? (
-        <p className={styles.estado}>Carregando desempenho...</p>
+        mostrarEsqueleto ? <DesempenhoSkeleton /> : null
       ) : erro ? (
         <p className={styles.erro} role="alert">{erro}</p>
       ) : !dadosDesempenho ? (

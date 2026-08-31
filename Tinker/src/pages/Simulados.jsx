@@ -7,6 +7,7 @@ import ModalExcluirSimulado from "../components/simulados/ModalExcluirSimulado";
 import ModalGerarSimulado from "../components/simulados/ModalGerarSimulado";
 import ModalRenomearSimulado from "../components/simulados/ModalRenomearSimulado";
 import PainelFiltroSimulados from "../components/simulados/PainelFiltroSimulados";
+import CardSimuladoSkeleton from "../components/simulados/CardSimuladoSkeleton";
 import { obterSessao } from "../services/autenticacaoService";
 import {
   criarSimuladoVazio,
@@ -17,6 +18,9 @@ import {
 } from "../services/simuladosApiService";
 import estiloSimulados from "./Simulados.module.css";
 import { useOpcoesFiltrosQuestoes } from "../hooks/useOpcoesFiltrosQuestoes";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { CHAVE_SIMULADOS } from "../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../hooks/useEsqueletoAtrasado";
 
 const normalizarTexto = (texto) =>
   texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -24,9 +28,12 @@ const normalizarTexto = (texto) =>
 function Simulados() {
   const navigate = useNavigate();
   const [busca, setBusca] = useState("");
-  const [simulados, setSimulados] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const [simulados, setSimulados] = useState(() => obterCache(CHAVE_SIMULADOS) ?? []);
+  const [carregando, setCarregando] = useState(
+    () => obterCache(CHAVE_SIMULADOS) === undefined,
+  );
   const [erro, setErro] = useState("");
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
   const [criando, setCriando] = useState(false);
   const [erroCriacao, setErroCriacao] = useState("");
@@ -65,14 +72,18 @@ function Simulados() {
         return;
       }
 
-      setCarregando(true);
+      const emCache = obterCache(CHAVE_SIMULADOS);
+      setCarregando(emCache === undefined);
       setErro("");
 
       try {
         const simuladosCarregados = await listarSimuladosDaConta();
-        if (componenteMontado) setSimulados(simuladosCarregados);
-      } catch {
         if (componenteMontado) {
+          setSimulados(simuladosCarregados);
+          definirCache(CHAVE_SIMULADOS, simuladosCarregados);
+        }
+      } catch {
+        if (componenteMontado && emCache === undefined) {
           setErro("Não foi possível carregar os simulados. Tente novamente.");
         }
       } finally {
@@ -99,11 +110,14 @@ function Simulados() {
         (simulado) => simulado.id === simuladoRecebido.id
       );
 
-      return jaExiste
+      const simuladosAtualizados = jaExiste
         ? simuladosAtuais.map((simulado) =>
             simulado.id === simuladoRecebido.id ? simuladoRecebido : simulado
           )
         : [...simuladosAtuais, simuladoRecebido];
+
+      definirCache(CHAVE_SIMULADOS, simuladosAtualizados);
+      return simuladosAtualizados;
     });
   }
 
@@ -185,11 +199,13 @@ function Simulados() {
 
     try {
       await excluirSimuladoDaConta(simuladoParaExcluir.id);
-      setSimulados((simuladosAtuais) =>
-        simuladosAtuais.filter(
+      setSimulados((simuladosAtuais) => {
+        const simuladosAtualizados = simuladosAtuais.filter(
           (simulado) => simulado.id !== simuladoParaExcluir.id
-        )
-      );
+        );
+        definirCache(CHAVE_SIMULADOS, simuladosAtualizados);
+        return simuladosAtualizados;
+      });
       setSimuladoParaExcluir(null);
     } catch (erroExcluir) {
       setErroExclusao(
@@ -204,7 +220,13 @@ function Simulados() {
 
   function renderizarLista() {
     if (carregando) {
-      return <div className={estiloSimulados.estadoVazio}>Carregando simulados...</div>;
+      return mostrarEsqueleto ? (
+        <>
+          <CardSimuladoSkeleton />
+          <CardSimuladoSkeleton />
+          <CardSimuladoSkeleton />
+        </>
+      ) : null;
     }
     if (erro) {
       return <div className={estiloSimulados.estadoVazio} role="alert">{erro}</div>;

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, useParams } from "react-router";
 import CardQuestao from "../components/questoes/CardQuestao";
+import CardQuestaoSkeleton from "../components/questoes/CardQuestaoSkeleton";
+import Skeleton from "../components/ui/Skeleton";
 import { obterSessao } from "../services/autenticacaoService";
 import { responderQuestao } from "../services/questoesService";
 import {
@@ -9,6 +11,9 @@ import {
   listarQuestoesDoSimuladoDaConta,
   obterSimuladoDaConta,
 } from "../services/simuladosApiService";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { chaveSimulado } from "../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../hooks/useEsqueletoAtrasado";
 import estilos from "./DetalhesSimulado.module.css";
 
 function formatarErroApi(erro, mensagemPadrao) {
@@ -19,9 +24,10 @@ function formatarErroApi(erro, mensagemPadrao) {
 function DetalhesSimulado() {
   const { simuladoId } = useParams();
   const navigate = useNavigate();
-  const [simulado, setSimulado] = useState(null);
-  const [questoes, setQuestoes] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const cacheInicial = obterCache(chaveSimulado(simuladoId));
+  const [simulado, setSimulado] = useState(() => cacheInicial?.simulado ?? null);
+  const [questoes, setQuestoes] = useState(() => cacheInicial?.questoes ?? []);
+  const [carregando, setCarregando] = useState(() => cacheInicial === undefined);
   const [erro, setErro] = useState("");
   const [respostas, setRespostas] = useState({});
   const [concluindo, setConcluindo] = useState(false);
@@ -29,6 +35,7 @@ function DetalhesSimulado() {
   const concluindoRef = useRef(false);
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
   const podeAdministrarSimulados = ["ALUNO", "PROFESSOR"].includes(tipoUsuario);
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
 
   useEffect(() => {
     let componenteMontado = true;
@@ -39,23 +46,33 @@ function DetalhesSimulado() {
         return;
       }
 
-      setCarregando(true);
+      const chave = chaveSimulado(simuladoId);
+      const emCache = obterCache(chave);
+
+      if (emCache) {
+        setSimulado(emCache.simulado);
+        setQuestoes(emCache.questoes);
+        setCarregando(false);
+      } else {
+        setSimulado(null);
+        setQuestoes([]);
+        setCarregando(true);
+      }
       setErro("");
-      setSimulado(null);
-      setQuestoes([]);
 
       try {
-        const dadosSimulado = await obterSimuladoDaConta(simuladoId);
-        const questoesAssociadas = await listarQuestoesDoSimuladoDaConta(
-          simuladoId
-        );
+        const [dadosSimulado, questoesAssociadas] = await Promise.all([
+          obterSimuladoDaConta(simuladoId),
+          listarQuestoesDoSimuladoDaConta(simuladoId),
+        ]);
 
         if (componenteMontado) {
           setSimulado(dadosSimulado);
           setQuestoes(questoesAssociadas);
+          definirCache(chave, { simulado: dadosSimulado, questoes: questoesAssociadas });
         }
       } catch (erroCarregamento) {
-        if (!componenteMontado) return;
+        if (!componenteMontado || emCache) return;
 
         setErro(
           erroCarregamento?.codigo === "SIMULADO_NAO_ENCONTRADO"
@@ -140,7 +157,20 @@ function DetalhesSimulado() {
                 Esta área não está disponível para este tipo de conta.
               </p>
             ) : carregando ? (
-              <p className={estilos.estado}>Carregando simulado...</p>
+              mostrarEsqueleto ? (
+                <div className={estilos.card} aria-hidden="true">
+                  <Skeleton height="1.8rem" width="60%" style={{ marginBottom: 12 }} />
+                  <div className={estilos.metadados}>
+                    <Skeleton width="76px" height="22px" radius="999px" />
+                    <Skeleton width="60px" height="22px" radius="999px" />
+                  </div>
+                  <div className={estilos.listaQuestoes}>
+                    <CardQuestaoSkeleton />
+                    <CardQuestaoSkeleton />
+                    <CardQuestaoSkeleton />
+                  </div>
+                </div>
+              ) : null
             ) : erro ? (
               <p className={estilos.erro} role="alert">{erro}</p>
             ) : (

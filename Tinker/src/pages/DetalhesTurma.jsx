@@ -11,6 +11,7 @@ import AbaMembrosTurma from "../components/turma/AbaMembrosTurma";
 import AbaSimuladosTurma from "../components/turma/AbaSimuladosTurma";
 import ModalConfiguracoesTurma from "../components/turma/ModalConfiguracoesTurma";
 import ModalConfirmarAcaoTurma from "../components/turma/ModalConfirmarAcaoTurma";
+import Skeleton from "../components/ui/Skeleton";
 import { obterSessao } from "../services/autenticacaoService";
 import {
   excluirTurmaDaConta,
@@ -18,6 +19,9 @@ import {
   renomearTurmaDaConta,
   sairDaTurmaDaConta,
 } from "../services/turmasApiService";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { chaveTurma } from "../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../hooks/useEsqueletoAtrasado";
 import estiloDetalhes from "./DetalhesTurma.module.css";
 
 const CONTEUDO_ABAS = {
@@ -40,9 +44,11 @@ function DetalhesTurma() {
   const { codigo } = useParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [turma, setTurma] = useState(null);
-  const [carregando, setCarregando] = useState(true);
+  const cacheInicial = obterCache(chaveTurma(codigo));
+  const [turma, setTurma] = useState(() => cacheInicial ?? null);
+  const [carregando, setCarregando] = useState(() => cacheInicial === undefined);
   const [erro, setErro] = useState("");
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
   const [acaoConfirmacao, setAcaoConfirmacao] = useState(null);
   const [processando, setProcessando] = useState(false);
   const [erroOperacao, setErroOperacao] = useState("");
@@ -58,14 +64,24 @@ function DetalhesTurma() {
     let carregamentoAtivo = true;
 
     async function carregarTurma() {
-      setCarregando(true);
+      const chave = chaveTurma(codigo);
+      const emCache = obterCache(chave);
+      if (emCache) {
+        setTurma(emCache);
+        setCarregando(false);
+      } else {
+        setCarregando(true);
+      }
       setErro("");
 
       try {
         const turmaCarregada = await obterTurmaDaConta(codigo);
-        if (carregamentoAtivo) setTurma(turmaCarregada);
-      } catch (erroCarregamento) {
         if (carregamentoAtivo) {
+          setTurma(turmaCarregada);
+          definirCache(chave, turmaCarregada);
+        }
+      } catch (erroCarregamento) {
+        if (carregamentoAtivo && !emCache) {
           setErro(
             formatarErroApi(
               erroCarregamento,
@@ -97,6 +113,7 @@ function DetalhesTurma() {
   async function handleRenomear(novoNome) {
     const turmaAtualizada = await renomearTurmaDaConta(codigo, novoNome);
     setTurma(turmaAtualizada);
+    definirCache(chaveTurma(codigo), turmaAtualizada);
   }
 
   function handleSolicitarExclusaoPelasConfiguracoes() {
@@ -129,11 +146,38 @@ function DetalhesTurma() {
   }
 
   if (carregando) {
+    if (!mostrarEsqueleto) {
+      return <main className={estiloDetalhes.pagina} />;
+    }
+
     return (
       <main className={estiloDetalhes.pagina}>
-        <div className={estiloDetalhes.estado} role="status">
-          Carregando turma...
-        </div>
+        <section className={estiloDetalhes.cardPrincipal} aria-hidden="true">
+          <div
+            className={estiloDetalhes.faixa}
+            style={{ background: "var(--cor-fundo-hover)" }}
+          >
+            <div className={estiloDetalhes.topoFaixa}>
+              <Skeleton width="42px" height="42px" radius="50%" />
+            </div>
+            <div className={estiloDetalhes.cabecalhoConteudo}>
+              <div className={estiloDetalhes.identidadeTurma}>
+                <Skeleton width="82px" height="82px" radius="50%" style={{ flexShrink: 0 }} />
+                <Skeleton height="2rem" width="260px" />
+              </div>
+            </div>
+          </div>
+
+          <nav className={estiloDetalhes.abas} aria-hidden="true">
+            <Skeleton width="80px" height="1rem" style={{ alignSelf: "center" }} />
+            <Skeleton width="80px" height="1rem" style={{ alignSelf: "center" }} />
+          </nav>
+
+          <div className={estiloDetalhes.conteudoAba}>
+            <Skeleton height="1rem" width="40%" style={{ marginBottom: 12 }} />
+            <Skeleton height="1rem" width="60%" />
+          </div>
+        </section>
       </main>
     );
   }

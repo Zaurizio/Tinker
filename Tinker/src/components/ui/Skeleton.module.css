@@ -1,0 +1,29 @@
+.skeleton {
+  display: block;
+  width: 100%;
+  height: 1em;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--cor-fundo-hover) 25%,
+    var(--cor-fundo-card-cinza) 37%,
+    var(--cor-fundo-hover) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-pulso 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulso {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

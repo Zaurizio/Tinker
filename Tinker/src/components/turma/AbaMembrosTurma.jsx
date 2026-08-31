@@ -5,7 +5,23 @@ import {
   removerMembroDaTurmaDaConta,
 } from "../../services/turmasApiService";
 import ModalConfirmarAcaoTurma from "./ModalConfirmarAcaoTurma";
+import Skeleton from "../ui/Skeleton";
+import { obterCache, definirCache } from "../../services/cacheStore";
+import { chaveMembrosTurma } from "../../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../../hooks/useEsqueletoAtrasado";
 import estiloMembros from "./AbaMembrosTurma.module.css";
+
+function MembroSkeleton() {
+  return (
+    <div className={estiloMembros.membro} aria-hidden="true">
+      <Skeleton width="46px" height="46px" radius="50%" style={{ flexShrink: 0 }} />
+      <div className={estiloMembros.identificacao}>
+        <Skeleton height="0.96rem" width="55%" />
+        <Skeleton height="0.82rem" width="35%" />
+      </div>
+    </div>
+  );
+}
 
 function formatarErroApi(erro, mensagemPadrao) {
   if (!(erro instanceof Error)) return mensagemPadrao;
@@ -18,26 +34,38 @@ function AbaMembrosTurma({
   professorCriador,
   fotoProfessorCriador,
 }) {
-  const [membros, setMembros] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const cacheInicial = obterCache(chaveMembrosTurma(codigo));
+  const [membros, setMembros] = useState(() => cacheInicial ?? []);
+  const [carregando, setCarregando] = useState(() => cacheInicial === undefined);
   const [erro, setErro] = useState("");
   const [membroParaRemover, setMembroParaRemover] = useState(null);
   const [removendo, setRemovendo] = useState(false);
   const [erroRemocao, setErroRemocao] = useState("");
   const removendoRef = useRef(false);
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
 
   useEffect(() => {
     let carregamentoAtivo = true;
 
     async function carregarMembros() {
-      setCarregando(true);
+      const chave = chaveMembrosTurma(codigo);
+      const emCache = obterCache(chave);
+      if (emCache) {
+        setMembros(emCache);
+        setCarregando(false);
+      } else {
+        setCarregando(true);
+      }
       setErro("");
 
       try {
         const membrosCarregados = await listarMembrosDaTurmaDaConta(codigo);
-        if (carregamentoAtivo) setMembros(membrosCarregados);
-      } catch (erroCarregamento) {
         if (carregamentoAtivo) {
+          setMembros(membrosCarregados);
+          definirCache(chave, membrosCarregados);
+        }
+      } catch (erroCarregamento) {
+        if (carregamentoAtivo && !emCache) {
           setErro(
             formatarErroApi(
               erroCarregamento,
@@ -65,11 +93,13 @@ function AbaMembrosTurma({
 
     try {
       await removerMembroDaTurmaDaConta(codigo, membroParaRemover.email);
-      setMembros((membrosAtuais) =>
-        membrosAtuais.filter(
+      setMembros((membrosAtuais) => {
+        const membrosAtualizados = membrosAtuais.filter(
           (membro) => membro.email !== membroParaRemover.email,
-        ),
-      );
+        );
+        definirCache(chaveMembrosTurma(codigo), membrosAtualizados);
+        return membrosAtualizados;
+      });
       setMembroParaRemover(null);
     } catch (erroOperacao) {
       setErroRemocao(
@@ -109,9 +139,13 @@ function AbaMembrosTurma({
 
       <div className={estiloMembros.lista}>
         {carregando ? (
-          <div className={estiloMembros.estado} role="status">
-            Carregando membros...
-          </div>
+          mostrarEsqueleto ? (
+            <>
+              <MembroSkeleton />
+              <MembroSkeleton />
+              <MembroSkeleton />
+            </>
+          ) : null
         ) : erro ? (
           <div className={estiloMembros.estado} role="alert">
             {erro}

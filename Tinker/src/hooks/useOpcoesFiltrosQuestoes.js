@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { buscarOpcoesFiltrosQuestoes } from "../services/questoesService";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { CHAVE_FILTROS_QUESTOES } from "../services/cacheChaves";
 
 const OPCOES_VAZIAS = { disciplinas: [], vestibulares: [], anos: [] };
 
 export function useOpcoesFiltrosQuestoes(ativo = true) {
-  const [opcoes, setOpcoes] = useState(OPCOES_VAZIAS);
-  const [carregando, setCarregando] = useState(ativo);
+  const cacheInicial = obterCache(CHAVE_FILTROS_QUESTOES);
+  const [opcoes, setOpcoes] = useState(() => cacheInicial ?? OPCOES_VAZIAS);
+  const [carregando, setCarregando] = useState(() => ativo && cacheInicial === undefined);
   const [erro, setErro] = useState(null);
   const [tentativa, setTentativa] = useState(0);
   const idCarregamentoRef = useRef(0);
@@ -13,17 +16,21 @@ export function useOpcoesFiltrosQuestoes(ativo = true) {
   useEffect(() => {
     if (!ativo) {
       idCarregamentoRef.current += 1;
-      return;
+      return undefined;
     }
 
     idCarregamentoRef.current += 1;
     const idCarregamento = idCarregamentoRef.current;
 
-    buscarOpcoesFiltrosQuestoes()
-      .then((resposta) => {
+    async function carregarOpcoes() {
+      const emCache = obterCache(CHAVE_FILTROS_QUESTOES);
+      setCarregando(emCache === undefined);
+
+      try {
+        const resposta = await buscarOpcoesFiltrosQuestoes();
         if (idCarregamento !== idCarregamentoRef.current) return;
-        setErro(null);
-        setOpcoes({
+
+        const opcoesCarregadas = {
           disciplinas: Array.isArray(resposta?.disciplinas)
             ? resposta.disciplinas
             : [],
@@ -31,16 +38,22 @@ export function useOpcoesFiltrosQuestoes(ativo = true) {
             ? resposta.vestibulares
             : [],
           anos: Array.isArray(resposta?.anos) ? resposta.anos : [],
-        });
-      })
-      .catch((erroCarregar) => {
+        };
+        setErro(null);
+        setOpcoes(opcoesCarregadas);
+        definirCache(CHAVE_FILTROS_QUESTOES, opcoesCarregadas);
+      } catch (erroCarregar) {
         if (idCarregamento !== idCarregamentoRef.current) return;
-        setOpcoes(OPCOES_VAZIAS);
-        setErro(erroCarregar);
-      })
-      .finally(() => {
+        if (emCache === undefined) {
+          setOpcoes(OPCOES_VAZIAS);
+          setErro(erroCarregar);
+        }
+      } finally {
         if (idCarregamento === idCarregamentoRef.current) setCarregando(false);
-      });
+      }
+    }
+
+    carregarOpcoes();
 
     return () => {
       idCarregamentoRef.current += 1;

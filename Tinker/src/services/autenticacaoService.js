@@ -5,6 +5,7 @@ import {
   removerSessaoArmazenada,
   salvarSessaoArmazenada,
 } from './sessaoStorage'
+import { limparTodoCache } from './cacheStore'
 
 export function fazerLogin({ email, senha, tipoUsuario }) {
   return apiService.post('/api/auth/login', { email, senha, tipoUsuario })
@@ -47,6 +48,7 @@ export function estaAutenticado() {
 
 export function encerrarSessao() {
   removerSessaoArmazenada()
+  limparTodoCache()
 }
 
 export function atualizarSessao(dados) {

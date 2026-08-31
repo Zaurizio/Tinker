@@ -7,6 +7,10 @@ import {
   listarEventosDoCalendario,
 } from "../services/calendarioApiService";
 import { obterSessao } from "../services/autenticacaoService";
+import Skeleton from "../components/ui/Skeleton";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { CHAVE_EVENTOS } from "../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../hooks/useEsqueletoAtrasado";
 
 /*seta esquerda*/ import { IoIosArrowBack } from "react-icons/io"; //<IoIosArrowBack />
 /*seta direita*/ import { IoIosArrowForward } from "react-icons/io"; //<IoIosArrowForward />
@@ -32,9 +36,12 @@ function Calendario() {
   const criacaoEmAndamentoRef = useRef(false);
   const remocaoEmAndamentoRef = useRef(false);
 
-  const [eventos, setEventos] = useState([]);
-  const [carregandoEventos, setCarregandoEventos] = useState(true);
+  const [eventos, setEventos] = useState(() => obterCache(CHAVE_EVENTOS) ?? []);
+  const [carregandoEventos, setCarregandoEventos] = useState(
+    () => obterCache(CHAVE_EVENTOS) === undefined,
+  );
   const [erroEventos, setErroEventos] = useState("");
+  const mostrarEsqueletoEventos = useEsqueletoAtrasado(carregandoEventos);
   const [salvandoEvento, setSalvandoEvento] = useState(false);
   const [erroCriacaoEvento, setErroCriacaoEvento] = useState("");
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
@@ -49,16 +56,18 @@ function Calendario() {
     componenteMontadoRef.current = true;
 
     async function carregarEventos() {
-      setCarregandoEventos(true);
+      const eventosEmCache = obterCache(CHAVE_EVENTOS);
+      setCarregandoEventos(eventosEmCache === undefined);
       setErroEventos("");
 
       try {
         const eventosCarregados = await listarEventosDoCalendario();
         if (componenteMontado) {
           setEventos(eventosCarregados);
+          definirCache(CHAVE_EVENTOS, eventosCarregados);
         }
       } catch (erroCarregamento) {
-        if (componenteMontado) {
+        if (componenteMontado && eventosEmCache === undefined) {
           setErroEventos(
             erroCarregamento instanceof Error
               ? `${erroCarregamento.message}${erroCarregamento.codigo ? ` (${erroCarregamento.codigo})` : ""}`
@@ -149,11 +158,13 @@ function Calendario() {
       await excluirEventoDoCalendario(eventoSelecionado.id);
 
       if (componenteMontadoRef.current) {
-        setEventos((eventosAtuais) =>
-          eventosAtuais.filter(
+        setEventos((eventosAtuais) => {
+          const eventosAtualizados = eventosAtuais.filter(
             (evento) => String(evento.id) !== String(eventoSelecionado.id),
-          ),
-        );
+          );
+          definirCache(CHAVE_EVENTOS, eventosAtualizados);
+          return eventosAtualizados;
+        });
         setEventoSelecionado(null);
         setConfirmandoRemocao(false);
       }
@@ -218,7 +229,11 @@ function Calendario() {
       const novosEventos = await criarEventoNoCalendario(dadosEvento);
 
       if (componenteMontadoRef.current) {
-        setEventos((eventosAtuais) => [...eventosAtuais, ...novosEventos]);
+        setEventos((eventosAtuais) => {
+          const eventosAtualizados = [...eventosAtuais, ...novosEventos];
+          definirCache(CHAVE_EVENTOS, eventosAtualizados);
+          return eventosAtualizados;
+        });
         setCardAberto(false);
       }
     } catch (erro) {
@@ -327,8 +342,10 @@ function aplicarAnimacao(tipo, callback) {
 
       <div className={`${estiloCalendario.calendarioContainer} ${qtdAllDay >= 2 ? 'allday-multiplo' : ''}`}>
         <div className={`${animacao} ${estiloCalendario.areaCalendario}`}>
-          {carregandoEventos && (
-            <p className={estiloCalendario.estadoEventos}>Carregando eventos...</p>
+          {carregandoEventos && mostrarEsqueletoEventos && (
+            <div className={estiloCalendario.estadoEventos} aria-hidden="true">
+              <Skeleton width="220px" height="1rem" />
+            </div>
           )}
           {erroEventos && !carregandoEventos && (
             <p className={estiloCalendario.erroEventos} role="alert">

@@ -2,8 +2,10 @@ import {
   obterSessaoArmazenada,
   removerSessaoArmazenada,
 } from './sessaoStorage'
+import { invalidarCacheDaContaAtual } from './cacheStore'
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '')
+const METODOS_DE_MUTACAO = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 
 export class ApiError extends Error {
   constructor(status, codigo, mensagem) {
@@ -65,12 +67,17 @@ export async function requisicao(caminho, opcoes = {}) {
 
     if (autenticada && response.status === 401) {
       removerSessaoArmazenada()
+      invalidarCacheDaContaAtual()
       if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.replace('/login')
       }
     }
 
     throw erro
+  }
+
+  if (METODOS_DE_MUTACAO.has(fetchOptions.method)) {
+    invalidarCacheDaContaAtual()
   }
 
   return dados

@@ -3,12 +3,16 @@ import BarraBusca from "../components/ui/BarraBusca";
 import CardTurma from "../components/turma/CardTurma";
 import ModalEntrarTurma from "../components/turma/ModalEntrarTurma";
 import ModalCriarTurma from "../components/turma/ModalCriarTurma";
+import CardTurmaSkeleton from "../components/turma/CardTurmaSkeleton";
 import {
   criarTurmaDaConta,
   entrarEmTurmaDaConta,
   listarTurmasDaConta,
 } from "../services/turmasApiService";
 import { obterSessao } from "../services/autenticacaoService";
+import { obterCache, definirCache } from "../services/cacheStore";
+import { CHAVE_TURMAS } from "../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../hooks/useEsqueletoAtrasado";
 import estiloTurma from "./Turma.module.css";
 
 function formatarErroApi(erro, mensagemPadrao) {
@@ -19,9 +23,12 @@ function formatarErroApi(erro, mensagemPadrao) {
 function Turma() {
   const [busca, setBusca] = useState("");
   const [modalAberto, setModalAberto] = useState(null); // "entrar" | "criar" | null
-  const [turmas, setTurmas] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const [turmas, setTurmas] = useState(() => obterCache(CHAVE_TURMAS) ?? []);
+  const [carregando, setCarregando] = useState(
+    () => obterCache(CHAVE_TURMAS) === undefined,
+  );
   const [erro, setErro] = useState("");
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
   const componenteMontadoRef = useRef(true);
   const tipoUsuario = String(obterSessao()?.tipoUsuario ?? "").toUpperCase();
   const eProfessor = tipoUsuario === "PROFESSOR";
@@ -32,14 +39,18 @@ function Turma() {
     componenteMontadoRef.current = true;
 
     async function carregarTurmas() {
-      setCarregando(true);
+      const emCache = obterCache(CHAVE_TURMAS);
+      setCarregando(emCache === undefined);
       setErro("");
 
       try {
         const turmasCarregadas = await listarTurmasDaConta();
-        if (carregamentoAtivo) setTurmas(turmasCarregadas);
-      } catch (erroCarregamento) {
         if (carregamentoAtivo) {
+          setTurmas(turmasCarregadas);
+          definirCache(CHAVE_TURMAS, turmasCarregadas);
+        }
+      } catch (erroCarregamento) {
+        if (carregamentoAtivo && emCache === undefined) {
           setErro(
             formatarErroApi(
               erroCarregamento,
@@ -71,18 +82,26 @@ function Turma() {
   async function handleCriarTurma(dadosTurma) {
     const novaTurma = await criarTurmaDaConta(dadosTurma);
     if (!componenteMontadoRef.current) return novaTurma;
-    setTurmas((turmasAtuais) => [...turmasAtuais, novaTurma]);
+    setTurmas((turmasAtuais) => {
+      const turmasAtualizadas = [...turmasAtuais, novaTurma];
+      definirCache(CHAVE_TURMAS, turmasAtualizadas);
+      return turmasAtualizadas;
+    });
     return novaTurma;
   }
 
   async function handleEntrarEmTurma(codigo) {
     const turmaIngressada = await entrarEmTurmaDaConta(codigo);
     if (!componenteMontadoRef.current) return turmaIngressada;
-    setTurmas((turmasAtuais) =>
-      turmasAtuais.some((turma) => turma.codigo === turmaIngressada.codigo)
+    setTurmas((turmasAtuais) => {
+      const turmasAtualizadas = turmasAtuais.some(
+        (turma) => turma.codigo === turmaIngressada.codigo,
+      )
         ? turmasAtuais
-        : [...turmasAtuais, turmaIngressada]
-    );
+        : [...turmasAtuais, turmaIngressada];
+      definirCache(CHAVE_TURMAS, turmasAtualizadas);
+      return turmasAtualizadas;
+    });
     return turmaIngressada;
   }
 
@@ -122,9 +141,13 @@ function Turma() {
 
         <div className={estiloTurma.listaTurmas}>
           {carregando ? (
-            <div className={estiloTurma.estadoVazio} role="status">
-              Carregando turmas...
-            </div>
+            mostrarEsqueleto ? (
+              <>
+                <CardTurmaSkeleton />
+                <CardTurmaSkeleton />
+                <CardTurmaSkeleton />
+              </>
+            ) : null
           ) : erro ? (
             <div className={estiloTurma.estadoVazio} role="alert">
               {erro}

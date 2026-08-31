@@ -6,8 +6,12 @@ import {
 } from "../../services/turmasApiService";
 import BarraBusca from "../ui/BarraBusca";
 import CardSimuladoTurma from "./CardSimuladoTurma";
+import CardSimuladoTurmaSkeleton from "./CardSimuladoTurmaSkeleton";
 import ModalConfirmarAcaoTurma from "./ModalConfirmarAcaoTurma";
 import ModalPublicarSimulado from "./ModalPublicarSimulado";
+import { obterCache, definirCache } from "../../services/cacheStore";
+import { chaveSimuladosTurma } from "../../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../../hooks/useEsqueletoAtrasado";
 import estiloSimulados from "./AbaSimuladosTurma.module.css";
 
 function normalizarTexto(texto) {
@@ -29,28 +33,40 @@ function AbaSimuladosTurma({
   modalPublicacaoAberto,
   onFecharModalPublicacao,
 }) {
+  const cacheInicial = obterCache(chaveSimuladosTurma(codigo));
   const [busca, setBusca] = useState("");
-  const [simulados, setSimulados] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+  const [simulados, setSimulados] = useState(() => cacheInicial ?? []);
+  const [carregando, setCarregando] = useState(() => cacheInicial === undefined);
   const [erro, setErro] = useState("");
   const [publicacaoParaRemover, setPublicacaoParaRemover] = useState(null);
   const [removendo, setRemovendo] = useState(false);
   const [erroRemocao, setErroRemocao] = useState("");
   const removendoRef = useRef(false);
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
 
   useEffect(() => {
     let carregamentoAtivo = true;
 
     async function carregarSimulados() {
-      setCarregando(true);
+      const chave = chaveSimuladosTurma(codigo);
+      const emCache = obterCache(chave);
+      if (emCache) {
+        setSimulados(emCache);
+        setCarregando(false);
+      } else {
+        setCarregando(true);
+      }
       setErro("");
 
       try {
         const simuladosCarregados =
           await listarSimuladosPublicadosNaTurma(codigo);
-        if (carregamentoAtivo) setSimulados(simuladosCarregados);
-      } catch (erroCarregamento) {
         if (carregamentoAtivo) {
+          setSimulados(simuladosCarregados);
+          definirCache(chave, simuladosCarregados);
+        }
+      } catch (erroCarregamento) {
+        if (carregamentoAtivo && !emCache) {
           setErro(
             formatarErroApi(
               erroCarregamento,
@@ -83,12 +99,16 @@ function AbaSimuladosTurma({
       simuladoId,
     );
 
-    setSimulados((simuladosAtuais) => [
-      simuladoPublicado,
-      ...simuladosAtuais.filter(
-        (simulado) => simulado.idPublicacao !== simuladoPublicado.idPublicacao,
-      ),
-    ]);
+    setSimulados((simuladosAtuais) => {
+      const simuladosAtualizados = [
+        simuladoPublicado,
+        ...simuladosAtuais.filter(
+          (simulado) => simulado.idPublicacao !== simuladoPublicado.idPublicacao,
+        ),
+      ];
+      definirCache(chaveSimuladosTurma(codigo), simuladosAtualizados);
+      return simuladosAtualizados;
+    });
   }
 
   async function handleRemoverPublicacao() {
@@ -103,12 +123,14 @@ function AbaSimuladosTurma({
         codigo,
         publicacaoParaRemover.idPublicacao,
       );
-      setSimulados((simuladosAtuais) =>
-        simuladosAtuais.filter(
+      setSimulados((simuladosAtuais) => {
+        const simuladosAtualizados = simuladosAtuais.filter(
           (simulado) =>
             simulado.idPublicacao !== publicacaoParaRemover.idPublicacao,
-        ),
-      );
+        );
+        definirCache(chaveSimuladosTurma(codigo), simuladosAtualizados);
+        return simuladosAtualizados;
+      });
       setPublicacaoParaRemover(null);
     } catch (erroOperacao) {
       setErroRemocao(
@@ -125,11 +147,13 @@ function AbaSimuladosTurma({
 
   function renderizarLista() {
     if (carregando) {
-      return (
-        <div className={estiloSimulados.estado} role="status">
-          Carregando simulados...
-        </div>
-      );
+      return mostrarEsqueleto ? (
+        <>
+          <CardSimuladoTurmaSkeleton />
+          <CardSimuladoTurmaSkeleton />
+          <CardSimuladoTurmaSkeleton />
+        </>
+      ) : null;
     }
     if (erro) {
       return (

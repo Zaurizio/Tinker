@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import estiloConta from "../../pages/Conta.module.css";
+import Skeleton from "../ui/Skeleton";
 import {
   atualizarPerfil,
   ehProfessor,
@@ -9,6 +10,9 @@ import {
   TAMANHO_MAXIMO_FOTO,
   TIPOS_FOTO_PERMITIDOS,
 } from "../../services/perfilService";
+import { obterCache, definirCache } from "../../services/cacheStore";
+import { CHAVE_PERFIL } from "../../services/cacheChaves";
+import { useEsqueletoAtrasado } from "../../hooks/useEsqueletoAtrasado";
 
 const perfilVazio = {
   nome: "",
@@ -24,8 +28,8 @@ function formatarTipoUsuario(tipoUsuario) {
 }
 
 function SecaoConta() {
-  const [perfil, setPerfil] = useState(perfilVazio);
-  const [carregando, setCarregando] = useState(true);
+  const [perfil, setPerfil] = useState(() => obterCache(CHAVE_PERFIL) ?? perfilVazio);
+  const [carregando, setCarregando] = useState(() => obterCache(CHAVE_PERFIL) === undefined);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
@@ -33,6 +37,7 @@ function SecaoConta() {
   const [erroFoto, setErroFoto] = useState("");
   const inputFotoRef = useRef(null);
   const eProfessor = ehProfessor(perfil.tipoUsuario);
+  const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
 
   const iniciais = useMemo(() => {
     const primeiraInicial = perfil.nome.trim().charAt(0);
@@ -44,22 +49,26 @@ function SecaoConta() {
     let componenteMontado = true;
 
     async function carregarPerfil() {
+      const emCache = obterCache(CHAVE_PERFIL);
+      setCarregando(emCache === undefined);
       setErro("");
 
       try {
         const dadosPerfil = await obterPerfil();
         if (componenteMontado) {
-          setPerfil({
+          const perfilCarregado = {
             nome: dadosPerfil.nome ?? "",
             sobrenome: dadosPerfil.sobrenome ?? "",
             email: dadosPerfil.email ?? "",
             tipoUsuario: dadosPerfil.tipoUsuario ?? "",
             nascimento: dadosPerfil.nascimento ?? "",
             foto: dadosPerfil.foto ?? null,
-          });
+          };
+          setPerfil(perfilCarregado);
+          definirCache(CHAVE_PERFIL, perfilCarregado);
         }
       } catch (erroPerfil) {
-        if (componenteMontado) {
+        if (componenteMontado && emCache === undefined) {
           setErro(
             erroPerfil instanceof Error
               ? erroPerfil.message
@@ -91,14 +100,18 @@ function SecaoConta() {
 
     try {
       const perfilAtualizado = await atualizarPerfil(perfil);
-      setPerfil((perfilAtual) => ({
-        ...perfilAtual,
-        nome: perfilAtualizado?.nome ?? perfilAtual.nome,
-        sobrenome: perfilAtualizado?.sobrenome ?? perfilAtual.sobrenome,
-        nascimento: eProfessor
-          ? ""
-          : perfilAtualizado?.nascimento ?? perfilAtual.nascimento,
-      }));
+      setPerfil((perfilAtual) => {
+        const perfilAtualizadoCompleto = {
+          ...perfilAtual,
+          nome: perfilAtualizado?.nome ?? perfilAtual.nome,
+          sobrenome: perfilAtualizado?.sobrenome ?? perfilAtual.sobrenome,
+          nascimento: eProfessor
+            ? ""
+            : perfilAtualizado?.nascimento ?? perfilAtual.nascimento,
+        };
+        definirCache(CHAVE_PERFIL, perfilAtualizadoCompleto);
+        return perfilAtualizadoCompleto;
+      });
       setSucesso("Dados atualizados com sucesso.");
     } catch (erroAtualizacao) {
       setErro(
@@ -135,10 +148,14 @@ function SecaoConta() {
 
     try {
       const perfilAtualizado = await enviarFotoPerfil(arquivo);
-      setPerfil((perfilAtual) => ({
-        ...perfilAtual,
-        foto: perfilAtualizado?.foto ?? perfilAtual.foto,
-      }));
+      setPerfil((perfilAtual) => {
+        const perfilAtualizadoCompleto = {
+          ...perfilAtual,
+          foto: perfilAtualizado?.foto ?? perfilAtual.foto,
+        };
+        definirCache(CHAVE_PERFIL, perfilAtualizadoCompleto);
+        return perfilAtualizadoCompleto;
+      });
     } catch (erroEnvio) {
       setErroFoto(
         erroEnvio instanceof Error
@@ -155,9 +172,21 @@ function SecaoConta() {
       <h2 className={estiloConta.tituloCard}>Minha Conta</h2>
 
       {carregando ? (
-        <p className={estiloConta.mensagemConta} role="status">
-          Carregando dados da conta...
-        </p>
+        mostrarEsqueleto ? (
+          <div className={estiloConta.contaConteudo} aria-hidden="true">
+            <div className={estiloConta.fotoColuna}>
+              <Skeleton width="138px" height="138px" radius="50%" />
+              <Skeleton width="140px" height="44px" radius="12px" />
+            </div>
+
+            <div className={estiloConta.formularioConta}>
+              <Skeleton height="48px" radius="12px" />
+              <Skeleton height="48px" radius="12px" />
+              <Skeleton height="48px" radius="12px" />
+              <Skeleton height="48px" radius="12px" />
+            </div>
+          </div>
+        ) : null
       ) : (
         <div className={estiloConta.contaConteudo}>
           <div className={estiloConta.fotoColuna}>
