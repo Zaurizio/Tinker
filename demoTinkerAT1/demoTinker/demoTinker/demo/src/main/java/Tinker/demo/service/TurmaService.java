@@ -10,6 +10,7 @@ import Tinker.demo.exception.DadosInvalidosException;
 import Tinker.demo.exception.RecursoNaoEncontradoException;
 import Tinker.demo.model.AlunoTurma;
 import Tinker.demo.model.AlunoTurmaid;
+import Tinker.demo.model.Professor;
 import Tinker.demo.model.Turma;
 import Tinker.demo.repository.AlunoRepository;
 import Tinker.demo.repository.AlunoTurmaRepository;
@@ -17,6 +18,7 @@ import Tinker.demo.repository.ProfessorRepository;
 import Tinker.demo.repository.TurmaRepository;
 import Tinker.demo.security.TipoUsuario;
 import Tinker.demo.security.UsuarioAutenticado;
+import Tinker.demo.util.FotoPerfilUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,7 +145,8 @@ public class TurmaService {
                 .map(aluno -> new MembroTurmaDTO(
                         aluno.getEmail(),
                         aluno.getNome(),
-                        aluno.getSobrenome()))
+                        aluno.getSobrenome(),
+                        FotoPerfilUtil.paraDataUri(aluno.getFoto())))
                 .toList();
     }
 
@@ -242,10 +245,12 @@ public class TurmaService {
     }
 
     private TurmaDTO paraDTO(Turma turma) {
-        String criadorNome = professorRepository.findById(turma.getEmailProf())
-                .map(professor -> professor.getNome())
-                .orElse("Professor");
-        return new TurmaDTO(turma.getCodTurma(), turma.getNomeTurma(), criadorNome);
+        Professor criador = professorRepository.findById(turma.getEmailProf()).orElse(null);
+        String criadorNome = criador == null
+                ? "Professor"
+                : (criador.getNome() + " " + criador.getSobrenome()).trim();
+        String fotoCriador = criador == null ? null : FotoPerfilUtil.paraDataUri(criador.getFoto());
+        return new TurmaDTO(turma.getCodTurma(), turma.getNomeTurma(), criadorNome, fotoCriador);
     }
 
     void validarCodigo(String codigo) {

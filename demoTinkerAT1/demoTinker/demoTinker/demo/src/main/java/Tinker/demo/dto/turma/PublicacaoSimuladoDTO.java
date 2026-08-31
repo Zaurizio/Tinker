@@ -6,5 +6,6 @@ public record PublicacaoSimuladoDTO(
         String titulo,
         String descricao,
         long quantidadeQuestoes,
-        String dataPublicacao) {
+        String dataPublicacao,
+        boolean concluido) {
 }

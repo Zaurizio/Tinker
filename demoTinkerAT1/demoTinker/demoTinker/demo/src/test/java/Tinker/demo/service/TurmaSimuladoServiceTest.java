@@ -45,6 +45,7 @@ class TurmaSimuladoServiceTest {
     private SimuladoRepository simuladoRepository;
     private QuestaoSimuRepository questaoSimuRepository;
     private QuestaoRepository questaoRepository;
+    private Tinker.demo.repository.RelatorioSimuladoRepository relatorioSimuladoRepository;
     private TurmaSimuladoService service;
 
     @BeforeEach
@@ -54,6 +55,7 @@ class TurmaSimuladoServiceTest {
         simuladoRepository = mock(SimuladoRepository.class);
         questaoSimuRepository = mock(QuestaoSimuRepository.class);
         questaoRepository = mock(QuestaoRepository.class);
+        relatorioSimuladoRepository = mock(Tinker.demo.repository.RelatorioSimuladoRepository.class);
         service = new TurmaSimuladoService(
                 turmaService,
                 publicacaoRepository,
@@ -62,7 +64,7 @@ class TurmaSimuladoServiceTest {
                 questaoRepository,
                 new QuestaoMapper(),
                 mock(RelatorioRepository.class),
-                mock(Tinker.demo.repository.RelatorioSimuladoRepository.class));
+                relatorioSimuladoRepository);
         when(turmaService.buscarAtiva(CODIGO)).thenReturn(turma());
         when(simuladoRepository.findById(15)).thenReturn(Optional.of(simulado()));
         when(questaoSimuRepository.countByCodSimulado(15)).thenReturn(10L);
@@ -167,11 +169,30 @@ class TurmaSimuladoServiceTest {
         assertEquals(10, doProfessor.get(0).quantidadeQuestoes());
         assertEquals(List.of(
                 "idPublicacao", "simuladoId", "titulo", "descricao",
-                "quantidadeQuestoes", "dataPublicacao"),
+                "quantidadeQuestoes", "dataPublicacao", "concluido"),
                 java.util.Arrays.stream(doProfessor.get(0).getClass().getRecordComponents())
                         .map(java.lang.reflect.RecordComponent::getName).toList());
+        assertEquals(false, doProfessor.get(0).concluido());
+        assertEquals(false, doAluno.get(0).concluido());
         verify(publicacaoRepository, org.mockito.Mockito.times(2))
                 .findByCodTurmaAndAtivoOrderByDataPublicacaoDesc(CODIGO, 1);
+    }
+
+    @Test
+    void alunoComResultadoValidoListaSimuladoComoConcluido() {
+        when(publicacaoRepository.findByCodTurmaAndAtivoOrderByDataPublicacaoDesc(CODIGO, 1))
+                .thenReturn(List.of(publicacao(1)));
+        Tinker.demo.model.RelatorioSimulado resultado = new Tinker.demo.model.RelatorioSimulado();
+        resultado.setAcertos(7);
+        resultado.setErros(3);
+        when(relatorioSimuladoRepository.findByCodSimuladoAndEmailAluno(15, EMAIL_ALUNO))
+                .thenReturn(Optional.of(resultado));
+
+        var doAluno = service.listar(aluno(), CODIGO);
+        var doProfessor = service.listar(professor(), CODIGO);
+
+        assertEquals(true, doAluno.get(0).concluido());
+        assertEquals(false, doProfessor.get(0).concluido());
     }
 
     @Test

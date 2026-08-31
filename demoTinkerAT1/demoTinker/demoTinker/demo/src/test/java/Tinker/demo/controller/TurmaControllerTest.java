@@ -36,8 +36,12 @@ class TurmaControllerTest {
             assertFalse(metodo.getReturnType().equals(Turma.class));
             assertFalse(metodo.getReturnType().equals(AlunoTurma.class));
         }
-        assertEquals(List.of("codigo", "nome", "criadorNome"), componentes(TurmaDTO.class));
-        assertEquals(List.of("email", "nome", "sobrenome"), componentes(MembroTurmaDTO.class));
+        assertEquals(
+                List.of("codigo", "nome", "criadorNome", "fotoCriador"),
+                componentes(TurmaDTO.class));
+        assertEquals(
+                List.of("email", "nome", "sobrenome", "foto"),
+                componentes(MembroTurmaDTO.class));
     }
 
     @Test
