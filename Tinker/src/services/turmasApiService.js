@@ -15,6 +15,7 @@ function prepararTurma(turma) {
     codigo: String(turma.codigo),
     nome: turma.nome,
     criador: turma.criadorNome,
+    fotoCriador: turma.fotoCriador ?? null,
     imagem: null,
     cor: "#2f5d8a",
   };
@@ -117,6 +118,7 @@ export async function listarMembrosDaTurmaDaConta(codigo) {
     nome: membro.nome,
     sobrenome: membro.sobrenome,
     nomeCompleto: `${membro.nome} ${membro.sobrenome}`.trim(),
+    foto: membro.foto ?? null,
   }));
 }
 

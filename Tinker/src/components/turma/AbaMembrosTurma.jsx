@@ -12,7 +12,12 @@ function formatarErroApi(erro, mensagemPadrao) {
   return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
 }
 
-function AbaMembrosTurma({ codigo, usuarioAdministrador }) {
+function AbaMembrosTurma({
+  codigo,
+  usuarioAdministrador,
+  professorCriador,
+  fotoProfessorCriador,
+}) {
   const [membros, setMembros] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
@@ -76,6 +81,27 @@ function AbaMembrosTurma({ codigo, usuarioAdministrador }) {
     }
   }
 
+  const cardProfessor = professorCriador
+    ? {
+        chave: "professor",
+        nomeCompleto: professorCriador,
+        papel: "Professor",
+        foto: fotoProfessorCriador ?? null,
+        ehProfessor: true,
+      }
+    : null;
+  const cardsAlunos = membros.map((membro) => ({
+    chave: membro.email,
+    nomeCompleto: membro.nomeCompleto,
+    papel: membro.email,
+    foto: membro.foto ?? null,
+    ehProfessor: false,
+    membro,
+  }));
+  const listaExibida = cardProfessor
+    ? [cardProfessor, ...cardsAlunos]
+    : cardsAlunos;
+
   return (
     <section aria-labelledby="titulo-membros">
       <h2 id="titulo-membros">Membros</h2>
@@ -90,27 +116,36 @@ function AbaMembrosTurma({ codigo, usuarioAdministrador }) {
           <div className={estiloMembros.estado} role="alert">
             {erro}
           </div>
-        ) : membros.length === 0 ? (
+        ) : listaExibida.length === 0 ? (
           <div className={estiloMembros.estado}>Nenhum membro encontrado.</div>
         ) : (
-          membros.map((membro) => (
-            <div key={membro.email} className={estiloMembros.membro}>
+          listaExibida.map((item) => (
+            <div
+              key={item.chave}
+              className={`${estiloMembros.membro} ${
+                item.ehProfessor ? estiloMembros.administrador : ""
+              }`}
+            >
               <div className={estiloMembros.foto}>
-                <MdPerson aria-hidden="true" />
+                {item.foto ? (
+                  <img src={item.foto} alt="" />
+                ) : (
+                  <MdPerson aria-hidden="true" />
+                )}
               </div>
 
               <div className={estiloMembros.identificacao}>
-                <span className={estiloMembros.nome}>{membro.nomeCompleto}</span>
-                <span className={estiloMembros.papel}>{membro.email}</span>
+                <span className={estiloMembros.nome}>{item.nomeCompleto}</span>
+                <span className={estiloMembros.papel}>{item.papel}</span>
               </div>
 
-              {usuarioAdministrador && (
+              {usuarioAdministrador && !item.ehProfessor && (
                 <button
                   type="button"
                   className={estiloMembros.botaoRemover}
                   onClick={() => {
                     setErroRemocao("");
-                    setMembroParaRemover(membro);
+                    setMembroParaRemover(item.membro);
                   }}
                   disabled={removendo}
                 >

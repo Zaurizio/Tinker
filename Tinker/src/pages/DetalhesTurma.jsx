@@ -247,6 +247,8 @@ function DetalhesTurma() {
             <AbaMembrosTurma
               codigo={turma.codigo}
               usuarioAdministrador={eProfessor}
+              professorCriador={turma.criador}
+              fotoProfessorCriador={turma.fotoCriador}
             />
           ) : (
             <>

@@ -247,7 +247,48 @@ class TurmaServiceTest {
 
         assertEquals(1, membros.size());
         assertEquals(EMAIL_ALUNO, membros.get(0).email());
+        assertEquals(null, membros.get(0).foto());
         assertFalse(membros.get(0).toString().contains("hash-secreto"));
+    }
+
+    @Test
+    void membroComFotoValidaExpoeDataUriEComFotoInvalidaNaoExpoeNada() {
+        prepararTurmaAtiva();
+        when(alunoTurmaRepository.findByCodTurmaAndAtivoOrderByEmailAlunoAsc(CODIGO, 1))
+                .thenReturn(List.of(membership(EMAIL_ALUNO, CODIGO, 1)));
+        Aluno comFoto = aluno();
+        comFoto.setFoto(new byte[] {
+                (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x01, 0x02
+        });
+        when(alunoRepository.findById(EMAIL_ALUNO)).thenReturn(Optional.of(comFoto));
+
+        MembroTurmaDTO membro = service.listarMembros(professorAutenticado(), CODIGO).get(0);
+
+        assertEquals(true, membro.foto().startsWith("data:image/png;base64,"));
+
+        comFoto.setFoto(new byte[] { 0x00, 0x01, 0x02 });
+        MembroTurmaDTO semFotoValida = service.listarMembros(professorAutenticado(), CODIGO).get(0);
+
+        assertEquals(null, semFotoValida.foto());
+    }
+
+    @Test
+    void turmaExpoeFotoDoCriadorQuandoValidaESemFotoQuandoAusente() {
+        prepararTurmaAtiva();
+        when(alunoTurmaRepository.findByEmailAlunoAndCodTurmaAndAtivo(EMAIL_ALUNO, CODIGO, 1))
+                .thenReturn(Optional.of(membership(EMAIL_ALUNO, CODIGO, 1)));
+
+        assertEquals(null, service.detalhar(alunoAutenticado(), CODIGO).fotoCriador());
+
+        Professor comFoto = professor();
+        comFoto.setFoto(new byte[] { (byte) 0xFF, (byte) 0xD8, (byte) 0xFF, 0x01 });
+        when(professorRepository.findById(EMAIL_PROF)).thenReturn(Optional.of(comFoto));
+
+        assertEquals(
+                true,
+                service.detalhar(alunoAutenticado(), CODIGO)
+                        .fotoCriador()
+                        .startsWith("data:image/jpeg;base64,"));
     }
 
     @Test
