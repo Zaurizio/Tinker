@@ -36,8 +36,23 @@ function SecaoConta() {
   const [enviandoFoto, setEnviandoFoto] = useState(false);
   const [erroFoto, setErroFoto] = useState("");
   const inputFotoRef = useRef(null);
+  const [perfilOriginal, setPerfilOriginal] = useState(
+    () => obterCache(CHAVE_PERFIL) ?? perfilVazio,
+  );
   const eProfessor = ehProfessor(perfil.tipoUsuario);
   const mostrarEsqueleto = useEsqueletoAtrasado(carregando);
+
+  const nomeTratado = perfil.nome.trim();
+  const sobrenomeTratado = perfil.sobrenome.trim();
+  const houveAlteracao =
+    nomeTratado !== perfilOriginal.nome.trim() ||
+    sobrenomeTratado !== perfilOriginal.sobrenome.trim();
+  const podeSalvar =
+    !salvando &&
+    !carregando &&
+    nomeTratado !== "" &&
+    sobrenomeTratado !== "" &&
+    houveAlteracao;
 
   const iniciais = useMemo(() => {
     const primeiraInicial = perfil.nome.trim().charAt(0);
@@ -66,6 +81,7 @@ function SecaoConta() {
           };
           setPerfil(perfilCarregado);
           definirCache(CHAVE_PERFIL, perfilCarregado);
+          setPerfilOriginal(perfilCarregado);
         }
       } catch (erroPerfil) {
         if (componenteMontado && emCache === undefined) {
@@ -92,7 +108,7 @@ function SecaoConta() {
 
   async function handleSalvar(evento) {
     evento.preventDefault();
-    if (salvando || carregando) return;
+    if (!podeSalvar) return;
 
     setSalvando(true);
     setErro("");
@@ -100,18 +116,17 @@ function SecaoConta() {
 
     try {
       const perfilAtualizado = await atualizarPerfil(perfil);
-      setPerfil((perfilAtual) => {
-        const perfilAtualizadoCompleto = {
-          ...perfilAtual,
-          nome: perfilAtualizado?.nome ?? perfilAtual.nome,
-          sobrenome: perfilAtualizado?.sobrenome ?? perfilAtual.sobrenome,
-          nascimento: eProfessor
-            ? ""
-            : perfilAtualizado?.nascimento ?? perfilAtual.nascimento,
-        };
-        definirCache(CHAVE_PERFIL, perfilAtualizadoCompleto);
-        return perfilAtualizadoCompleto;
-      });
+      const perfilAtualizadoCompleto = {
+        ...perfil,
+        nome: perfilAtualizado?.nome ?? perfil.nome,
+        sobrenome: perfilAtualizado?.sobrenome ?? perfil.sobrenome,
+        nascimento: eProfessor
+          ? ""
+          : perfilAtualizado?.nascimento ?? perfil.nascimento,
+      };
+      setPerfil(perfilAtualizadoCompleto);
+      definirCache(CHAVE_PERFIL, perfilAtualizadoCompleto);
+      setPerfilOriginal(perfilAtualizadoCompleto);
       setSucesso("Dados atualizados com sucesso.");
     } catch (erroAtualizacao) {
       setErro(
@@ -259,7 +274,7 @@ function SecaoConta() {
               <button
                 type="submit"
                 className={estiloConta.botaoPrimario}
-                disabled={salvando}
+                disabled={!podeSalvar}
               >
                 {salvando ? "Salvando..." : "Salvar alterações"}
                 <FaPen />
