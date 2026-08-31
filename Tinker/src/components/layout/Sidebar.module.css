@@ -88,8 +88,12 @@
 }
 
 .ativo { /*página atual*/
-  color: #F1F5F9;
+  color: var(--cor-texto-principal);
   font-weight: 700;
+}
+
+:global(.dark-mode) .ativo {
+  color: #F1F5F9;
 }
 
 /*define tamanho da area do icone, centraliza*/

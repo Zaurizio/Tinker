@@ -447,7 +447,7 @@ function aplicarAnimacao(tipo, callback) {
                 return (
                   <div
                     className="conteudo-evento-calendario"
-                    style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 4px', overflow: 'hidden', color: 'var(--cor-texto-claro)' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '0 4px', overflow: 'hidden', color: allDay ? 'var(--cor-texto-claro)' : 'var(--cor-texto-calendario-escuro)' }}
                   >
                     {/* Bolinha colorida */}
                     <span
