@@ -8,7 +8,6 @@ import {
   corrigirQuestaoDoSimuladoPublicado,
   listarQuestoesDoSimuladoPublicado,
   listarSimuladosPublicadosNaTurma,
-  obterResultadoDoSimuladoPublicado,
 } from "../services/turmasApiService";
 import estilos from "./ExecutarSimuladoTurma.module.css";
 
@@ -28,9 +27,7 @@ function ExecutarSimuladoTurma() {
   const publicacaoInicialRef = useRef(publicacaoDoCard);
   const [publicacao, setPublicacao] = useState(publicacaoDoCard);
   const [questoes, setQuestoes] = useState([]);
-  const [resultado, setResultado] = useState(null);
   const [respostas, setRespostas] = useState({});
-  const [versaoExecucao, setVersaoExecucao] = useState(0);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [concluindo, setConcluindo] = useState(false);
@@ -70,17 +67,14 @@ function ExecutarSimuladoTurma() {
               return encontrada;
             });
 
-        const [questoesCarregadas, resultadoCarregado, publicacaoCarregada] =
-          await Promise.all([
-            listarQuestoesDoSimuladoPublicado(codigo, idPublicacao),
-            obterResultadoDoSimuladoPublicado(codigo, idPublicacao),
-            consultaPublicacao,
-          ]);
+        const [questoesCarregadas, publicacaoCarregada] = await Promise.all([
+          listarQuestoesDoSimuladoPublicado(codigo, idPublicacao),
+          consultaPublicacao,
+        ]);
 
         if (carregamentoAtivo) {
           setPublicacao(publicacaoCarregada);
           setQuestoes(questoesCarregadas);
-          setResultado(resultadoCarregado.completo ? resultadoCarregado : null);
         }
       } catch (erroCarregamento) {
         if (carregamentoAtivo) {
@@ -142,12 +136,8 @@ function ExecutarSimuladoTurma() {
       const respostasOrdenadas = questoes.map(
         (questao) => respostas[questao.id],
       );
-      const resultadoConclusao = await concluirSimuladoPublicado(
-        codigo,
-        idPublicacao,
-        respostasOrdenadas,
-      );
-      setResultado(resultadoConclusao);
+      await concluirSimuladoPublicado(codigo, idPublicacao, respostasOrdenadas);
+      navigate(`/turma/${codigo}/simulados`);
     } catch (erroFinalizacao) {
       setErroConclusao(
         formatarErroApi(
@@ -160,94 +150,83 @@ function ExecutarSimuladoTurma() {
     }
   }
 
-  function handleRecomecar() {
-    setResultado(null);
-    setRespostas({});
-    setErroConclusao("");
-    setConcluindo(false);
-    concluindoRef.current = false;
-    setVersaoExecucao((versaoAtual) => versaoAtual + 1);
-  }
-
   const todasRespondidas =
     questoes.length > 0 && Object.keys(respostas).length === questoes.length;
 
   return (
-    <main className={estilos.pagina}>
-      <header className={estilos.topo}>
-        <button
-          type="button"
-          className={estilos.botaoVoltar}
-          onClick={() => navigate(`/turma/${codigo}/simulados`)}
-          aria-label="Voltar para os simulados da turma"
-        >
-          <IoIosArrowBack />
-        </button>
-        <h1 className={estilos.titulo}>{publicacao?.titulo ?? "Simulado"}</h1>
-        <div aria-hidden="true" />
-      </header>
+    <section className={estilos.pagina}>
+      <div className={estilos.envoltorio}>
+        <div className={estilos.linha}>
+          <button
+            type="button"
+            className={estilos.botaoVoltar}
+            onClick={() => navigate(`/turma/${codigo}/simulados`)}
+            aria-label="Voltar para os simulados da turma"
+          >
+            <IoIosArrowBack />
+          </button>
 
-      <div className={estilos.conteudo}>
-        {!eAluno ? (
-          <p className={estilos.estado}>
-            A execução de simulados da turma está disponível somente para alunos.
-          </p>
-        ) : carregando ? (
-          <p className={estilos.estado} role="status">
-            Carregando simulado...
-          </p>
-        ) : erro ? (
-          <p className={estilos.erro} role="alert">
-            {erro}
-          </p>
-        ) : resultado ? (
-          <section className={estilos.resultado} aria-labelledby="resultado-titulo">
-            <h2 id="resultado-titulo">Completo</h2>
-            <div className={estilos.metricas}>
-              <span>{resultado.quantidadeQuestoes} questões</span>
-              <span>{resultado.acertos} acertos</span>
-              <span>{resultado.erros} erros</span>
-            </div>
-            <button type="button" onClick={handleRecomecar}>
-              Recomeçar
-            </button>
-          </section>
-        ) : questoes.length === 0 ? (
-          <p className={estilos.estado}>
-            Este simulado não possui questões disponíveis.
-          </p>
-        ) : (
-          <>
-            <div className={estilos.listaQuestoes}>
-              {questoes.map((questao) => (
-                <CardQuestao
-                  key={`${versaoExecucao}-${questao.id}`}
-                  questao={questao}
-                  exibirSeletorSimulados={false}
-                  onEnviarResposta={handleEnviarResposta}
-                />
-              ))}
-            </div>
-
-            {erroConclusao && (
-              <p className={estilos.erroConclusao} role="alert">
-                {erroConclusao}
+          <div className={estilos.conteudoPrincipal}>
+            {!eAluno ? (
+              <p className={estilos.estado}>
+                A execução de simulados da turma está disponível somente para alunos.
               </p>
-            )}
+            ) : carregando ? (
+              <p className={estilos.estado} role="status">
+                Carregando simulado...
+              </p>
+            ) : erro ? (
+              <p className={estilos.erro} role="alert">
+                {erro}
+              </p>
+            ) : (
+              <div className={estilos.card}>
+                <h1 className={estilos.titulo}>{publicacao?.titulo ?? "Simulado"}</h1>
 
-            <div className={estilos.acoes}>
-              <button
-                type="button"
-                onClick={handleFinalizar}
-                disabled={!todasRespondidas || concluindo}
-              >
-                {concluindo ? "Finalizando..." : "Finalizar simulado"}
-              </button>
-            </div>
-          </>
-        )}
+                {questoes.length === 0 ? (
+                  <p className={estilos.estado}>
+                    Este simulado não possui questões disponíveis.
+                  </p>
+                ) : (
+                  <>
+                    <div className={estilos.metadados}>
+                      <span>{questoes.length} questões</span>
+                    </div>
+
+                    <div className={estilos.listaQuestoes}>
+                      {questoes.map((questao) => (
+                        <CardQuestao
+                          key={questao.id}
+                          questao={questao}
+                          exibirSeletorSimulados={false}
+                          onEnviarResposta={handleEnviarResposta}
+                        />
+                      ))}
+                    </div>
+
+                    {erroConclusao && (
+                      <p className={estilos.erroConclusao} role="alert">
+                        {erroConclusao}
+                      </p>
+                    )}
+
+                    <div className={estilos.acoes}>
+                      <button
+                        type="button"
+                        onClick={handleFinalizar}
+                        disabled={!todasRespondidas || concluindo}
+                      >
+                        {concluindo ? "Finalizando..." : "Finalizar simulado"}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </main>
+    </section>
   );
 }
 

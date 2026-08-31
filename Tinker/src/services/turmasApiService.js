@@ -44,6 +44,7 @@ function prepararPublicacaoSimulado(publicacao) {
     dataPublicacaoFormatada: formatarDataPublicacao(
       publicacao.dataPublicacao,
     ),
+    concluido: Boolean(publicacao.concluido),
   };
 }
 

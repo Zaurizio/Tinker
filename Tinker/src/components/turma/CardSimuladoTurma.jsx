@@ -11,9 +11,13 @@ function CardSimuladoTurma({
   const textoQuestoes = `${simulado.quantidadeQuestoes} ${
     simulado.quantidadeQuestoes === 1 ? "questão" : "questões"
   }`;
+  const destino = `/turma/${codigo}/simulados/${encodeURIComponent(simulado.idPublicacao)}`;
+  const concluido = usuarioAluno && simulado.concluido;
 
   const conteudo = (
-    <article className={estiloCard.card}>
+    <article
+      className={`${estiloCard.card} ${concluido ? estiloCard.cardConcluido : ""}`}
+    >
       <div className={estiloCard.conteudo}>
         <h3 className={estiloCard.titulo}>{simulado.titulo}</h3>
         {simulado.descricao && (
@@ -40,7 +44,7 @@ function CardSimuladoTurma({
 
   return (
     <Link
-      to={`/turma/${codigo}/simulados/${encodeURIComponent(simulado.idPublicacao)}`}
+      to={destino}
       state={{ publicacao: simulado }}
       className={estiloCard.linkCard}
       aria-label={`Abrir simulado ${simulado.titulo}`}

@@ -83,13 +83,25 @@ public class TurmaSimuladoService {
         Turma turma = turmaService.buscarAtiva(codigo);
         turmaService.exigirAcesso(usuario, turma);
 
+        boolean aluno = usuario.tipoUsuario() == TipoUsuario.ALUNO;
+
         return turmaSimuladoRepository
                 .findByCodTurmaAndAtivoOrderByDataPublicacaoDesc(codigo, ATIVO)
                 .stream()
                 .map(publicacao -> simuladoRepository.findById(publicacao.getCodSimulado())
-                        .map(simulado -> paraDTO(publicacao, simulado)))
+                        .map(simulado -> paraDTO(
+                                publicacao,
+                                simulado,
+                                aluno && concluidoPeloAluno(simulado.getCodSimulado(), usuario.email()))))
                 .flatMap(java.util.Optional::stream)
                 .toList();
+    }
+
+    private boolean concluidoPeloAluno(Integer codSimulado, String emailAluno) {
+        RelatorioSimulado resultado = relatorioSimuladoRepository
+                .findByCodSimuladoAndEmailAluno(codSimulado, emailAluno)
+                .orElse(null);
+        return resultadoValido(resultado);
     }
 
     @Transactional(readOnly = true)
@@ -367,7 +379,7 @@ public class TurmaSimuladoService {
             publicacao.setAtivo(ATIVO);
             publicacao.setDataPublicacao(agora());
             turmaSimuladoRepository.save(publicacao);
-            return new ResultadoPublicacao(paraDTO(publicacao, simulado), false);
+            return new ResultadoPublicacao(paraDTO(publicacao, simulado, false), false);
         }
 
         TurmaSimulado publicacao = new TurmaSimulado();
@@ -377,7 +389,7 @@ public class TurmaSimuladoService {
         publicacao.setAtivo(ATIVO);
         publicacao.setDataPublicacao(agora());
         turmaSimuladoRepository.save(publicacao);
-        return new ResultadoPublicacao(paraDTO(publicacao, simulado), true);
+        return new ResultadoPublicacao(paraDTO(publicacao, simulado, false), true);
     }
 
     @Transactional
@@ -394,14 +406,18 @@ public class TurmaSimuladoService {
         turmaSimuladoRepository.save(publicacao);
     }
 
-    private PublicacaoSimuladoDTO paraDTO(TurmaSimulado publicacao, Simulado simulado) {
+    private PublicacaoSimuladoDTO paraDTO(
+            TurmaSimulado publicacao,
+            Simulado simulado,
+            boolean concluido) {
         return new PublicacaoSimuladoDTO(
                 publicacao.getIdPublicacao(),
                 simulado.getCodSimulado(),
                 simulado.getNome(),
                 simulado.getDescricao(),
                 questaoSimuRepository.countByCodSimulado(simulado.getCodSimulado()),
-                publicacao.getDataPublicacao());
+                publicacao.getDataPublicacao(),
+                concluido);
     }
 
     private String agora() {
