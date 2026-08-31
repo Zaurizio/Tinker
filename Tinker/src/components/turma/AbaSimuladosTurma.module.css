@@ -12,7 +12,7 @@
 .lista {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -23,8 +23,18 @@
   font-size: 0.9rem;
 }
 
+@media (max-width: 900px) {
+  .lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 600px) {
   .cabecalho {
     flex-direction: column;
+  }
+
+  .lista {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

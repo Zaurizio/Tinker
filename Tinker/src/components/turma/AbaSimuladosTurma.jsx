@@ -93,6 +93,11 @@ function AbaSimuladosTurma({
     );
   }, [busca, simulados]);
 
+  const idsJaPublicados = useMemo(
+    () => new Set(simulados.map((simulado) => simulado.simuladoId)),
+    [simulados],
+  );
+
   async function handlePublicarSimulado(simuladoId) {
     const simuladoPublicado = await publicarSimuladoNaTurmaDaConta(
       codigo,
@@ -215,6 +220,7 @@ function AbaSimuladosTurma({
         <ModalPublicarSimulado
           onPublicar={handlePublicarSimulado}
           onFechar={onFecharModalPublicacao}
+          idsJaPublicados={idsJaPublicados}
         />
       )}
 

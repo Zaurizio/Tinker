@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import Checkbox from "@mui/material/Checkbox";
 import { listarSimuladosDaConta } from "../../services/simuladosApiService";
 import BarraBusca from "../ui/BarraBusca";
+import estilosSelecao from "../questoes/CampoSelecaoMultipla.module.css";
 import estiloModal from "./ModalPublicarSimulado.module.css";
 
 function normalizarTexto(texto) {
@@ -15,10 +17,16 @@ function formatarErroApi(erro, mensagemPadrao) {
   return erro.codigo ? `${erro.message} (${erro.codigo})` : erro.message;
 }
 
-function ModalPublicarSimulado({ onPublicar, onFechar }) {
+const SEM_IDS_PUBLICADOS = new Set();
+
+function ModalPublicarSimulado({
+  onPublicar,
+  onFechar,
+  idsJaPublicados = SEM_IDS_PUBLICADOS,
+}) {
   const [busca, setBusca] = useState("");
   const [simulados, setSimulados] = useState([]);
-  const [simuladoSelecionadoId, setSimuladoSelecionadoId] = useState(null);
+  const [simuladosSelecionadosIds, setSimuladosSelecionadosIds] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erroCarregamento, setErroCarregamento] = useState("");
   const [publicando, setPublicando] = useState(false);
@@ -59,9 +67,21 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
     );
   }, [busca, simulados]);
 
+  function alternarSelecao(id) {
+    if (publicando || idsJaPublicados.has(id)) return;
+    setSimuladosSelecionadosIds((idsAtuais) =>
+      idsAtuais.includes(id)
+        ? idsAtuais.filter((idSelecionado) => idSelecionado !== id)
+        : [...idsAtuais, id],
+    );
+  }
+
   async function handleSubmit(evento) {
     evento.preventDefault();
-    if (simuladoSelecionadoId === null || publicacaoEmAndamentoRef.current) {
+    if (
+      simuladosSelecionadosIds.length === 0 ||
+      publicacaoEmAndamentoRef.current
+    ) {
       return;
     }
 
@@ -69,16 +89,37 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
     setPublicando(true);
     setErroPublicacao("");
 
-    try {
-      await onPublicar(simuladoSelecionadoId);
-      onFechar();
-    } catch (erro) {
-      setErroPublicacao(
-        formatarErroApi(erro, "Não foi possível publicar o simulado."),
-      );
-      publicacaoEmAndamentoRef.current = false;
-      setPublicando(false);
+    const idsParaPublicar = [...simuladosSelecionadosIds];
+    const idsComFalha = [];
+    let ultimoErro = null;
+
+    for (const id of idsParaPublicar) {
+      try {
+        await onPublicar(id);
+      } catch (erro) {
+        idsComFalha.push(id);
+        ultimoErro = erro;
+      }
     }
+
+    publicacaoEmAndamentoRef.current = false;
+    setPublicando(false);
+
+    if (idsComFalha.length > 0) {
+      setSimuladosSelecionadosIds(idsComFalha);
+      const mensagemBase = formatarErroApi(
+        ultimoErro,
+        "Não foi possível publicar o simulado selecionado.",
+      );
+      setErroPublicacao(
+        idsParaPublicar.length > 1
+          ? `${mensagemBase} (${idsComFalha.length} de ${idsParaPublicar.length} não publicados)`
+          : mensagemBase,
+      );
+      return;
+    }
+
+    onFechar();
   }
 
   function renderizarOpcoes() {
@@ -109,32 +150,35 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
       );
     }
 
-    return simuladosFiltrados.map((simulado) => (
-      <label
-        key={simulado.id}
-        className={`${estiloModal.opcao} ${
-          simuladoSelecionadoId === simulado.id
-            ? estiloModal.opcaoSelecionada
-            : ""
-        }`}
-      >
-        <input
-          type="radio"
-          name="simulado"
-          value={simulado.id}
-          checked={simuladoSelecionadoId === simulado.id}
-          onChange={() => setSimuladoSelecionadoId(simulado.id)}
-          disabled={publicando}
-        />
-        <span>
-          <strong>{simulado.titulo}</strong>
-          <small>
-            {simulado.quantidadeQuestoes}{" "}
-            {simulado.quantidadeQuestoes === 1 ? "questão" : "questões"}
-          </small>
-        </span>
-      </label>
-    ));
+    return simuladosFiltrados.map((simulado) => {
+      const jaPublicado = idsJaPublicados.has(simulado.id);
+      const selecionado =
+        jaPublicado || simuladosSelecionadosIds.includes(simulado.id);
+
+      return (
+        <label
+          key={simulado.id}
+          className={`${estiloModal.opcao} ${
+            selecionado ? estiloModal.opcaoSelecionada : ""
+          }`}
+        >
+          <Checkbox
+            checked={selecionado}
+            onChange={() => alternarSelecao(simulado.id)}
+            className={estilosSelecao.checkboxCustom}
+            disableRipple
+            disabled={publicando || jaPublicado}
+          />
+          <span>
+            <strong>{simulado.titulo}</strong>
+            <small>
+              {simulado.quantidadeQuestoes}{" "}
+              {simulado.quantidadeQuestoes === 1 ? "questão" : "questões"}
+            </small>
+          </span>
+        </label>
+      );
+    });
   }
 
   return (
@@ -174,7 +218,7 @@ function ModalPublicarSimulado({ onPublicar, onFechar }) {
             <button
               type="submit"
               className={estiloModal.publicar}
-              disabled={simuladoSelecionadoId === null || publicando}
+              disabled={simuladosSelecionadosIds.length === 0 || publicando}
             >
               {publicando ? "Publicando..." : "Publicar"}
             </button>
