@@ -105,10 +105,6 @@ function PainelFiltroSimulados({
   return (
     <Card className={estiloPainel.cardBusca}>
       <form className={estiloPainel.formulario} onSubmit={handleSubmit}>
-        <p className={estiloPainel.rotuloFiltros}>
-          Mostrar apenas questões:
-        </p>
-
         {erroOpcoes && (
           <p className={estiloPainel.erro} role="alert">
             {formatarErroOpcoes(erroOpcoes)}{" "}

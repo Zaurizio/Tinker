@@ -10,13 +10,6 @@
   gap: 20px;
 }
 
-.rotuloFiltros {
-  margin: 0;
-  color: var(--cor-texto-principal);
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
 .linhaDuasColunas {
   display: grid;
   grid-template-columns: 1fr 1fr;
