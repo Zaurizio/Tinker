@@ -99,9 +99,13 @@ function Simulados() {
 
   const simuladosFiltrados = useMemo(() => {
     const buscaNormalizada = normalizarTexto(busca);
-    return simulados.filter((simulado) =>
-      normalizarTexto(simulado.titulo).includes(buscaNormalizada)
-    );
+    return simulados
+      .filter((simulado) =>
+        normalizarTexto(simulado.titulo).includes(buscaNormalizada)
+      )
+      .sort(
+        (a, b) => Number(Boolean(b.concluido)) - Number(Boolean(a.concluido))
+      );
   }, [busca, simulados]);
 
   function adicionarOuAtualizarSimulado(simuladoRecebido) {
