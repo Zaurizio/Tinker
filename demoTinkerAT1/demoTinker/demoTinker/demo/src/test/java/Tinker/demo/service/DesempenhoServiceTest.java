@@ -7,6 +7,7 @@ import Tinker.demo.model.Questao;
 import Tinker.demo.model.Relatorio;
 import Tinker.demo.repository.QuestaoRepository;
 import Tinker.demo.repository.RelatorioRepository;
+import Tinker.demo.repository.RelatorioSimuladoRepository;
 import Tinker.demo.security.TipoUsuario;
 import Tinker.demo.security.UsuarioAutenticado;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,13 +32,16 @@ class DesempenhoServiceTest {
 
     private RelatorioRepository relatorioRepository;
     private QuestaoRepository questaoRepository;
+    private RelatorioSimuladoRepository relatorioSimuladoRepository;
     private DesempenhoService service;
 
     @BeforeEach
     void configurar() {
         relatorioRepository = mock(RelatorioRepository.class);
         questaoRepository = mock(QuestaoRepository.class);
-        service = new DesempenhoService(relatorioRepository, questaoRepository);
+        relatorioSimuladoRepository = mock(RelatorioSimuladoRepository.class);
+        service = new DesempenhoService(
+                relatorioRepository, questaoRepository, relatorioSimuladoRepository);
     }
 
     @Test
@@ -144,6 +148,27 @@ class DesempenhoServiceTest {
     }
 
     @Test
+    void alunoRecebeQuantidadeDeSimuladosConcluidosPeloEmailAutenticado() {
+        when(relatorioRepository.findByEmailAndTipoUsu(EMAIL, "ALUNO")).thenReturn(List.of());
+        when(relatorioSimuladoRepository.countByEmailAluno(EMAIL)).thenReturn(3L);
+
+        DesempenhoDTO desempenho = service.consultar(aluno());
+
+        assertEquals(3, desempenho.simuladosConcluidos());
+        verify(relatorioSimuladoRepository).countByEmailAluno(EMAIL);
+    }
+
+    @Test
+    void professorNuncaConsultaSimuladosConcluidosENaoMisturaComAluno() {
+        when(relatorioRepository.findByEmailAndTipoUsu(EMAIL, "PROFESSOR")).thenReturn(List.of());
+
+        DesempenhoDTO professor = service.consultar(usuario(EMAIL, TipoUsuario.PROFESSOR));
+
+        assertEquals(0, professor.simuladosConcluidos());
+        verify(relatorioSimuladoRepository, never()).countByEmailAluno(any());
+    }
+
+    @Test
     void usaSomenteEmailAutenticadoETipoAluno() {
         when(relatorioRepository.findByEmailAndTipoUsu(EMAIL, "ALUNO")).thenReturn(List.of());
 
@@ -160,7 +185,8 @@ class DesempenhoServiceTest {
 
         assertEquals(Arrays.asList(
                         "questoesRespondidas", "totalAcertos", "percentualGeral",
-                        "maiorDesempenho", "menorDesempenho", "disciplinas"),
+                        "maiorDesempenho", "menorDesempenho", "disciplinas",
+                        "simuladosConcluidos"),
                 Arrays.stream(DesempenhoDTO.class.getRecordComponents())
                         .map(componente -> componente.getName()).toList());
         assertFalse(desempenho.toString().contains(EMAIL));

@@ -8,5 +8,6 @@ public record DesempenhoDTO(
         int percentualGeral,
         DesempenhoDisciplinaDTO maiorDesempenho,
         DesempenhoDisciplinaDTO menorDesempenho,
-        List<DesempenhoDisciplinaDTO> disciplinas) {
+        List<DesempenhoDisciplinaDTO> disciplinas,
+        int simuladosConcluidos) {
 }

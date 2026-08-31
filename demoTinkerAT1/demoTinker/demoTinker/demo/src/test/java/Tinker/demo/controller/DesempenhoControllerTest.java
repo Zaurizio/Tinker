@@ -36,7 +36,7 @@ class DesempenhoControllerTest {
         DesempenhoService service = mock(DesempenhoService.class);
         DesempenhoController controller = new DesempenhoController(service);
         UsuarioAutenticado usuario = new UsuarioAutenticado("aluno@tinker.com", TipoUsuario.ALUNO);
-        DesempenhoDTO esperado = new DesempenhoDTO(0, 0, 0, null, null, List.of());
+        DesempenhoDTO esperado = new DesempenhoDTO(0, 0, 0, null, null, List.of(), 0);
         when(service.consultar(usuario)).thenReturn(esperado);
 
         assertEquals(esperado, controller.consultar(usuario));

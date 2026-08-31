@@ -85,6 +85,10 @@ function Desempenho() {
                 titulo="Questões Respondidas"
                 valor={dadosDesempenho.questoesRespondidas}
               />
+              <CardMetrica
+                titulo="Simulados Concluídos"
+                valor={dadosDesempenho.simuladosConcluidos}
+              />
             </div>
           </div>
 

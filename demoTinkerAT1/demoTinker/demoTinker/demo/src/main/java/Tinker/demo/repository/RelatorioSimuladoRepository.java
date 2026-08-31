@@ -13,6 +13,7 @@ public interface RelatorioSimuladoRepository
         extends JpaRepository<RelatorioSimulado, RelatorioSimuladoid> {
     Optional<RelatorioSimulado> findByCodSimuladoAndEmailAluno(Integer codSimulado, String emailAluno);
     List<RelatorioSimulado> findByEmailAlunoAndCodSimuladoIn(String emailAluno, List<Integer> codSimulados);
+    long countByEmailAluno(String emailAluno);
     long deleteByCodSimuladoAndEmailAluno(Integer codSimulado, String emailAluno);
     long deleteByCodSimulado(Integer codSimulado);
 }

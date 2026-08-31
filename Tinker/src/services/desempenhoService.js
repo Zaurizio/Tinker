@@ -37,6 +37,7 @@ export async function obterResumoDesempenho() {
   return {
     questoesRespondidas,
     totalAcertos: dados.totalAcertos ?? 0,
+    simuladosConcluidos: dados.simuladosConcluidos ?? 0,
     possuiRespostas,
     taxaAcertosGeral,
     mensagemTaxaGeral: possuiRespostas
