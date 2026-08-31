@@ -21,18 +21,18 @@
 }
 
 .titulo {
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin: 0 0 14px;
-  padding: 0 18px;
   text-align: center;
   font-size: 1.08rem;
   overflow-wrap: anywhere;
 }
 
 .corEvento {
-  position: absolute;
-  top: 0.35em;
-  left: 0;
+  flex-shrink: 0;
   width: 9px;
   height: 9px;
   border: 1px solid var(--cor-borda-padrao);
@@ -41,16 +41,22 @@
 
 .detalhes {
   display: grid;
-  gap: 7px;
+  gap: 10px;
   margin: 0;
 }
 
 .detalhes div {
   display: flex;
-  align-items: baseline;
-  gap: 5px;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.iconeDetalhe {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
 }
 
 .detalhes dt {
@@ -84,6 +90,8 @@
   justify-content: flex-end;
   gap: 8px;
   margin-top: 17px;
+  padding-top: 14px;
+  border-top: 1px solid var(--cor-borda-padrao);
 }
 
 .botaoSecundario,

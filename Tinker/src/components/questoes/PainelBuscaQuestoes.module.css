@@ -133,9 +133,11 @@
   font-size: 0.82rem;
 }
 
-.botaoStatusAtivo {
-  background: #132845;
-  border-color: #2F5D95;
+.botaoStatusAtivo,
+.botaoStatusAtivo:hover {
+  border-color: var(--cor-primaria-destaque-borda);
+  background: var(--cor-primaria-destaque-fundo);
+  color: var(--cor-primaria-destaque);
 }
 
 .linhaAcoes {

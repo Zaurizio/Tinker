@@ -1,3 +1,4 @@
+import { TbCalendarEvent, TbClockHour9 } from "react-icons/tb";
 import estilos from "./CardDetalhesEvento.module.css";
 
 function formatarData(data) {
@@ -43,26 +44,25 @@ export default function CardDetalhesEvento({
             </h2>
             <dl className={estilos.detalhes}>
               <div>
+                <TbCalendarEvent className={estilos.iconeDetalhe} aria-hidden="true" />
                 <dt>Data:</dt>
                 <dd>{formatarData(evento.data)}</dd>
               </div>
               {evento.diaInteiro ? (
                 <div>
+                  <TbClockHour9 className={estilos.iconeDetalhe} aria-hidden="true" />
                   <dt>Horário:</dt>
                   <dd>Dia inteiro</dd>
                 </div>
               ) : (
                 <div>
+                  <TbClockHour9 className={estilos.iconeDetalhe} aria-hidden="true" />
                   <dt>Horário:</dt>
                   <dd>
                     {evento.horarioInicio} – {evento.horarioFim}
                   </dd>
                 </div>
               )}
-              <div>
-                <dt>Cor:</dt>
-                <dd>{evento.cor}</dd>
-              </div>
             </dl>
             {erroRemocao && (
               <p className={estilos.erro} role="alert">
