@@ -7,6 +7,7 @@ import Tinker.demo.model.Questao;
 import Tinker.demo.model.Relatorio;
 import Tinker.demo.repository.QuestaoRepository;
 import Tinker.demo.repository.RelatorioRepository;
+import Tinker.demo.repository.RelatorioSimuladoRepository;
 import Tinker.demo.security.TipoUsuario;
 import Tinker.demo.security.UsuarioAutenticado;
 import org.springframework.stereotype.Service;
@@ -22,21 +23,25 @@ public class DesempenhoService {
 
     private final RelatorioRepository relatorioRepository;
     private final QuestaoRepository questaoRepository;
+    private final RelatorioSimuladoRepository relatorioSimuladoRepository;
 
     public DesempenhoService(
             RelatorioRepository relatorioRepository,
-            QuestaoRepository questaoRepository) {
+            QuestaoRepository questaoRepository,
+            RelatorioSimuladoRepository relatorioSimuladoRepository) {
         this.relatorioRepository = relatorioRepository;
         this.questaoRepository = questaoRepository;
+        this.relatorioSimuladoRepository = relatorioSimuladoRepository;
     }
 
     @Transactional(readOnly = true)
     public DesempenhoDTO consultar(UsuarioAutenticado usuario) {
         exigirAluno(usuario);
+        int simuladosConcluidos = contarSimuladosConcluidos(usuario);
         List<Relatorio> relatorios = relatorioRepository.findByEmailAndTipoUsu(
                 usuario.email(), usuario.tipoUsuario().name());
         if (relatorios.isEmpty()) {
-            return vazio();
+            return vazio(simuladosConcluidos);
         }
 
         List<Integer> questoesIds = relatorios.stream()
@@ -63,7 +68,7 @@ public class DesempenhoService {
         }
 
         if (totaisPorDisciplina.isEmpty()) {
-            return vazio();
+            return vazio(simuladosConcluidos);
         }
 
         List<DesempenhoDisciplinaDTO> disciplinas = totaisPorDisciplina.entrySet().stream()
@@ -91,7 +96,15 @@ public class DesempenhoService {
                 percentual(totalAcertos, questoesRespondidas),
                 maior,
                 menor,
-                disciplinas);
+                disciplinas,
+                simuladosConcluidos);
+    }
+
+    private int contarSimuladosConcluidos(UsuarioAutenticado usuario) {
+        if (usuario.tipoUsuario() != TipoUsuario.ALUNO) {
+            return 0;
+        }
+        return (int) relatorioSimuladoRepository.countByEmailAluno(usuario.email());
     }
 
     private DesempenhoDisciplinaDTO paraDTO(String disciplina, Totais totais) {
@@ -117,8 +130,8 @@ public class DesempenhoService {
         return disciplina.trim();
     }
 
-    private DesempenhoDTO vazio() {
-        return new DesempenhoDTO(0, 0, 0, null, null, List.of());
+    private DesempenhoDTO vazio(int simuladosConcluidos) {
+        return new DesempenhoDTO(0, 0, 0, null, null, List.of(), simuladosConcluidos);
     }
 
     private void exigirAluno(UsuarioAutenticado usuario) {
