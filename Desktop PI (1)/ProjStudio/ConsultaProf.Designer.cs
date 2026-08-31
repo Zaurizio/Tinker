@@ -422,7 +422,7 @@
             this.guna2Button1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(64)))), ((int)(((byte)(102)))));
             this.guna2Button1.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.guna2Button1.ForeColor = System.Drawing.Color.White;
-            this.guna2Button1.Location = new System.Drawing.Point(780, 122);
+            this.guna2Button1.Location = new System.Drawing.Point(567, 413);
             this.guna2Button1.Name = "guna2Button1";
             this.guna2Button1.Size = new System.Drawing.Size(268, 45);
             this.guna2Button1.TabIndex = 54;
@@ -497,6 +497,7 @@
             // guna2PictureBox1
             // 
             this.guna2PictureBox1.BorderRadius = 5;
+            this.guna2PictureBox1.FillColor = System.Drawing.Color.Transparent;
             this.guna2PictureBox1.ImageRotate = 0F;
             this.guna2PictureBox1.Location = new System.Drawing.Point(297, 568);
             this.guna2PictureBox1.Name = "guna2PictureBox1";
@@ -513,7 +514,7 @@
             this.tableLayoutPanel6.Controls.Add(this.guna2TextBox1, 0, 1);
             this.tableLayoutPanel6.Controls.Add(this.label5, 1, 0);
             this.tableLayoutPanel6.Controls.Add(this.guna2TextBox2, 1, 1);
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(258, 103);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(443, 193);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 2;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
@@ -530,7 +531,7 @@
             this.tableLayoutPanel1.Controls.Add(this.label7, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.guna2TextBox5, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label9, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(258, 173);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(443, 263);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
@@ -545,7 +546,7 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.label8, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.guna2TextBox4, 0, 1);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(258, 243);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(443, 333);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));

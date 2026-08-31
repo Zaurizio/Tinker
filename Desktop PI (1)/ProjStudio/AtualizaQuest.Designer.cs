@@ -769,7 +769,7 @@
             this.guna2Button2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(64)))), ((int)(((byte)(102)))));
             this.guna2Button2.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.guna2Button2.ForeColor = System.Drawing.Color.White;
-            this.guna2Button2.Location = new System.Drawing.Point(829, 646);
+            this.guna2Button2.Location = new System.Drawing.Point(829, 649);
             this.guna2Button2.Margin = new System.Windows.Forms.Padding(1);
             this.guna2Button2.Name = "guna2Button2";
             this.guna2Button2.Size = new System.Drawing.Size(268, 45);

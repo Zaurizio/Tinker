@@ -610,7 +610,7 @@
             this.guna2TextBox5.PlaceholderText = "";
             this.guna2TextBox5.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.guna2TextBox5.SelectedText = "";
-            this.guna2TextBox5.Size = new System.Drawing.Size(372, 70);
+            this.guna2TextBox5.Size = new System.Drawing.Size(430, 70);
             this.guna2TextBox5.TabIndex = 68;
             // 
             // guna2TextBox6
@@ -632,7 +632,7 @@
             this.guna2TextBox6.PlaceholderText = "";
             this.guna2TextBox6.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.guna2TextBox6.SelectedText = "";
-            this.guna2TextBox6.Size = new System.Drawing.Size(371, 70);
+            this.guna2TextBox6.Size = new System.Drawing.Size(429, 70);
             this.guna2TextBox6.TabIndex = 69;
             // 
             // guna2TextBox7
@@ -654,7 +654,7 @@
             this.guna2TextBox7.PlaceholderText = "";
             this.guna2TextBox7.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.guna2TextBox7.SelectedText = "";
-            this.guna2TextBox7.Size = new System.Drawing.Size(371, 70);
+            this.guna2TextBox7.Size = new System.Drawing.Size(429, 70);
             this.guna2TextBox7.TabIndex = 70;
             // 
             // guna2TextBox8
@@ -676,7 +676,7 @@
             this.guna2TextBox8.PlaceholderText = "";
             this.guna2TextBox8.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.guna2TextBox8.SelectedText = "";
-            this.guna2TextBox8.Size = new System.Drawing.Size(372, 70);
+            this.guna2TextBox8.Size = new System.Drawing.Size(430, 70);
             this.guna2TextBox8.TabIndex = 71;
             // 
             // guna2TextBox9
@@ -698,7 +698,7 @@
             this.guna2TextBox9.PlaceholderText = "";
             this.guna2TextBox9.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.guna2TextBox9.SelectedText = "";
-            this.guna2TextBox9.Size = new System.Drawing.Size(371, 70);
+            this.guna2TextBox9.Size = new System.Drawing.Size(429, 70);
             this.guna2TextBox9.TabIndex = 72;
             // 
             // guna2Button1
@@ -711,7 +711,7 @@
             this.guna2Button1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(64)))), ((int)(((byte)(102)))));
             this.guna2Button1.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.guna2Button1.ForeColor = System.Drawing.Color.White;
-            this.guna2Button1.Location = new System.Drawing.Point(259, 591);
+            this.guna2Button1.Location = new System.Drawing.Point(343, 602);
             this.guna2Button1.Margin = new System.Windows.Forms.Padding(1);
             this.guna2Button1.Name = "guna2Button1";
             this.guna2Button1.Size = new System.Drawing.Size(268, 45);
@@ -790,7 +790,7 @@
             this.guna2Button2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(64)))), ((int)(((byte)(102)))));
             this.guna2Button2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.guna2Button2.ForeColor = System.Drawing.Color.White;
-            this.guna2Button2.Location = new System.Drawing.Point(487, 422);
+            this.guna2Button2.Location = new System.Drawing.Point(538, 422);
             this.guna2Button2.Margin = new System.Windows.Forms.Padding(1);
             this.guna2Button2.Name = "guna2Button2";
             this.guna2Button2.Size = new System.Drawing.Size(121, 39);
@@ -805,7 +805,7 @@
             this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel7.Controls.Add(this.label15, 0, 0);
             this.tableLayoutPanel7.Controls.Add(this.guna2PictureBox1, 0, 1);
-            this.tableLayoutPanel7.Location = new System.Drawing.Point(258, 395);
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(309, 395);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
             this.tableLayoutPanel7.RowCount = 2;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));

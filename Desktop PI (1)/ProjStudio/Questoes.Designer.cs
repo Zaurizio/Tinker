@@ -80,23 +80,23 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold);
             this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label5.Location = new System.Drawing.Point(38, 26);
+            this.label5.Location = new System.Drawing.Point(43, 26);
             this.label5.Name = "label5";
             this.label5.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label5.Size = new System.Drawing.Size(237, 62);
+            this.label5.Size = new System.Drawing.Size(216, 64);
             this.label5.TabIndex = 12;
             this.label5.Text = "Atualizar Questão \r\nAlternativa";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // guna2ShadowPanel2
             // 
             this.guna2ShadowPanel2.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel2.Controls.Add(this.guna2Button1);
             this.guna2ShadowPanel2.Controls.Add(this.label5);
-            this.guna2ShadowPanel2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
-            this.guna2ShadowPanel2.Location = new System.Drawing.Point(450, 344);
+            this.guna2ShadowPanel2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
+            this.guna2ShadowPanel2.Location = new System.Drawing.Point(401, 314);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 10;
             this.guna2ShadowPanel2.ShadowColor = System.Drawing.Color.Black;
@@ -113,7 +113,7 @@
             this.guna2Button1.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button1.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
             this.guna2Button1.FillColor = System.Drawing.Color.Transparent;
-            this.guna2Button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2Button1.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.guna2Button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
             this.guna2Button1.Location = new System.Drawing.Point(77, 113);
             this.guna2Button1.Name = "guna2Button1";
@@ -373,7 +373,7 @@
             this.guna2Button8.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button8.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
             this.guna2Button8.FillColor = System.Drawing.Color.Transparent;
-            this.guna2Button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2Button8.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.guna2Button8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
             this.guna2Button8.Location = new System.Drawing.Point(86, 115);
             this.guna2Button8.Name = "guna2Button8";
@@ -387,8 +387,8 @@
             this.guna2ShadowPanel1.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel1.Controls.Add(this.guna2Button8);
             this.guna2ShadowPanel1.Controls.Add(this.label3);
-            this.guna2ShadowPanel1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
-            this.guna2ShadowPanel1.Location = new System.Drawing.Point(450, 152);
+            this.guna2ShadowPanel1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
+            this.guna2ShadowPanel1.Location = new System.Drawing.Point(401, 122);
             this.guna2ShadowPanel1.Name = "guna2ShadowPanel1";
             this.guna2ShadowPanel1.Radius = 10;
             this.guna2ShadowPanel1.ShadowColor = System.Drawing.Color.Black;
@@ -399,15 +399,15 @@
             // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold);
             this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label3.Location = new System.Drawing.Point(46, 38);
+            this.label3.Location = new System.Drawing.Point(55, 29);
             this.label3.Name = "label3";
             this.label3.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label3.Size = new System.Drawing.Size(200, 62);
+            this.label3.Size = new System.Drawing.Size(180, 64);
             this.label3.TabIndex = 12;
             this.label3.Text = "Inserir Questão\r\n Alternativa";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // guna2BorderlessForm1
             // 
@@ -425,7 +425,7 @@
             this.guna2Button2.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button2.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
             this.guna2Button2.FillColor = System.Drawing.Color.Transparent;
-            this.guna2Button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2Button2.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.guna2Button2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
             this.guna2Button2.Location = new System.Drawing.Point(79, 115);
             this.guna2Button2.Name = "guna2Button2";
@@ -439,8 +439,8 @@
             this.guna2ShadowPanel3.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel3.Controls.Add(this.guna2Button2);
             this.guna2ShadowPanel3.Controls.Add(this.label4);
-            this.guna2ShadowPanel3.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
-            this.guna2ShadowPanel3.Location = new System.Drawing.Point(450, 525);
+            this.guna2ShadowPanel3.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
+            this.guna2ShadowPanel3.Location = new System.Drawing.Point(401, 495);
             this.guna2ShadowPanel3.Name = "guna2ShadowPanel3";
             this.guna2ShadowPanel3.Radius = 10;
             this.guna2ShadowPanel3.ShadowColor = System.Drawing.Color.Black;
@@ -451,23 +451,23 @@
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold);
             this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
             this.label4.Location = new System.Drawing.Point(53, 39);
             this.label4.Name = "label4";
             this.label4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label4.Size = new System.Drawing.Size(205, 31);
+            this.label4.Size = new System.Drawing.Size(182, 32);
             this.label4.TabIndex = 12;
             this.label4.Text = "Excluir Questão\r\n";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // guna2ShadowPanel4
             // 
             this.guna2ShadowPanel4.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel4.Controls.Add(this.guna2Button3);
             this.guna2ShadowPanel4.Controls.Add(this.label7);
-            this.guna2ShadowPanel4.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
-            this.guna2ShadowPanel4.Location = new System.Drawing.Point(798, 152);
+            this.guna2ShadowPanel4.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
+            this.guna2ShadowPanel4.Location = new System.Drawing.Point(749, 122);
             this.guna2ShadowPanel4.Name = "guna2ShadowPanel4";
             this.guna2ShadowPanel4.Radius = 10;
             this.guna2ShadowPanel4.ShadowColor = System.Drawing.Color.Black;
@@ -484,7 +484,7 @@
             this.guna2Button3.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button3.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
             this.guna2Button3.FillColor = System.Drawing.Color.Transparent;
-            this.guna2Button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2Button3.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.guna2Button3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
             this.guna2Button3.Location = new System.Drawing.Point(86, 115);
             this.guna2Button3.Name = "guna2Button3";
@@ -497,23 +497,23 @@
             // 
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label7.Location = new System.Drawing.Point(46, 38);
+            this.label7.Location = new System.Drawing.Point(54, 29);
             this.label7.Name = "label7";
             this.label7.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label7.Size = new System.Drawing.Size(207, 62);
+            this.label7.Size = new System.Drawing.Size(187, 64);
             this.label7.TabIndex = 12;
             this.label7.Text = "Inserir Questão \r\nDissertativa";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // guna2ShadowPanel5
             // 
             this.guna2ShadowPanel5.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel5.Controls.Add(this.guna2Button4);
             this.guna2ShadowPanel5.Controls.Add(this.label8);
-            this.guna2ShadowPanel5.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
-            this.guna2ShadowPanel5.Location = new System.Drawing.Point(798, 525);
+            this.guna2ShadowPanel5.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
+            this.guna2ShadowPanel5.Location = new System.Drawing.Point(749, 495);
             this.guna2ShadowPanel5.Name = "guna2ShadowPanel5";
             this.guna2ShadowPanel5.Radius = 10;
             this.guna2ShadowPanel5.ShadowColor = System.Drawing.Color.Black;
@@ -530,7 +530,7 @@
             this.guna2Button4.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button4.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
             this.guna2Button4.FillColor = System.Drawing.Color.Transparent;
-            this.guna2Button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2Button4.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.guna2Button4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
             this.guna2Button4.Location = new System.Drawing.Point(79, 115);
             this.guna2Button4.Name = "guna2Button4";
@@ -543,23 +543,23 @@
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold);
             this.label8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label8.Location = new System.Drawing.Point(3, 39);
+            this.label8.Location = new System.Drawing.Point(19, 39);
             this.label8.Name = "label8";
             this.label8.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label8.Size = new System.Drawing.Size(293, 31);
+            this.label8.Size = new System.Drawing.Size(264, 32);
             this.label8.TabIndex = 12;
             this.label8.Text = "Inserir Questões por IA";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // guna2ShadowPanel6
             // 
             this.guna2ShadowPanel6.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel6.Controls.Add(this.guna2Button5);
             this.guna2ShadowPanel6.Controls.Add(this.label9);
-            this.guna2ShadowPanel6.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(36)))), ((int)(((byte)(51)))));
-            this.guna2ShadowPanel6.Location = new System.Drawing.Point(798, 344);
+            this.guna2ShadowPanel6.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(32)))), ((int)(((byte)(51)))));
+            this.guna2ShadowPanel6.Location = new System.Drawing.Point(749, 314);
             this.guna2ShadowPanel6.Name = "guna2ShadowPanel6";
             this.guna2ShadowPanel6.Radius = 10;
             this.guna2ShadowPanel6.ShadowColor = System.Drawing.Color.Black;
@@ -576,7 +576,7 @@
             this.guna2Button5.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.guna2Button5.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
             this.guna2Button5.FillColor = System.Drawing.Color.Transparent;
-            this.guna2Button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2Button5.Font = new System.Drawing.Font("Segoe UI", 14.25F);
             this.guna2Button5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
             this.guna2Button5.Location = new System.Drawing.Point(86, 115);
             this.guna2Button5.Name = "guna2Button5";
@@ -589,15 +589,15 @@
             // 
             this.label9.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Font = new System.Drawing.Font("Segoe UI Semibold", 18F, System.Drawing.FontStyle.Bold);
             this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(246)))), ((int)(((byte)(248)))), ((int)(((byte)(251)))));
-            this.label9.Location = new System.Drawing.Point(34, 30);
+            this.label9.Location = new System.Drawing.Point(51, 26);
             this.label9.Name = "label9";
             this.label9.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label9.Size = new System.Drawing.Size(237, 62);
+            this.label9.Size = new System.Drawing.Size(216, 64);
             this.label9.TabIndex = 12;
             this.label9.Text = "Atualizar Questão \r\nDissertativa";
-            this.label9.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Questoes
             // 

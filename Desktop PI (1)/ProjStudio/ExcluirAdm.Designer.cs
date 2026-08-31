@@ -309,7 +309,7 @@
             this.guna2ComboBox1.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.guna2ComboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
             this.guna2ComboBox1.ItemHeight = 30;
-            this.guna2ComboBox1.Location = new System.Drawing.Point(410, 184);
+            this.guna2ComboBox1.Location = new System.Drawing.Point(431, 246);
             this.guna2ComboBox1.Name = "guna2ComboBox1";
             this.guna2ComboBox1.Size = new System.Drawing.Size(273, 36);
             this.guna2ComboBox1.TabIndex = 41;
@@ -333,7 +333,7 @@
             this.guna2Button1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(64)))), ((int)(((byte)(102)))));
             this.guna2Button1.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             this.guna2Button1.ForeColor = System.Drawing.Color.White;
-            this.guna2Button1.Location = new System.Drawing.Point(689, 183);
+            this.guna2Button1.Location = new System.Drawing.Point(710, 245);
             this.guna2Button1.Name = "guna2Button1";
             this.guna2Button1.Size = new System.Drawing.Size(268, 45);
             this.guna2Button1.TabIndex = 42;
