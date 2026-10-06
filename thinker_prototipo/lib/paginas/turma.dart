@@ -1,5 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:tinker/Models/turma_model.dart';
+import 'package:tinker/Services/turma_service.dart';
+import 'package:tinker/Services/api_client.dart';
+import 'package:tinker/Services/sessao_atual.dart';
 import 'package:tinker/paginas/turma_detalhes.dart';
+
+const List<Color> coresAvatarTurma = [
+  Color(0xFF2C7AA9),
+  Color(0xFF1F9C7A),
+  Color(0xFF3A5BA9),
+  Color(0xFF7A4AA9),
+  Color(0xFFA9682C),
+];
+
+Color corDaTurma(String codigo) =>
+    coresAvatarTurma[codigo.hashCode.abs() % coresAvatarTurma.length];
 
 class Turma extends StatefulWidget {
   const Turma({super.key});
@@ -10,127 +25,248 @@ class Turma extends StatefulWidget {
 
 class _TurmaState extends State<Turma> {
   final buscaCtrl = TextEditingController();
-  final List<Map<String, String>> turmas = [];
-  List<Map<String, String>> turmasFiltradas = [];
+
+  bool carregando = true;
+  String? erro;
+  List<TurmaModel> minhasTurmas = [];
+  List<TurmaModel> turmasFiltradas = [];
 
   @override
   void initState() {
     super.initState();
-    turmasFiltradas = List.from(turmas);
+    _carregarDados();
+  }
+
+  Future<void> _carregarDados() async {
+    setState(() => carregando = true);
+
+    try {
+      final turmas = await buscarTurmas();
+      setState(() {
+        minhasTurmas = turmas;
+        turmasFiltradas = List.from(turmas);
+        carregando = false;
+      });
+    } catch (e) {
+      setState(() {
+        erro = 'Não foi possível carregar suas turmas.';
+        carregando = false;
+      });
+    }
   }
 
   void filtrar(String texto) {
     setState(() {
       if (texto.isEmpty) {
-        turmasFiltradas = List.from(turmas);
+        turmasFiltradas = List.from(minhasTurmas);
       } else {
-        turmasFiltradas = turmas
-            .where((t) =>
-                t["turma"]!.toLowerCase().contains(texto.toLowerCase()) ||
-                t["materia"]!.toLowerCase().contains(texto.toLowerCase()))
+        turmasFiltradas = minhasTurmas
+            .where((t) => t.nome.toLowerCase().contains(texto.toLowerCase()))
             .toList();
       }
     });
   }
 
-  void remover(Map<String, String> turma) {
-    setState(() {
-      turmas.remove(turma);
-      filtrar(buscaCtrl.text);
-    });
-  }
-
-  void criarTurma() {
+  void _abrirCriarTurma() {
     final nomeCtrl = TextEditingController();
-    final materiaCtrl = TextEditingController();
+    bool salvando = false;
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Color(0xFF0F2744),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        title: Text('Nova turma',
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Nome da turma', style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
-            SizedBox(height: 6),
-            campoDeTurma(nomeCtrl, 'Ex: Turma A'),
-            SizedBox(height: 14),
-            Text('Matéria', style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
-            SizedBox(height: 6),
-            campoDeTurma(materiaCtrl, 'Ex: Matemática'),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          backgroundColor: const Color(0xFF0F2744),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          title: const Text('Criar turma',
+              style:
+                  TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Dê um nome para a sua turma. Um código de 8 dígitos será gerado automaticamente.',
+                style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13),
+              ),
+              const SizedBox(height: 14),
+              _campoDialogo(nomeCtrl, 'Nome da turma'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: salvando ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancelar', style: TextStyle(color: Color(0xFF8AABCC))),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1A4A8A),
+                foregroundColor: const Color(0xFF4A9EFF),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
+              ),
+              onPressed: salvando
+                  ? null
+                  : () async {
+                      if (nomeCtrl.text.trim().isEmpty) return;
+                      setDialogState(() => salvando = true);
+
+                      try {
+                        final criada = await criarTurma(nomeCtrl.text.trim());
+                        if (!mounted) return;
+                        Navigator.pop(ctx);
+                        await _carregarDados();
+
+                        if (!mounted) return;
+                        showDialog(
+                          context: context,
+                          builder: (ctx2) => AlertDialog(
+                            backgroundColor: const Color(0xFF0F2744),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
+                            title: const Text('Turma criada!',
+                                style: TextStyle(color: Colors.white, fontSize: 16)),
+                            content: Text(
+                              'Compartilhe esse código com os alunos:\n\n${criada.codigo}',
+                              style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 14),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx2),
+                                child: const Text('Fechar',
+                                    style: TextStyle(color: Color(0xFF4A9EFF))),
+                              ),
+                            ],
+                          ),
+                        );
+                      } on ApiException catch (e) {
+                        setDialogState(() => salvando = false);
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text(e.mensagem)));
+                      } catch (e) {
+                        setDialogState(() => salvando = false);
+                      }
+                    },
+              child: Text(salvando ? 'Criando...' : 'Criar'),
+            ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancelar', style: TextStyle(color: Color(0xFF8AABCC))),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF1A4A8A),
-              foregroundColor: Color(0xFF4A9EFF),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              elevation: 0,
-            ),
-            onPressed: () {
-              if (nomeCtrl.text.trim().isEmpty) return;
-              setState(() {
-                turmas.insert(0, {
-                  "turma": nomeCtrl.text.trim(),
-                  "materia": materiaCtrl.text.trim().isEmpty
-                      ? "Sem matéria"
-                      : materiaCtrl.text.trim(),
-                });
-                filtrar(buscaCtrl.text);
-              });
-              Navigator.pop(ctx);
-            },
-            child: Text('Criar'),
-          ),
-        ],
       ),
     );
   }
 
-  Widget campoDeTurma(TextEditingController ctrl, String hint) {
+  void _abrirEntrarTurma() {
+    final codigoCtrl = TextEditingController();
+    bool entrando = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          backgroundColor: const Color(0xFF0F2744),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          title: const Text('Entrar em turma',
+              style:
+                  TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Digite o código de 8 dígitos compartilhado pelo professor.',
+                style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13),
+              ),
+              const SizedBox(height: 14),
+              _campoDialogo(codigoCtrl, 'Código da turma',
+                  tipoTeclado: TextInputType.number),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: entrando ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancelar', style: TextStyle(color: Color(0xFF8AABCC))),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1A4A8A),
+                foregroundColor: const Color(0xFF4A9EFF),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
+              ),
+              onPressed: entrando
+                  ? null
+                  : () async {
+                      final codigo = codigoCtrl.text.trim();
+                      if (!RegExp(r'^[0-9]{8}$').hasMatch(codigo)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('O código deve ter exatamente 8 dígitos.')),
+                        );
+                        return;
+                      }
+
+                      setDialogState(() => entrando = true);
+
+                      try {
+                        await entrarNaTurma(codigo);
+                        if (!mounted) return;
+                        Navigator.pop(ctx);
+                        _carregarDados();
+                      } on ApiException catch (e) {
+                        setDialogState(() => entrando = false);
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text(e.mensagem)));
+                      } catch (e) {
+                        setDialogState(() => entrando = false);
+                      }
+                    },
+              child: Text(entrando ? 'Entrando...' : 'Entrar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _campoDialogo(TextEditingController ctrl, String hint,
+      {TextInputType? tipoTeclado}) {
     return TextField(
       controller: ctrl,
-      style: TextStyle(color: Colors.white, fontSize: 14),
+      keyboardType: tipoTeclado,
+      style: const TextStyle(color: Colors.white, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14),
+        hintStyle: const TextStyle(color: Color(0xFF4A6A8A), fontSize: 14),
         filled: true,
-        fillColor: Color(0xFF0D1B2A),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        fillColor: const Color(0xFF0D1B2A),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+            borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+            borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1)),
+            borderSide: const BorderSide(color: Color(0xFF4A9EFF), width: 2)),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final ehProfessor = SessaoAtual.ehProfessor;
+
     return Scaffold(
-      backgroundColor: Color(0xFF0D1B2A),
+      backgroundColor: const Color(0xFF0D1B2A),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16),
-
+              const SizedBox(height: 16),
               Row(
                 children: [
                   GestureDetector(
@@ -140,20 +276,20 @@ class _TurmaState extends State<Turma> {
                       height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Color(0xFF0F2744),
-                        border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                        color: const Color(0xFF0F2744),
+                        border: Border.all(color: const Color(0xFF1E3D5C), width: 1),
                       ),
-                      child: Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor: Color(0xFF1A4A7A),
+                    backgroundColor: const Color(0xFF1A4A7A),
                     child: Image.asset('assets/images/tinker_images/logo2.png'),
                   ),
-                  SizedBox(width: 8),
-                  Text('TINKER',
+                  const SizedBox(width: 8),
+                  const Text('TINKER',
                       style: TextStyle(
                           fontFamily: 'Stardom',
                           color: Colors.white,
@@ -161,84 +297,73 @@ class _TurmaState extends State<Turma> {
                           letterSpacing: 3)),
                 ],
               ),
-
-              SizedBox(height: 20),
-
-              Text('Turmas',
+              const SizedBox(height: 24),
+              const Text('Minhas Turmas',
                   style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600)),
-              SizedBox(height: 4),
-              Text('Gerencie suas turmas e matérias',
-                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
-
-              SizedBox(height: 20),
-
+              const SizedBox(height: 16),
               TextField(
                 controller: buscaCtrl,
                 onChanged: filtrar,
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
                 decoration: InputDecoration(
-                  hintText: 'Buscar turma ou matéria...',
-                  hintStyle: TextStyle(color: Color(0xFF4A6A8A), fontSize: 13),
-                  prefixIcon: Icon(Icons.search, color: Color(0xFF4A6A8A), size: 20),
+                  hintText: 'Pesquisar turma...',
+                  hintStyle: const TextStyle(color: Color(0xFF4A6A8A), fontSize: 13),
+                  prefixIcon: const Icon(Icons.search, color: Color(0xFF4A6A8A), size: 20),
                   filled: true,
-                  fillColor: Color(0xFF0F2744),
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  fillColor: const Color(0xFF0F2744),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+                      borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+                      borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1)),
+                      borderSide: const BorderSide(color: Color(0xFF4A9EFF), width: 2)),
                 ),
               ),
-
-              SizedBox(height: 20),
-
-              Text('SUAS TURMAS',
-                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 11, letterSpacing: 1.2)),
-
-              SizedBox(height: 10),
-
+              const SizedBox(height: 14),
               GestureDetector(
-                onTap: criarTurma,
+                onTap: ehProfessor ? _abrirCriarTurma : _abrirEntrarTurma,
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 13),
                   decoration: BoxDecoration(
-                    color: Color(0xFF0F2744),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                    color: const Color(0xFF1A4A8A),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add, color: Color(0xFF4A9EFF), size: 18),
-                      SizedBox(width: 8),
-                      Text('Adicionar turma',
-                          style: TextStyle(color: Color(0xFF4A9EFF), fontSize: 14)),
-                    ],
-                  ),
+                  child: Text(ehProfessor ? 'Criar turma' : 'Entrar em turma',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500)),
                 ),
               ),
-
-              SizedBox(height: 12),
-
-              if (turmasFiltradas.isEmpty)
+              const SizedBox(height: 20),
+              if (carregando)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 60),
+                  child: Center(child: CircularProgressIndicator(color: Color(0xFF4A9EFF))),
+                )
+              else if (erro != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 60),
+                  child: Center(
+                      child: Text(erro!, style: const TextStyle(color: Color(0xFFE05C6A), fontSize: 13))),
+                )
+              else if (turmasFiltradas.isEmpty)
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40),
+                    padding: const EdgeInsets.symmetric(vertical: 40),
                     child: Column(
                       children: [
-                        Icon(Icons.group_outlined, color: Color(0xFF4A6A8A), size: 40),
-                        SizedBox(height: 12),
-                        Text('Nenhuma turma encontrada.',
-                            style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14)),
-                        SizedBox(height: 4),
-                        Text('Adicione sua primeira turma acima.',
-                            style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 13)),
+                        const Icon(Icons.group_outlined, color: Color(0xFF4A6A8A), size: 40),
+                        const SizedBox(height: 12),
+                        Text(
+                            ehProfessor
+                                ? 'Você ainda não criou nenhuma turma.'
+                                : 'Você ainda não está em nenhuma turma.',
+                            style: const TextStyle(color: Color(0xFF4A6A8A), fontSize: 14)),
                       ],
                     ),
                   ),
@@ -250,54 +375,43 @@ class _TurmaState extends State<Turma> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => TurmaDetalhes(turma: t)),
-                      );
+                      ).then((_) => _carregarDados());
                     },
                     child: Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                       decoration: BoxDecoration(
-                        color: Color(0xFF0F2744),
+                        color: const Color(0xFF0F2744),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                        border: Border.all(color: const Color(0xFF1E3D5C), width: 1.5),
                       ),
                       child: Row(
                         children: [
-                          Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF1A3A6A),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(Icons.group_outlined, color: Color(0xFF4A9EFF), size: 18),
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundColor: corDaTurma(t.codigo),
+                            child: const Icon(Icons.groups_rounded, color: Colors.white, size: 18),
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(t["turma"]!,
-                                    style: TextStyle(
+                                Text(t.nome,
+                                    style: const TextStyle(
                                         color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
-                                SizedBox(height: 3),
-                                Text(t["materia"]!,
-                                    style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+                                const SizedBox(height: 3),
+                                Text('Prof. ${t.criadorNome}',
+                                    style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
                               ],
                             ),
-                          ),
-                          IconButton(
-                            onPressed: () => remover(t),
-                            icon: Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
-                            padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
             ],
           ),
         ),

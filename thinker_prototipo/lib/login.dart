@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tinker/cadastro.dart';
 import 'package:tinker/homepage.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:tinker/Classes/usuariosCadastro.dart';
-
+import 'package:tinker/Services/auth_service.dart';
+import 'package:tinker/Services/api_client.dart';
+import 'package:tinker/Services/tipo_usuario.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,11 +15,12 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _senhaVisivel = false;
+  TipoUsuario tipoSelecionado = TipoUsuario.aluno;
   final GlobalKey<FormState> logKey = GlobalKey<FormState>();
   final TextEditingController campoController1 = TextEditingController();
   final TextEditingController campoController2 = TextEditingController();
 
-  void _erroLogin() {
+  void _erroLogin(String mensagem) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -27,7 +29,7 @@ class _LoginState extends State<Login> {
         title:  Icon(Icons.error_outline_rounded,
             color: Color(0xFF4A90D9), size: 40),
         content:  Text(
-          'E-mail ou senha incorretos',
+          mensagem,
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white, fontSize: 16),
         ),
@@ -51,21 +53,36 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _fazerLogin() {
-    if (logKey.currentState!.validate()) {
-      final emailDigitado = campoController1.text.trim();
-      final senhaDigitada = campoController2.text;
+  bool carregando = false;
 
-      final encontrado = cadastros.any(
-        (user) => user.email == emailDigitado && user.senha == senhaDigitada,
+  void _fazerLogin() async {
+    if (!logKey.currentState!.validate()) return;
+
+    setState(() => carregando = true);
+
+    try {
+      await fazerLogin(
+        email: campoController1.text.trim(),
+        senha: campoController2.text,
+        tipoUsuario: tipoSelecionado,
       );
 
-      if (encontrado) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Homepage()));
+      if (!mounted) return;
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Homepage()));
+    } on ApiException catch (e) {
+      setState(() => carregando = false);
+      if (e.statusCode == 401) {
+        _erroLogin(e.mensagem);
       } else {
-        _erroLogin();
+        _erroLogin('Não foi possível entrar. Tente novamente.');
       }
+    } catch (e) {
+      setState(() => carregando = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Não foi possível conectar ao servidor.')),
+      );
     }
   }
 
@@ -134,7 +151,56 @@ class _LoginState extends State<Login> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () =>
+                                setState(() => tipoSelecionado = TipoUsuario.aluno),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: tipoSelecionado == TipoUsuario.aluno
+                                    ? Color(0xFF3A7BD5)
+                                    : Color(0xFF1A2E45),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text('Aluno',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => setState(
+                                () => tipoSelecionado = TipoUsuario.professor),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: tipoSelecionado == TipoUsuario.professor
+                                    ? Color(0xFF3A7BD5)
+                                    : Color(0xFF1A2E45),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text('Professor',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 28),
+
                      Text(
                       'E-mail',
                       style: TextStyle(
@@ -254,11 +320,17 @@ class _LoginState extends State<Login> {
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton.icon(
-                        onPressed: _fazerLogin,
-                        icon:  Icon(Icons.login_rounded,
-                            color: Colors.white),
-                        label:  Text(
-                          'Entrar',
+                        onPressed: carregando ? null : _fazerLogin,
+                        icon: carregando
+                            ? SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white),
+                              )
+                            : Icon(Icons.login_rounded, color: Colors.white),
+                        label: Text(
+                          carregando ? 'Entrando...' : 'Entrar',
                           style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w500,

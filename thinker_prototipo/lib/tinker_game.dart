@@ -28,7 +28,7 @@ class TinkerGame extends FlameGame
   late CameraComponent cam;
   Player player = Player(character: 'Razor Bill');
   late JoystickComponent joystick;
-  bool showControls = false;
+  bool showControls = true;
   bool playSounds = true;
   double soundVolume = 1.0;
   List<String> levelNames = ['level_01', 'level_02'];
@@ -38,17 +38,17 @@ class TinkerGame extends FlameGame
 
   @override
   FutureOr<void> onLoad() async {
-  
+
     await images.loadAllImages();
 
-    _loadLevel();
+    await _loadLevel();
 
     if (showControls) {
       addJoystick();
-      add(JumpButton());
+      cam.viewport.add(JumpButton());
     }
-    
-add(InteractButton());
+
+    cam.viewport.add(InteractButton());
 
     return super.onLoad();
   }
@@ -63,7 +63,7 @@ add(InteractButton());
 
   void addJoystick() {
     joystick = JoystickComponent(
-      priority: 10,
+      priority: 100,
       knob: SpriteComponent(
         sprite: Sprite(
           images.fromCache('hud/knob.png'),
@@ -74,10 +74,10 @@ add(InteractButton());
           images.fromCache('hud/joystick.png'),
         ),
       ),
-      margin: const EdgeInsets.only(left: 32, bottom: 32),
+      margin: const EdgeInsets.only(left: 56, bottom: 56),
     );
 
-    add(joystick);
+    cam.viewport.add(joystick);
   }
 
   void updateJoystick() {
@@ -110,28 +110,24 @@ add(InteractButton());
     }
   }
 
-  void _loadLevel() {
-    Future.delayed(const Duration(seconds: 1), () {
-      Level world = Level(
-        player: player,
-        levelName: levelNames[currentLevelIndex],
-      );
+  Future<void> _loadLevel() async {
+    await Future.delayed(const Duration(seconds: 1));
 
-      cam = CameraComponent.withFixedResolution(
-        world: world,
-        width: 640,
-        height: 360,
-      );
-      cam.viewfinder.anchor = Anchor.topLeft;
+    Level world = Level(
+      player: player,
+      levelName: levelNames[currentLevelIndex],
+    );
 
-      addAll([cam, world]);
-    });
-    
-    
+    cam = CameraComponent.withFixedResolution(
+      world: world,
+      width: 640,
+      height: 360,
+    );
+    cam.viewfinder.anchor = Anchor.topLeft;
 
-
+    await addAll([cam, world]);
   }
-  
+
 void tryInteract() {
   final target = activeInteractable;
   if (target == null) return;
@@ -142,8 +138,12 @@ void tryInteract() {
     _startQuestion();
   }
 }
-void _startQuestion() {
-  currentQuestion = pickRandomQuestion();
+
+Future<void> _startQuestion() async {
+  final questao = await fetchRandomQuestion();
+  if (questao == null) return;
+
+  currentQuestion = questao;
   pauseEngine();
   overlays.add('QuestionOverlay');
 }

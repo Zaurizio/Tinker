@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tinker/data/question.dart';
 import 'package:tinker/tinker_game.dart';
+import 'package:tinker/Services/questoes_service.dart';
 
 enum _OptionState { normal, correct, wrong }
 
@@ -14,32 +15,50 @@ class QuestionOverlay extends StatefulWidget {
 
 class _QuestionOverlayState extends State<QuestionOverlay> {
   int? selectedIndex;
+  bool enviando = false;
   bool answered = false;
+  bool? acertou;
 
   static const letters = ['A', 'B', 'C', 'D', 'E'];
 
-  void _onOptionTap(int index, Question question) {
-    if (answered) return;
+  Future<void> _onOptionTap(int index, Question question) async {
+    if (answered || enviando) return;
+
     setState(() {
       selectedIndex = index;
-      answered = true;
+      enviando = true;
     });
 
-    final correct = index == question.correctIndex;
-    final delay = correct
+    bool resultado;
+    try {
+      resultado = await corrigirQuestaoAvulsa(question.id, question.optionIds[index]);
+    } catch (e) {
+      // sem internet/erro do servidor: cancela a tentativa e deixa escolher de novo
+      setState(() {
+        selectedIndex = null;
+        enviando = false;
+      });
+      return;
+    }
+
+    setState(() {
+      enviando = false;
+      answered = true;
+      acertou = resultado;
+    });
+
+    final delay = resultado
         ? const Duration(milliseconds: 600)
         : const Duration(milliseconds: 1400);
 
     Future.delayed(delay, () {
-      widget.game.resolveQuestion(correct);
+      widget.game.resolveQuestion(resultado);
     });
   }
 
-  _OptionState _stateFor(int index, Question question) {
-    if (!answered) return _OptionState.normal;
-    if (index == question.correctIndex) return _OptionState.correct;
-    if (index == selectedIndex) return _OptionState.wrong;
-    return _OptionState.normal;
+  _OptionState _stateFor(int index) {
+    if (!answered || index != selectedIndex) return _OptionState.normal;
+    return acertou == true ? _OptionState.correct : _OptionState.wrong;
   }
 
   @override
@@ -126,22 +145,39 @@ class _QuestionOverlayState extends State<QuestionOverlay> {
                                     child: _OptionButton(
                                       letter: letters[i],
                                       text: question.options[i],
-                                      state: _stateFor(i, question),
+                                      state: _stateFor(i),
                                       height: optionHeight,
                                       fontSize: optionFontSize,
                                       onTap: () => _onOptionTap(i, question),
+                                    ),
+                                  ),
+                                if (enviando)
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 4),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 14,
+                                          height: 14,
+                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text('Corrigindo...',
+                                            style: TextStyle(
+                                                color: Color(0xFF1A0E05), fontSize: 12)),
+                                      ],
                                     ),
                                   ),
                                 if (answered)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 4),
                                     child: Text(
-                                      selectedIndex == question.correctIndex
+                                      acertou == true
                                           ? 'Resposta correta!'
                                           : 'Resposta incorreta! Tente novamente.',
                                       style: TextStyle(
-                                        color: selectedIndex ==
-                                                question.correctIndex
+                                        color: acertou == true
                                             ? Colors.green.shade800
                                             : Colors.red.shade800,
                                         fontSize: optionFontSize,

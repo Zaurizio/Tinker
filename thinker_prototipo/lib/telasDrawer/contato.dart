@@ -49,17 +49,17 @@ void Mostrar(){
 
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+                borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 2)),
 
 
             enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 0.5)),
+                borderSide: BorderSide(color: Color(0xFF1E3D5C), width: 2)),
 
 
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 1)),
+                borderSide: BorderSide(color: Color(0xFF4A9EFF), width: 2)),
           ),
         ),
       ],
@@ -119,7 +119,7 @@ void Mostrar(){
                 decoration: BoxDecoration(
                   color: Color(0xFF0F2744),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Color(0xFF1E3D5C), width: 0.5),
+                  border: Border.all(color: Color(0xFF1E3D5C), width: 2),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -31,7 +31,7 @@ class Thinker extends StatelessWidget {
                       radius: 50,
                     ),
                   ),
-                  SizedBox(width: 14),
+                  SizedBox(width: 5),
                   Text(
                     'TINKER',
                     style: TextStyle(

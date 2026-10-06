@@ -15,3 +15,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+negocin pra rodar sempre na porta 5173 por causa do Corsa bipbip (Cross-Origin Resource Sharing)
+flutter run -d chrome --web-port=5173

@@ -56,40 +56,41 @@ class Planos extends StatelessWidget {
               cardPlano(
                 imagem: 'assets/images/tinker_images/Pgratuito.png',
                 nome: 'Plano Gratuito',
-                descricao: 'Ideal para começar e conhecer a plataforma.',
-                preco: 'R\$ 0',
+                descricao: 'Comece do jeito certo.\nIdeal para quem quer conhecer o Tinker\n e dar os primeiros passos na preparação para o vestibular.',
+                descricao1: "-Crie seus próprios simulados manualmente",
+                descricao2: "-Gere simulados automáticos (1 por mês)",
+                descricao3: "-Apenas um simulado salvo",
+                descricao4: "-Caso seja professor, pode criar apenas de uma turma",
+                descricao5:"-Até 7 eventos diários por dia da semana" ,
+                preco: 'R\$ 0,00',
                 periodo: 'Para sempre',
-                textoBotao: 'Plano atual',
+                textoBotao: 'Continue gratuito',
                 botaoPreenchido: false,
                 destaque: false,
                 onTap: () {},
+                
               ),
 
               SizedBox(height: 12),
 
               
-              cardPlano(
-                imagem: 'assets/images/tinker_images/Pmensal.png',
-                nome: 'Plano Mensal',
-                descricao: 'Tenha acesso a recursos avançados e aproveite todo o potencial da plataforma.',
-                preco: 'R\$ 15,99',
-                periodo: '/mês',
-                textoBotao: 'Assinar agora',
-                botaoPreenchido: true,
-                destaque: true,
-                onTap: () {},
-              ),
+            
 
               SizedBox(height: 12),
                 cardPlano(
                 imagem: 'assets/images/tinker_images/Pestudantil.png',
-                nome: 'Plano Max',
-                descricao: 'A experiência mais completa para quem busca o máximo desempenho.',
-                preco: 'R\$ 29,99',
+                nome: 'Plano Estudantil (Premium)',
+                descricao: 'A preparação completa para quem quer ir além.\nVoltado a estudantes que buscam desempenho máximo,\n dados detalhados e suporte personalizado.',
+                descricao1: "Tudo do plano mensal",
+                descricao2: "Criação automática de simulado ilimitada",
+                descricao3: "Simulado salvos ilimitados",
+                descricao4: "Caso seja professor, turmas ilimitadas",
+                descricao5:"Eventos por dia da semana ilimitados" ,
+                preco: 'R\$ 15,90',
                 periodo: '/mês',
-                textoBotao: 'Assinar agora',
+                textoBotao: 'Começar agora',
                 botaoPreenchido: true,
-                destaque: false,
+                destaque: true,
                 onTap: () {},
               ),
 
@@ -108,10 +109,34 @@ class Planos extends StatelessWidget {
     );
   }
 
+  Widget itemBeneficio(String texto) {
+    // remove o "-" inicial, caso exista, já que o ícone substitui esse marcador
+    final textoLimpo = texto.startsWith('-') ? texto.substring(1) : texto;
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.check_circle, color: Color(0xFF4A9EFF), size: 16),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(textoLimpo,
+                style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget cardPlano({
     required String imagem,
     required String nome,
     required String descricao,
+    required String descricao1,
+    required String descricao2,
+    required String descricao3,
+    required String descricao4,
+    required String descricao5,
     required String preco,
     required String periodo,
     required String textoBotao,
@@ -129,7 +154,7 @@ class Planos extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: destaque ? Color(0xFF4A9EFF) : Color(0xFF1E3D5C),
-              width: destaque ? 1.5 : 0.5,
+              width: destaque ? 2 : 1.5,
             ),
           ),
           child: Column(
@@ -162,6 +187,12 @@ class Planos extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 14),
+              itemBeneficio(descricao1),
+              itemBeneficio(descricao2),
+              itemBeneficio(descricao3),
+              itemBeneficio(descricao4),
+              itemBeneficio(descricao5),
               SizedBox(height: 16),
               Divider(color: Color(0xFF1E3D5C), height: 1),
               SizedBox(height: 14),

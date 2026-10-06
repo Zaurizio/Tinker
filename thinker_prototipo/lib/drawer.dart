@@ -1,11 +1,39 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:tinker/bottombar/perfil.dart';
+//import 'package:tinker/bottombar/perfil.dart';
 import 'package:tinker/telasDrawer/planos.dart';
 import 'package:tinker/telasDrawer/info.dart';
 import 'package:tinker/telasDrawer/contato.dart';
+import 'package:tinker/homepage.dart';
+import 'package:tinker/Models/perfil_model.dart';
+import 'package:tinker/Services/perfil_service.dart';
 
-class MeuDrawer extends StatelessWidget {
+class MeuDrawer extends StatefulWidget {
   const MeuDrawer({super.key});
+
+  @override
+  State<MeuDrawer> createState() => _MeuDrawerState();
+}
+
+class _MeuDrawerState extends State<MeuDrawer> {
+  PerfilModel? perfil;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarPerfil();
+  }
+
+  Future<void> _carregarPerfil() async {
+    try {
+      final dados = await buscarPerfil();
+      if (!mounted) return;
+      setState(() => perfil = dados);
+    } catch (e) {
+      // sem foto disponível: mantém o círculo vazio, sem travar o drawer
+    }
+  }
 
   Widget ItensDrawer({
     required BuildContext context,
@@ -70,6 +98,15 @@ class MeuDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Uint8List? bytesFoto;
+    if (perfil?.fotoBase64 != null) {
+      try {
+        bytesFoto = base64Decode(perfil!.fotoBase64!);
+      } catch (_) {
+        bytesFoto = null;
+      }
+    }
+
     return Drawer(
       backgroundColor:  Color(0xFF0D1B2A),
       width: 300,
@@ -84,18 +121,16 @@ class MeuDrawer extends StatelessWidget {
                   CircleAvatar(
                     radius: 40,
                     backgroundColor:  Color(0xFF1A4A7A),
-                    backgroundImage: AssetImage(fotoUser),
+                    backgroundImage: bytesFoto != null ? MemoryImage(bytesFoto) : null,
+                    child: bytesFoto == null
+                        ? Icon(Icons.person, color: Colors.white, size: 36)
+                        : null,
                   ),
                    SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(nomeUser,
-                          style:  TextStyle(
-                              color: Colors.white,
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold)),
-                       SizedBox(height: 4),   
+                       
                     ]
                   ),
                 ],
@@ -155,8 +190,10 @@ class MeuDrawer extends StatelessWidget {
                 width: double.infinity,
                 height: 54,
                 child: ElevatedButton.icon(
-                  onPressed: () =>
-                      Navigator.pushReplacementNamed(context, '/homepage'),
+                  onPressed: () => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const Homepage()),
+                      (route) => false),
                   icon:  Icon(Icons.home_rounded,
                       color: Colors.white, size: 20),
                   label:  Text('Voltar para a home',

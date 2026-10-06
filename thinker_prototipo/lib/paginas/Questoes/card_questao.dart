@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tinker/Models/questao_model.dart';
 
-
 class QuestaoCard extends StatelessWidget {
   final Questao questao;
   final bool mostrarSalvar;
@@ -30,7 +29,7 @@ class QuestaoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF0F2744),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF1E3D5C), width: 0.5),
+        border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +43,7 @@ class QuestaoCard extends StatelessWidget {
                     _tag(questao.materia),
                     _tag(questao.assunto),
                     _tag(questao.instituicao),
-                    _tag(questao.ano),
+                    if (questao.ano != null) _tag(questao.ano.toString()),
                   ],
                 ),
               ),
@@ -67,25 +66,67 @@ class QuestaoCard extends StatelessWidget {
           const SizedBox(height: 14),
           ...questao.alternativas.map((alt) => _linhaAlternativa(alt)),
           const SizedBox(height: 4),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: questao.respondida || questao.alternativaSelecionadaId == null
-                  ? null
-                  : onEnviarResposta,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF14335A),
-                disabledBackgroundColor: const Color(0xFF14335A),
-                foregroundColor: const Color(0xFF8AABCC),
-                disabledForegroundColor: const Color(0xFF8AABCC),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                elevation: 0,
+          if (onEnviarResposta != null)
+            _botaoResposta()
+          else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D1B2A),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
               ),
-              child: Text(questao.respondida ? 'Resposta enviada' : 'Enviar resposta'),
+              child: const Text(
+                'Correção de questões avulsas em breve',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 12),
+              ),
             ),
-          ),
+          if (questao.respondida) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: questao.ultimaRespostaCorreta == true
+                    ? const Color(0xFF0F3A2A)
+                    : const Color(0xFF3A1520),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                questao.ultimaRespostaCorreta == true ? 'Você acertou!' : 'Você errou.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: questao.ultimaRespostaCorreta == true
+                      ? const Color(0xFF4ABA8A)
+                      : const Color(0xFFE05C6A),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ],
+      ),
+    );
+  }
+
+  Widget _botaoResposta() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: questao.alternativaSelecionadaId == null ? null : onEnviarResposta,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF14335A),
+          disabledBackgroundColor: const Color(0xFF14335A),
+          foregroundColor: const Color(0xFF8AABCC),
+          disabledForegroundColor: const Color(0xFF8AABCC),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 0,
+        ),
+        child: const Text('Enviar resposta'),
       ),
     );
   }
@@ -98,12 +139,10 @@ class QuestaoCard extends StatelessWidget {
     final selecionada = questao.alternativaSelecionadaId == alt.id;
 
     Color corBorda = const Color(0xFF1E3D5C);
-    if (questao.respondida) {
-      if (alt.correta) {
-        corBorda = const Color(0xFF4ABA8A);
-      } else if (selecionada) {
-        corBorda = const Color(0xFFE05C6A);
-      }
+    if (questao.respondida && selecionada) {
+      corBorda = questao.ultimaRespostaCorreta == true
+          ? const Color(0xFF4ABA8A)
+          : const Color(0xFFE05C6A);
     } else if (selecionada) {
       corBorda = const Color(0xFF4A9EFF);
     }
@@ -112,7 +151,7 @@ class QuestaoCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: GestureDetector(
         onTap: () {
-          if (questao.respondida || alt.eliminada) return;
+          if (alt.eliminada || questao.respondida) return;
           onSelecionarAlternativa?.call(alt);
         },
         child: Container(
@@ -120,7 +159,7 @@ class QuestaoCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF0D1B2A),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: corBorda, width: selecionada ? 1 : 0.5),
+            border: Border.all(color: corBorda, width: selecionada ? 1.5 : 2),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
