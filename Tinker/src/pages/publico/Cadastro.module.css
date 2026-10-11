@@ -17,3 +17,17 @@
   flex-direction: column;
   gap: 6px;
 }
+
+.avisoTipoConta {
+  margin: 4px 0 0;
+  color: #5E6B7A;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .camposDuplos {
+    flex-direction: column;
+  }
+}

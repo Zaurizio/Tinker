@@ -1,85 +1,56 @@
-// Dados simulados de usuários
-const usuariosSimulados = [
-  {
-    id: 1,
-    nome: "João",
-    sobrenome: "Silva",
-    email: "joao@email.com",
-    senha: "123456"
-  },
-  {
-    id: 2,
-    nome: "Maria",
-    sobrenome: "Santos",
-    email: "maria@email.com",
-    senha: "1234567"
-  }
-];
+import { apiService } from './apiService'
+import {
+  atualizarSessaoArmazenada,
+  obterSessaoArmazenada,
+  removerSessaoArmazenada,
+  salvarSessaoArmazenada,
+} from './sessaoStorage'
+import { limparTodoCache } from './cacheStore'
 
-// Simula login
-export function fazerLogin(email, senha) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const usuario = usuariosSimulados.find(
-        u => u.email === email && u.senha === senha
-      );
-
-      if (usuario) {
-        resolve({
-          sucesso: true,
-          usuario: {
-            id: usuario.id,
-            nome: usuario.nome,
-            sobrenome: usuario.sobrenome,
-            email: usuario.email
-          }
-        });
-      } 
-      else {
-        resolve({
-          sucesso: false,
-          mensagem: "Email ou senha incorretos"
-        });
-      }
-    }, 1000); // Simula 1 segundo de delay
-  });
+export function fazerLogin({ email, senha, tipoUsuario }) {
+  return apiService.post('/api/auth/login', { email, senha, tipoUsuario })
 }
 
-// Simula cadastro
-export function fazerCadastro(nome, sobrenome, email, senha) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Verifica se email já existe
-      const emailExiste = usuariosSimulados.some(u => u.email === email);
+export function fazerCadastro({ nome, sobrenome, email, senha, nascimento, tipoUsuario }) {
+  return apiService.post('/api/auth/cadastros', {
+    nome,
+    sobrenome,
+    email,
+    senha,
+    nascimento,
+    tipoUsuario,
+  })
+}
 
-      if (emailExiste) {
-        resolve({
-          sucesso: false,
-          mensagem: "Este email já está cadastrado"
-        });
-      } else {
-        // Cria novo usuário
-        const novoUsuario = {
-          id: usuariosSimulados.length + 1,
-          nome,
-          sobrenome,
-          email,
-          senha
-        };
+export function salvarSessao(dadosLogin) {
+  const sessao = {
+    token: dadosLogin.token,
+    nome: dadosLogin.nome,
+    sobrenome: dadosLogin.sobrenome,
+    email: dadosLogin.email,
+    tipoUsuario: dadosLogin.tipoUsuario,
+  }
 
-        usuariosSimulados.push(novoUsuario);
+  return salvarSessaoArmazenada(sessao)
+}
 
-        resolve({
-          sucesso: true,
-          mensagem: "Cadastro realizado com sucesso",
-          usuario: {
-            id: novoUsuario.id,
-            nome: novoUsuario.nome,
-            sobrenome: novoUsuario.sobrenome,
-            email: novoUsuario.email
-          }
-        });
-      }
-    }, 1000); // Simula 1 segundo de delay
-  });
+export function obterSessao() {
+  return obterSessaoArmazenada()
+}
+
+export function obterToken() {
+  return obterSessao()?.token ?? null
+}
+
+export function estaAutenticado() {
+  return Boolean(obterToken())
+}
+
+export function encerrarSessao() {
+  removerSessaoArmazenada()
+  limparTodoCache()
+}
+
+export function atualizarSessao(dados) {
+  return atualizarSessaoArmazenada(dados)
 }

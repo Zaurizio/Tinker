@@ -1,30 +1,34 @@
 /*seta baixo*/ import { IoIosArrowDown } from "react-icons/io"; //<IoIosArrowDown />
 /*seta cima*/ import { IoIosArrowUp } from "react-icons/io"; //<IoIosArrowUp />
 import { useEffect, useMemo, useRef, useState } from "react";
+import Checkbox from "@mui/material/Checkbox";
 {/*useEffect: executa efeitos quando algo muda,
   useRef: guarda referencia de um elemento do DOM,
   useMemo: calcula valor derivado sem recalcular tudo a toa  
 */}
 import estiloCampoSelM from "./CampoSelecaoMultipla.module.css";
 
-function CampoSelecaoMultipla({ 
-  /*props*/
+function CampoSelecaoMultipla({
+  /*props que vem de */
   label,
   placeholder,
   opcoes = [],
   selecionadas = [],
   onChange,
+  desabilitado = false,
 }) {
   const [aberto, setAberto] = useState(false); {/*se o painel está aberto*/}
   const [busca, setBusca] = useState(""); {/*guarda o que usuario digitou em busca*/}
   const [selecionadasTemporarias, setSelecionadasTemporarias] = useState(selecionadas);
   {/*guarda opções marcadas no painel*/}
+  const [selecionadasSincronizadas, setSelecionadasSincronizadas] = useState(selecionadas);
 
   const containerRef = useRef(null); {/*cria referencia pra area do campo (se clicou dentro ou fora) ?*/}
 
-  useEffect(() => {
+  if (selecionadas !== selecionadasSincronizadas) {
+    setSelecionadasSincronizadas(selecionadas);
     setSelecionadasTemporarias(selecionadas);
-  }, [selecionadas]); {/*selecionadas temporarias = selecionadas (?)*/}
+  } {/*selecionadas temporarias = selecionadas (?)*/}
 
   {/*se clicar fora sai do painel*/}
   useEffect(() => {
@@ -57,6 +61,7 @@ function CampoSelecaoMultipla({
   {/*cria nova lista opcoesFiltradas*/}
 
   function abrirPainel() {
+    if (desabilitado) return;
     setSelecionadasTemporarias(selecionadas);
     setAberto(true);
   }
@@ -81,7 +86,7 @@ function CampoSelecaoMultipla({
     }
 
     setSelecionadasTemporarias([...selecionadasTemporarias, opcao]);
-    /*o que caralhos isso significa*/
+    /*adiciona opçao*/
   }
 
   function aplicarSelecao() {
@@ -119,8 +124,12 @@ function CampoSelecaoMultipla({
       <div className={estiloCampoSelM.areaCampo} ref={containerRef}>
         <button
           type="button"
-          className={`${estiloCampoSelM.botaoCampo} ${aberto ? estiloCampoSelM.botaoCampoAberto : ""}`}
+          className={`${estiloCampoSelM.botaoCampo} ${aberto ? estiloCampoSelM.botaoCampoAberto : ""} ${
+            desabilitado ? estiloCampoSelM.botaoCampoDesabilitado : ""
+          }`}
           onClick={() => (aberto ? fecharPainel() : abrirPainel())}
+          disabled={desabilitado}
+          aria-busy={desabilitado}
         >
           <span
             className={`${estiloCampoSelM.valorCampo} ${
@@ -133,11 +142,11 @@ function CampoSelecaoMultipla({
           <span
             className={`${estiloCampoSelM.seta} ${aberto ? estiloCampoSelM.setaAberta : ""}`}
           >
-            <IoIosArrowDown /> {/*tem que centralizar a seta*/}
+            <IoIosArrowDown />
           </span>
         </button>
 
-        {aberto && (
+        {aberto && !desabilitado && (
           <div className={estiloCampoSelM.painelSelecao}>
             <div className={estiloCampoSelM.topoPainel}>
               <input
@@ -153,10 +162,11 @@ function CampoSelecaoMultipla({
               {opcoesFiltradas.length > 0 ? (
                 opcoesFiltradas.map((opcao) => (
                   <label key={opcao} className={estiloCampoSelM.itemOpcao}>
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={selecionadasTemporarias.includes(opcao)}
                       onChange={() => toggleOpcao(opcao)}
+                      className={estiloCampoSelM.checkboxCustom}
+                      disableRipple
                     />
                     <span>{opcao}</span>
                   </label>

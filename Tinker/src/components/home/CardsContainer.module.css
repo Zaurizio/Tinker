@@ -1,38 +1,36 @@
 .cardLink {
-  text-decoration: none; /* Remove sublinhado do link */
-  color: inherit; /* Mantém a cor do texto padrão */
-  display: block; /* Garante que o link ocupe todo o card */
-  /* Adicione flex-shrink para permitir que o card encolha se necessário */
-  flex-shrink: 1;
-  /* Defina uma largura base para o card, para que 5 caibam na linha */
-  flex-basis: 280px; /* Exemplo: 5 cards de 180px + 4 gaps de 20px = 980px, cabe em 1200px */
-  max-width: 300px; /* Limita a largura máxima para não ficarem muito grandes */
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  flex: 1 1 220px;
+  max-width: 300px;
+  min-width: 0;
 }
 
 .card {
+  height: 150px;
   background-color: var(--cor-fundo-card-suave);
-  border-radius: 15px; /* Cantos arredondados */
-  box-shadow: 0 4px 15px var(--cor-sombra-preta-hover); /* Sombra suave */
+  border-radius: 15px;
+  box-shadow: 0 4px 15px var(--cor-sombra-preta-hover);
   padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: left;
+  align-items: flex-start;
   justify-content: center;
   text-align: left;
-  height: 150px; /* Altura fixa para todos os cards */
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   cursor: pointer;
 }
 
 .card:hover {
-  transform: translateY(-5px); /* Efeito de "levantar" ao passar o mouse */
-  box-shadow: 0 8px 25px var(--cor-sombra-preta-hover); /* Sombra mais pronunciada */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--cor-sombra-preta-hover);
 }
 
 .cardIcon {
-  font-size: 2.5em; /* Tamanho grande para os ícones */
-  color: var(--cor-texto-principal); /* Cor do ícone (pode ser ajustada) */
-  margin-bottom: 0; /*margem inferior que empurra titulo*/
+  font-size: 2.5em;
+  color: var(--cor-texto-principal);
+  margin-bottom: 0;
 }
 
 .cardTitle {
@@ -43,28 +41,41 @@
   margin-bottom: 0;
 }
 
-/* Responsividade para o tamanho do card */
 @media (max-width: 768px) {
-  .card {
-    height: 180px;
-    padding: 25px;
+  .cardLink {
+    flex-basis: calc(50% - 10px);
+    max-width: none;
   }
+
+  .card {
+    height: 170px;
+    padding: 24px;
+  }
+
   .cardIcon {
     font-size: 3em;
   }
+
   .cardTitle {
     font-size: 1.2em;
   }
 }
 
 @media (max-width: 480px) {
+  .cardLink {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
   .card {
-    height: 160px;
+    height: 150px;
     padding: 20px;
   }
+
   .cardIcon {
     font-size: 2.5em;
   }
+
   .cardTitle {
     font-size: 1.1em;
   }

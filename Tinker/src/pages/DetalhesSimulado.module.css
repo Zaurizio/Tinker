@@ -1,0 +1,166 @@
+.pagina {
+  flex: 1;
+  min-height: 100vh;
+  padding: 36px 32px;
+  box-sizing: border-box;
+  background: var(--cor-fundo-pagina);
+}
+
+.envoltorio {
+  width: 100%;
+  max-width: 910px;
+  margin: 0 auto;
+}
+
+.linha {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.conteudoPrincipal {
+  flex: 1;
+  min-width: 0;
+}
+
+.botaoVoltar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--cor-texto-principal);
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.botaoVoltar:hover {
+  color: var(--cor-primaria);
+}
+
+.botaoVoltar:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
+}
+
+.card {
+  box-sizing: border-box;
+  padding: 28px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  box-shadow: 0 2px 4px var(--cor-sombra-preta-suave);
+}
+
+.titulo {
+  min-width: 0;
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto-principal);
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.descricao {
+  margin: 0 0 12px;
+  color: var(--cor-texto-secundario);
+}
+
+.listaQuestoes {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.metadados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.metadados span {
+  border-radius: 999px;
+  background: var(--cor-fundo-input-suave);
+  color: var(--cor-texto-secundario);
+  font-size: 0.82rem;
+  padding: 5px 9px;
+}
+
+.estado,
+.erro {
+  margin: 0;
+  padding: 16px 4px;
+  color: var(--cor-texto-secundario);
+  text-align: center;
+}
+
+.erro {
+  color: var(--cor-alerta);
+}
+
+.erroConclusao {
+  margin: 18px 0 0;
+  color: var(--cor-alerta);
+  text-align: center;
+}
+
+.acoes {
+  margin-top: 22px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.acoes button {
+  min-height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 12px;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.acoes button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 600px) {
+  .pagina {
+    padding: 24px 16px;
+  }
+
+  .linha {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .conteudoPrincipal {
+    width: 100%;
+  }
+
+  .botaoVoltar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .titulo {
+    font-size: 1.4rem;
+  }
+
+  .acoes button {
+    width: 100%;
+  }
+}

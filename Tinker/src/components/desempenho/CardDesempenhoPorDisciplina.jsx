@@ -1,38 +1,32 @@
-// CardDesempenhoPorDisciplina.jsx
-import React from 'react';
+import styles from "./CardDesempenhoPorDisciplina.module.css";
 
-import styles from './CardDesempenhoPorDisciplina.module.css';
-
-const CardDesempenhoPorDisciplina = ({ dadosDisciplinas = [] }) => {
-  const nenhumaQuestaoRespondida = dadosDisciplinas.length === 0;
-
+function CardDesempenhoPorDisciplina({ dadosDisciplinas = [] }) {
   return (
     <div className={styles.card}>
-      <h3 className={styles.titulo}>Desempenho por disciplina</h3>
-      {nenhumaQuestaoRespondida ? (
-        <p className={styles.mensagemVazia}>Nenhuma questão foi respondida ainda.</p>
+      <h3 id="titulo-desempenho-disciplinas" className={styles.titulo}>
+        Desempenho por disciplina
+      </h3>
+
+      {dadosDisciplinas.length === 0 ? (
+        <p className={styles.mensagemVazia}>Nenhuma questão respondida</p>
       ) : (
         <div className={styles.tabelaContainer}>
-          {/* Aqui você pode renderizar uma tabela com os dados das disciplinas */}
-          {/* Exemplo de estrutura de tabela: */}
-          <table>
+          <table aria-labelledby="titulo-desempenho-disciplinas">
             <thead>
               <tr>
-                <th>Disciplina</th>
-                <th>Acertos</th>
-                <th>Erros</th>
-                <th>Total</th>
-                <th>Taxa de Acerto</th>
+                <th scope="col">Disciplina</th>
+                <th scope="col">Porcentagem de acertos</th>
+                <th scope="col">Número de acertos</th>
+                <th scope="col">Questões feitas</th>
               </tr>
             </thead>
             <tbody>
-              {dadosDisciplinas.map((disciplina, index) => (
-                <tr key={index}>
+              {dadosDisciplinas.map((disciplina) => (
+                <tr key={disciplina.id}>
                   <td>{disciplina.nome}</td>
+                  <td>{disciplina.porcentagemAcertos}%</td>
                   <td>{disciplina.acertos}</td>
-                  <td>{disciplina.erros}</td>
-                  <td>{disciplina.total}</td>
-                  <td>{disciplina.taxaAcerto}%</td>
+                  <td>{disciplina.questoesFeitas}</td>
                 </tr>
               ))}
             </tbody>
@@ -41,6 +35,6 @@ const CardDesempenhoPorDisciplina = ({ dadosDisciplinas = [] }) => {
       )}
     </div>
   );
-};
+}
 
 export default CardDesempenhoPorDisciplina;

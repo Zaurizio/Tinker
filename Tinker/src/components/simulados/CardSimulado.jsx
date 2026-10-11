@@ -1,86 +1,85 @@
-import React, { useState, useRef } from 'react';
-import styles from './CardSimulado.module.css';
-import SimuladoOptions from './SimuladoOptions';
+import styles from "./CardSimulado.module.css";
 
-const CardSimulado = ({ simulado, onMoveToFolder, onDelete, onRename, onDownload, onChangeCop }) => {
-    const [showMenu, setShowMenu] = useState(false);
-    const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, shouldGoUp: false });
-    const buttonRef = useRef(null); // Referência para o botão de três pontinhos
-    const cardRef = useRef(null); // NOVO: Referência para o CardSimulado
+function CardSimulado({ simulado, onAbrir, onRenomear, onExcluir }) {
+  const concluido = Boolean(simulado.concluido);
 
-    const handleToggleMenu = (event) => {
-        event.stopPropagation();
+  function abrirSimulado() {
+    if (concluido) return;
+    onAbrir(simulado);
+  }
 
-        if (showMenu) {
-            setShowMenu(false);
-            return;
-        }
+  function handleKeyDown(event) {
+    if (concluido) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      abrirSimulado();
+    }
+  }
 
-        const buttonRect = buttonRef.current.getBoundingClientRect();
-        const cardRect = cardRef.current.getBoundingClientRect(); // NOVO: Posição do card
-        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  function executarSemAbrir(event, acao) {
+    event.stopPropagation();
+    acao(simulado);
+  }
 
-        // NOVO CÁLCULO: Posição do menu relativa ao CardSimulado
-        // O 'top' é a distância do botão até o topo do card, mais um pequeno offset
-        let top = buttonRect.bottom - cardRect.top + 5; // 5px de espaçamento
-        // O 'left' é a distância do botão até a esquerda do card
-        let left = buttonRect.left - cardRect.left;
+  return (
+    <article
+      className={`${styles.cardSimulado} ${
+        concluido ? styles.cardConcluido : ""
+      }`}
+    >
+      <div
+        className={`${styles.conteudo} ${
+          concluido ? styles.conteudoDesabilitado : ""
+        }`}
+        role={concluido ? undefined : "button"}
+        tabIndex={concluido ? undefined : 0}
+        aria-label={concluido ? undefined : `Abrir simulado ${simulado.titulo}`}
+        onClick={concluido ? undefined : abrirSimulado}
+        onKeyDown={concluido ? undefined : handleKeyDown}
+      >
+        <h3 className={styles.titulo}>{simulado.titulo}</h3>
+        {simulado.descricao && (
+          <p className={styles.descricao}>{simulado.descricao}</p>
+        )}
+        <p className={styles.metadados}>
+          {simulado.quantidadeQuestoes} questões
+          {simulado.tempo !== null && ` · ${simulado.tempo} min`}
+        </p>
+        {concluido && (
+          <span className={styles.seloConcluido}>
+            Concluído
+            {simulado.acertos !== null && ` · ${simulado.acertos} acertos`}
+          </span>
+        )}
+      </div>
 
-        // Lógica para verificar se o menu vaza para baixo
-        const menuHeightEstimate = 180; // Ajuste conforme a altura real do seu menu
-        const spaceBelowViewport = viewportHeight - buttonRect.bottom; // Espaço do botão até o fim da viewport
-
-        let shouldGoUp = false;
-        // Se o menu, posicionado abaixo do botão, for vazar da viewport
-        // E se houver espaço suficiente acima do botão na viewport
-        if (spaceBelowViewport < menuHeightEstimate && buttonRect.top > menuHeightEstimate) {
-            shouldGoUp = true;
-            // Se for para cima, o 'top' precisa ser ajustado para a parte superior do botão
-            // e o CSS fará o resto com translateY(-100%)
-            top = buttonRect.top - cardRect.top - 5; // 5px de espaçamento acima do botão
-        }
-
-        setMenuPosition({ top, left, shouldGoUp });
-        setShowMenu(true);
-    };
-
-    const handleCloseMenu = () => {
-        setShowMenu(false);
-    };
-
-    // Handlers para as ações do menu (mantidos como estavam)
-    const handleMoveToFolderClick = () => { onMoveToFolder(simulado.id); handleCloseMenu(); };
-    const handleDeleteClick = () => { onDelete(simulado.id); handleCloseMenu(); };
-    const handleRenameClick = () => { onRename(simulado.id, simulado.nome); handleCloseMenu(); };
-    const handleDownloadClick = () => { onDownload(simulado.id); handleCloseMenu(); };
-    const handleChangeCopClick = () => { onChangeCop(simulado.id); handleCloseMenu(); };
-
-    return (
-        <div className={styles.cardSimulado} onClick={handleCloseMenu} ref={cardRef}> {/* Adicione a referência ao card */}
-            <div className={styles.header}>
-                <h3 className={styles.simuladoTitle}>{simulado.nome}</h3>
-                <button
-                    ref={buttonRef}
-                    className={styles.menuButton}
-                    onClick={handleToggleMenu}
-                >
-                    ...
-                </button>
-                {showMenu && (
-                    <SimuladoOptions
-                        onClose={handleCloseMenu}
-                        position={menuPosition}
-                        onMoveToFolder={handleMoveToFolderClick}
-                        onDelete={handleDeleteClick}
-                        onRename={handleRenameClick}
-                        onDownload={handleDownloadClick}
-                        onChangeCop={handleChangeCopClick}
-                    />
-                )}
-            </div>
-            <p className={styles.simuladoDescription}>{simulado.descricao || "Nenhuma descrição disponível."}</p>
-        </div>
-    );
-};
+      <div className={styles.acoes}>
+        {concluido && (
+          <button
+            type="button"
+            className={styles.botaoRecomecar}
+            onClick={(event) => executarSemAbrir(event, onAbrir)}
+          >
+            Recomeçar
+          </button>
+        )}
+        <button
+          type="button"
+          className={styles.botaoRenomear}
+          onClick={(event) => executarSemAbrir(event, onRenomear)}
+        >
+          Renomear
+        </button>
+        <button
+          type="button"
+          className={styles.botaoExcluir}
+          onClick={(event) => executarSemAbrir(event, onExcluir)}
+        >
+          Excluir
+        </button>
+      </div>
+    </article>
+  );
+}
 
 export default CardSimulado;

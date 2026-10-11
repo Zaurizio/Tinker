@@ -1,7 +1,7 @@
 import { FiSearch } from "react-icons/fi";
 import estiloBarraBusca from "./BarraBusca.module.css";
 
-function BarraBusca({ placeholder = "Pesquisar...", value, onChange }) {
+function BarraBusca({ placeholder = "Pesquisar...", value, onChange, disabled = false }) {
   return (
     <div className={estiloBarraBusca.campoBusca}>
       <FiSearch className={estiloBarraBusca.icone} />
@@ -11,6 +11,7 @@ function BarraBusca({ placeholder = "Pesquisar...", value, onChange }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={estiloBarraBusca.input}
+        disabled={disabled}
       />
     </div>
   );

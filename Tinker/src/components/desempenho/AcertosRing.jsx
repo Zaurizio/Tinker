@@ -12,8 +12,8 @@ const AcertosRing = ({ value = 0, animationDuration = 800 }) => { // Adicionamos
   useEffect(() => {
     // Se o valor final for 0, não anima, apenas mostra 0
     if (value === 0) {
-      setDisplayValue(0);
-      return;
+      const timerZero = setTimeout(() => setDisplayValue(0), 0);
+      return () => clearTimeout(timerZero);
     }
 
     let start = 0;

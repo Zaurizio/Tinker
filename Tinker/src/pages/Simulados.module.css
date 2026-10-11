@@ -1,102 +1,128 @@
-/* src/pages/Simulados.module.css */
-
 .pagina {
   flex: 1;
   min-height: 100vh;
-  background: var(--cor-fundo-pagina);
   padding: 36px 32px;
+  display: flex;
+  justify-content: center;
   box-sizing: border-box;
-  display: flex; /* Adicionado para centralizar o conteúdo */
-  justify-content: center; /* Centraliza o conteúdo horizontalmente */
+  background: var(--cor-fundo-pagina);
 }
 
 .conteudo {
+  width: 100%;
   max-width: 850px;
-  width: 100%; /* Garante que o conteúdo ocupe a largura máxima definida */
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.titulo { /* Novo estilo para o título "Meus Simulados" */
+.titulo {
+  margin-bottom: 10px;
+  color: var(--cor-texto-principal);
   font-size: 2.2em;
   font-weight: 450;
-  color: var(--cor-texto-principal); /* Cor do texto */
-  margin-bottom: 10px; /* Espaçamento abaixo do título */
-  text-align: left; /* Centraliza o texto */
+  text-align: left;
 }
 
-.acoes {
-  display: flex;
-  gap: 14px;
-  /* justify-content: flex-start; */ /* Remova ou ajuste se quiser centralizar os botões */
-}
-
-/* Estilos para os botões de ação */
-.botaoCriarSimulado,
-.botaoFiltrarSimulados {
+.seletorModo {
   display: flex;
   align-items: center;
-  gap: 8px; /* Espaçamento entre ícone e texto */
-  height: 46px;
-  padding: 0 22px;
-  border-radius: 14px;
-  font-size: 0.95rem;
+  gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--cor-borda-padrao);
+}
+
+.botaoModo {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cor-texto-secundario);
+  font: inherit;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.botaoCriarSimulado { /* Botão branco */
-  border: 1px solid var(--cor-borda-controle);
-  background: var(--cor-fundo-card);
+.botaoModo:hover {
+  background: var(--cor-fundo-hover);
   color: var(--cor-texto-principal);
 }
 
+.botaoModoAtivo,
+.botaoModoAtivo:hover {
+  border-color: var(--cor-primaria-destaque-borda);
+  background: var(--cor-primaria-destaque-fundo);
+  color: var(--cor-primaria-destaque);
+}
+
+.botaoModo:focus-visible,
+.botaoCriarSimulado:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
+}
+
+.ferramentasLista {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.botaoCriarSimulado {
+  min-height: 46px;
+  padding: 0 22px;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 14px;
+  background: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
 .botaoCriarSimulado:hover {
+  border-color: var(--cor-borda-hover);
   background: var(--cor-fundo-hover);
-}
-
-.botaoFiltrarSimulados { /* Botão azul */
-  border: none; /* Remova a borda se quiser que seja sólido */
-  background: var(--cor-primaria);
-  color: var(--cor-texto-claro);
-}
-
-.botaoFiltrarSimulados:hover {
-  background: var(--cor-botao-primario-hover);
 }
 
 .listaSimulados {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .estadoVazio {
-  font-size: 0.95rem;
+  padding: 18px 4px;
   color: var(--cor-texto-placeholder);
-  padding: 12px 4px;
-  text-align: center; /* Centraliza a mensagem de estado vazio */
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .seletorModo {
+    align-items: stretch;
+  }
+
+  .botaoModo {
+    flex: 1;
+    padding: 0 12px;
+  }
+
+  .ferramentasLista {
+    grid-template-columns: 1fr;
+  }
+
+  .botaoCriarSimulado {
+    width: 100%;
+  }
 }
 
 @media (max-width: 600px) {
   .pagina {
     padding: 24px 16px;
-  }
-
-  /*
-  .titulo {
-    text-align: left;
-  }
-*/
-
-  .acoes {
-    flex-direction: column;
-  }
-
-  .botaoCriarSimulado,
-  .botaoFiltrarSimulados { /* Ajuste para os novos nomes de classe */
-    width: 100%;
   }
 }

@@ -34,3 +34,8 @@
 .input::placeholder {
   color: var(--cor-texto-placeholder);
 }
+
+.input:disabled {
+  cursor: not-allowed;
+  color: var(--cor-texto-desabilitado);
+}

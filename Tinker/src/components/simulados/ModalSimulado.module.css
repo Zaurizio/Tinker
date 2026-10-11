@@ -64,6 +64,17 @@
   color: var(--cor-texto-placeholder);
 }
 
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.erro {
+  margin: -4px 0 0;
+  color: var(--cor-erro, #b42318);
+  font-size: 0.875rem;
+}
+
 .acoes {
   display: flex;
   justify-content: flex-end;
@@ -99,4 +110,27 @@
 
 .botaoSecundario:hover {
   background: var(--cor-fundo-hover);
+}
+
+.botaoDestrutivo {
+  height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 14px;
+  background: var(--cor-acao-destrutiva);
+  color: var(--cor-texto-claro);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botaoDestrutivo:hover:not(:disabled) {
+  background: var(--cor-alerta);
+}
+
+.botaoPrimario:disabled,
+.botaoSecundario:disabled,
+.botaoDestrutivo:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }

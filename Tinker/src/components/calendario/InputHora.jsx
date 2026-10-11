@@ -57,7 +57,7 @@ function interpretarHora(texto) {
   return null;
 }
 
-export default function InputHora({ value, onChange }) {
+export default function InputHora({ value, onChange, onValidityChange, disabled = false }) {
     /*value: hora inicial, onChange: muda hora (setHora)*/
     const [texto, setTexto] = useState(value || ''); /*guarda o que tá no input*/
     const [listaAberta, setListaAberta] = useState(false); /*lista de horarios fechada*/
@@ -65,7 +65,6 @@ export default function InputHora({ value, onChange }) {
     const inputRef = useRef(null); /*onde ta o input*/
     const listaRef = useRef(null); /*onde ta a div da lista*/
     const containerRef = useRef(null); /*onde ta o container*/
-    const ultimoValido = useRef(value || ''); /*guarda último valor válido*/
 
   /*rola até o horário selecionado quando abre a div*/
   useEffect(() => {
@@ -83,7 +82,6 @@ export default function InputHora({ value, onChange }) {
     function handleClickFora(e) {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
         setListaAberta(false);
-        setInvalido(false);
       }
     }
     document.addEventListener('mousedown', handleClickFora);
@@ -92,33 +90,35 @@ export default function InputHora({ value, onChange }) {
 
     /*quando clica no input de hora*/
     function handleFocus() {
+        if (disabled) return;
         setListaAberta(true); /*abre lista*/
         setInvalido(false); /*limpa erro anterior*/
     }
 
     /*quando digita no input de hora*/
     function handleChange(e) {
-        setTexto(e.target.value); /*atualiza texto do input*/
+        const novoTexto = e.target.value;
+        setTexto(novoTexto); /*atualiza texto do input*/
         setInvalido(false); /*limpa erro (novo texto)*/
+        onValidityChange?.(Boolean(interpretarHora(novoTexto)));
     }
 
     /*quando sai do campo*/
     function handleBlur() {
         if (texto === '') {
-            const ultValorVal = ultimoValido.current;
-            setTexto(ultValorVal); /*deixa texto no input*/
-            onChange(ultValorVal); /*atualiza horário pro cardeventos*/
-            setInvalido(false);
+            setInvalido(true);
+            onValidityChange?.(false);
             return;
         }
         const interpretado = interpretarHora(texto);
         if (interpretado) {
             setTexto(interpretado); /*deixa texto no input*/
             onChange(interpretado); /*atualiza horário pro cardEventos*/
-            ultimoValido.current = interpretado;
             setInvalido(false);
+            onValidityChange?.(true);
         } else {
             setInvalido(true);
+            onValidityChange?.(false);
         }
     }
 
@@ -133,9 +133,9 @@ export default function InputHora({ value, onChange }) {
     function handleSelecionar(horario) {
         setTexto(horario);
         onChange(horario);
-        ultimoValido.current = horario;
         setListaAberta(false);
         setInvalido(false);
+        onValidityChange?.(true);
     }
 
   return (
@@ -149,6 +149,7 @@ export default function InputHora({ value, onChange }) {
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
+          disabled={disabled}
         />
         {invalido && (
           <span className={estilos.tooltip}>Hora inválida</span>
@@ -161,6 +162,7 @@ export default function InputHora({ value, onChange }) {
             <button
               key={h}
               className={`${estilos.item} ${value === h ? estilos.itemAtivo : ''}`}
+              disabled={disabled}
               onMouseDown={(e) => {
                 e.preventDefault(); // evita blur antes do click
                 e.stopPropagation();

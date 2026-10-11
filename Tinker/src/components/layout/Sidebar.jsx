@@ -1,4 +1,5 @@
-import { NavLink } from "react-router"
+import { useState } from "react"
+import { NavLink, useNavigate } from "react-router"
 /*menu*/ import { TiThMenu } from "react-icons/ti"; //<TiThMenu />
 /*setinha*/ import { MdKeyboardArrowRight } from "react-icons/md"; //<MdKeyboardArrowRight />
 /*home*/ import { FaHome } from "react-icons/fa"; //<FaHome />
@@ -7,18 +8,30 @@ import { NavLink } from "react-router"
 /*desempenho*/ import { SiGoogleanalytics } from "react-icons/si"; //<SiGoogleanalytics />
 /*calendario*/ import { TbCalendarEvent } from "react-icons/tb"; //<TbCalendarEvent />
 /*turma*/ import { MdGroups } from "react-icons/md"; //<MdGroups />
-/*suporte*/ import { FaQuestionCircle } from "react-icons/fa"; //<FaQuestionCircle />
+/*conta*/ import { FaUserCircle } from "react-icons/fa"; //<FaUserCircle />
+/*sair*/ import { IoIosLogOut } from "react-icons/io"; //<IoIosLogOut />
 
 import { RiBarChartFill } from "react-icons/ri";
 import { TbTargetArrow } from "react-icons/tb";
 import { FaRegNoteSticky } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { IoGameControllerOutline } from "react-icons/io5";
 
+import ModalConfirmarAcaoTurma from "../turma/ModalConfirmarAcaoTurma";
+import { encerrarSessao } from "../../services/autenticacaoService";
 
 import estiloSidebar from './Sidebar.module.css'
 
 function Sidebar() {
+    const navigate = useNavigate();
+    const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+    function handleSair() {
+        encerrarSessao();
+        navigate("/login");
+    }
+
     return(
         <aside className={estiloSidebar.sidebar}> {/*conteudo lateral*/}
             <div className={estiloSidebar.topo}>
@@ -122,9 +135,10 @@ function Sidebar() {
                 <span className={estiloSidebar.texto}>Turma</span>
                 </NavLink>
 
-                {/*SUPORTE*/}
+
+                {/*JOGO*/}
                 <NavLink
-                to="/suporte"
+                to="/jogo"
                 className={({ isActive }) =>
                     isActive
                     ? `${estiloSidebar.link} ${estiloSidebar.ativo}`
@@ -132,11 +146,47 @@ function Sidebar() {
                 }
                 >
                 <span className={estiloSidebar.icone}>
-                    <FaQuestionCircle />
+                    <IoGameControllerOutline />
                 </span>
-                <span className={estiloSidebar.texto}>Suporte</span>
+                <span className={estiloSidebar.texto}>Jogo</span>
                 </NavLink>
+                {/*CONTA*/}
+                <NavLink
+                to="/conta"
+                className={({ isActive }) =>
+                    isActive
+                    ? `${estiloSidebar.link} ${estiloSidebar.ativo}`
+                    : estiloSidebar.link
+                }
+                >
+                <span className={estiloSidebar.icone}>
+                    <FaUserCircle />
+                </span>
+                <span className={estiloSidebar.texto}>Conta</span>
+                </NavLink>
+
+                {/*SAIR*/}
+                <button
+                type="button"
+                className={`${estiloSidebar.linkButton} ${estiloSidebar.linkSair}`}
+                onClick={() => setConfirmandoSaida(true)}
+                >
+                <span className={estiloSidebar.icone}>
+                    <IoIosLogOut />
+                </span>
+                <span className={estiloSidebar.texto}>Sair</span>
+                </button>
             </nav>
+
+            {confirmandoSaida && (
+                <ModalConfirmarAcaoTurma
+                titulo="Sair"
+                descricao="Tem certeza que deseja sair da sua conta?"
+                textoConfirmar="Sair"
+                onFechar={() => setConfirmandoSaida(false)}
+                onConfirmar={handleSair}
+                />
+            )}
         </aside>
     )
 }

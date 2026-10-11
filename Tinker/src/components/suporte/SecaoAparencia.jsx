@@ -1,5 +1,5 @@
 import { FaMoon, FaRegCircle, FaRegDotCircle, FaSun } from "react-icons/fa";
-import estiloSuporte from "../../pages/Suporte.module.css";
+import estiloConta from "../../pages/Conta.module.css";
 
 const opcoesTema = [
   { valor: "claro", label: "Modo claro", icone: FaSun },
@@ -8,15 +8,15 @@ const opcoesTema = [
 
 function SecaoAparencia({ temaSelecionado, onAlterarTema }) {
   return (
-    <article className={estiloSuporte.card}>
-      <div className={estiloSuporte.cabecalhoCard}>
-        <h2 className={estiloSuporte.tituloCard}>Aparência</h2>
-        <p className={estiloSuporte.textoCard}>
+    <article className={estiloConta.card}>
+      <div className={estiloConta.cabecalhoCard}>
+        <h2 className={estiloConta.tituloCard}>Aparência</h2>
+        <p className={estiloConta.textoCard}>
           Escolha como você deseja usar o Tinker.
         </p>
       </div>
 
-      <div className={estiloSuporte.opcoesTema}>
+      <div className={estiloConta.opcoesTema}>
         {opcoesTema.map(({ valor, label, icone }) => {
           const selecionado = temaSelecionado === valor;
           const IconeTema = icone;
@@ -25,17 +25,17 @@ function SecaoAparencia({ temaSelecionado, onAlterarTema }) {
             <button
               type="button"
               key={valor}
-              className={`${estiloSuporte.opcaoTema} ${
-                selecionado ? estiloSuporte.opcaoTemaAtiva : ""
+              className={`${estiloConta.opcaoTema} ${
+                selecionado ? estiloConta.opcaoTemaAtiva : ""
               }`}
               onClick={() => onAlterarTema(valor)}
               aria-pressed={selecionado}
             >
-              <span className={estiloSuporte.iconeTema}>
+              <span className={estiloConta.iconeTema}>
                 <IconeTema />
               </span>
               <span>{label}</span>
-              <span className={estiloSuporte.radioTema}>
+              <span className={estiloConta.radioTema}>
                 {selecionado ? <FaRegDotCircle /> : <FaRegCircle />}
               </span>
             </button>

@@ -26,6 +26,18 @@
   gap: 10px;
 }
 
+.horarios {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+}
+
+.horariosOcultos {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .inputEvento {
   width: 100%;
   height: 44px;
@@ -42,6 +54,11 @@
 
 .inputEvento:focus {
   border-color: var(--cor-primaria);
+}
+
+.inputEvento::placeholder {
+  color: var(--cor-texto-placeholder);
+  opacity: 1;
 }
 
 .botaoData {
@@ -185,6 +202,33 @@
   background: var(--cor-fundo-hover);
 }
 
+.mensagemErro {
+  margin: 0;
+  color: var(--cor-alerta);
+  font-size: 0.875rem;
+}
+
+.areaMensagem {
+  min-height: 1.35rem;
+}
+
+@media (max-width: 560px) {
+  .card {
+    min-width: 0;
+    max-width: calc(100vw - 32px);
+  }
+
+  .linha {
+    flex-wrap: wrap;
+  }
+}
+
+.card button:disabled,
+.card input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /*linha 3*/
 .labelCheck {
   display: flex;
@@ -196,11 +240,22 @@
   user-select: none;
 }
 
-.checkbox {
-  width: 15px;
-  height: 15px;
-  cursor: pointer;
-  accent-color: var(--cor-primaria);
+/*desmarcado*/
+.checkboxCustom {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  color: var(--cor-primaria-hover) !important;
+}
+
+/*marcado*/
+.checkboxCustom:global(.Mui-checked) {
+  color: var(--cor-primaria-hover) !important;
+}
+
+/*tamanho icone interno*/
+.checkboxCustom :global(.MuiSvgIcon-root) {
+  font-size: 18px;
 }
 
 .botaoCor {
