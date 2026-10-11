@@ -1,0 +1,1 @@
+const bool kSoJogo = bool.fromEnvironment('SO_JOGO');

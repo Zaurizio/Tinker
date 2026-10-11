@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tinker/_comum/so_jogo.dart';
 import 'package:tinker/homepage.dart';
 import 'package:tinker/screens/level_select_screen.dart';
 
@@ -39,6 +40,7 @@ class TitleScreen extends StatelessWidget {
             ),
           ),
 
+          if (!kSoJogo)
           Positioned(
             top: 16,
             left: 16,

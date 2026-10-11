@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/painting.dart';
 import 'package:tinker/components/interaction_button.dart';
 import 'package:tinker/components/jump_button.dart';
@@ -28,7 +29,8 @@ class TinkerGame extends FlameGame
   late CameraComponent cam;
   Player player = Player(character: 'Razor Bill');
   late JoystickComponent joystick;
-  bool showControls = true;
+  bool showControls = defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS;
   bool playSounds = true;
   double soundVolume = 1.0;
   List<String> levelNames = ['level_01', 'level_02'];

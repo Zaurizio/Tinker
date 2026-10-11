@@ -3,10 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/game.dart';
-import 'package:flame/widgets.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
-import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/services.dart';
 import 'package:tinker/components/checkpoint.dart';
 import 'package:tinker/components/collision_block.dart';

@@ -37,7 +37,7 @@ Future<List<EventoCalendario>> criarEvento({
     'diaInteiro': diaInteiro,
     'cor': cor,
     'recorrencia': recorrencia,
-    if (repeticoes != null) 'repeticoes': repeticoes,
+    'repeticoes': ?repeticoes,
     if (disciplina != null && disciplina.trim().isNotEmpty) 'disciplina': disciplina.trim(),
     if (conteudo != null && conteudo.trim().isNotEmpty) 'conteudo': conteudo.trim(),
     if (descricao != null && descricao.trim().isNotEmpty) 'descricao': descricao.trim(),

@@ -15,8 +15,8 @@ Future<SimuladoDetalheDTO> criarSimulado({
 }) async {
   final dados = await apiPost('/simulados', {
     'titulo': titulo,
-    if (descricao != null) 'descricao': descricao,
-    if (tempo != null) 'tempo': tempo,
+    'descricao': ?descricao,
+    'tempo': ?tempo,
   });
   return SimuladoDetalheDTO.fromApi(dados);
 }

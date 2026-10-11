@@ -16,13 +16,13 @@ class _ContatoState extends State<Contato> {
   final msgCtrl = TextEditingController();
 
 void Mostrar(){
-  listaMensagem.forEach((Mensagem m){
-    print("nome:" + m.nomeF);
+  for (var m in listaMensagem) {
+    print("nome:${m.nomeF}");
     print("email:" + m.emailU);
-    print("Numero:" + m.numC.toString());
-    print("Mensagem:" + m.msg);
+    print("Numero:${m.numC}");
+    print("Mensagem:${m.msg}");
   
-  });
+  }
 }
 
   List<Mensagem> listaMensagem = [];

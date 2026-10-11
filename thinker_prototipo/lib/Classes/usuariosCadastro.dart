@@ -3,17 +3,17 @@ class Usuarioscadastro {
   String _senha;
   String _email;
 
- String get nome => this._nome;
+ String get nome => _nome;
 
- set nome(String value) => this._nome = value;
+ set nome(String value) => _nome = value;
 
-  get senha => this._senha;
+  String get senha => _senha;
 
- set senha( value) => this._senha = value;
+ set senha( value) => _senha = value;
 
-  get email => this._email;
+  String get email => _email;
 
- set email( value) => this._email = value;
+ set email( value) => _email = value;
 
 Usuarioscadastro(this._nome,this._senha,this._email);
 }

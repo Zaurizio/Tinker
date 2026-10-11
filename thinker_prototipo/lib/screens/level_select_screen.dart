@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tinker/data/level_theme.dart';
+import 'package:tinker/_comum/so_jogo.dart';
 import 'package:tinker/homepage.dart';
 import 'package:tinker/screens/game_screen.dart';
 
@@ -52,6 +53,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 24),
+                if (!kSoJogo)
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Material(
