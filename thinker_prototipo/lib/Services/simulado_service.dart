@@ -1,6 +1,7 @@
 import 'package:tinker/Services/api_client.dart';
 import 'package:tinker/Models/simulado_model.dart';
 import 'package:tinker/Models/questao_model.dart';
+import 'package:tinker/Models/resultado_simulado_model.dart';
 import 'package:tinker/Services/questoes_service.dart';
 
 Future<List<SimuladoResumo>> buscarSimulados() async {
@@ -15,8 +16,8 @@ Future<SimuladoDetalheDTO> criarSimulado({
 }) async {
   final dados = await apiPost('/simulados', {
     'titulo': titulo,
-    'descricao': ?descricao,
-    'tempo': ?tempo,
+    if (descricao != null) 'descricao': descricao,
+    if (tempo != null) 'tempo': tempo,
   });
   return SimuladoDetalheDTO.fromApi(dados);
 }
@@ -49,4 +50,13 @@ Future<bool> corrigirQuestaoDoSimulado({
   required String alternativaSelecionadaId,
 }) async {
   return corrigirQuestaoAvulsa(questaoId, alternativaSelecionadaId);
+}
+
+
+Future<ConclusaoSimulado> concluirSimulado({
+  required int simuladoId,
+  required List<Map<String, dynamic>> respostas,
+}) async {
+  final dados = await apiPost('/simulados/$simuladoId/conclusoes', {'respostas': respostas});
+  return ConclusaoSimulado.fromApi(dados);
 }

@@ -15,7 +15,10 @@ class FiltrosQuestao {
 
   factory FiltrosQuestao.fromApi(Map<String, dynamic> json) {
     return FiltrosQuestao(
-      disciplinas: List<String>.from(json['disciplinas'] ?? []),
+      
+      disciplinas: ((json['disciplinas'] ?? []) as List)
+          .map((d) => d is Map ? d['nome'].toString() : d.toString())
+          .toList(),
       vestibulares: List<String>.from(json['vestibulares'] ?? []),
       conteudos: List<String>.from(json['conteudos'] ?? []),
       anos: List<int>.from(json['anos'] ?? []),

@@ -62,7 +62,7 @@ Future<Questao> buscarQuestaoPorId(int id) async {
 
 Future<bool> corrigirQuestaoAvulsa(int questaoId, String alternativaSelecionadaId) async {
   final dados = await apiPost('/questoes/$questaoId/correcoes', {
-    'alternativaSelecionadaId': alternativaSelecionadaId,
+    'alternativa': alternativaSelecionadaId,
   });
   return dados['acertou'] as bool;
 }

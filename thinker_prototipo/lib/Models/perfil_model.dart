@@ -1,3 +1,5 @@
+import 'package:tinker/_comum/foto_base64.dart';
+
 class PerfilModel {
   final String email;
   final String nome;
@@ -26,7 +28,7 @@ class PerfilModel {
       nascimento:
           json['nascimento'] == null ? null : DateTime.tryParse(json['nascimento'].toString()),
       ativo: json['ativo'] is int ? json['ativo'] : int.parse((json['ativo'] ?? 1).toString()),
-      fotoBase64: json['foto']?.toString(),
+      fotoBase64: semPrefixoDataUri(json['foto']),
     );
   }
 

@@ -1,3 +1,5 @@
+import 'package:tinker/_comum/foto_base64.dart';
+
 class MembroTurmaModel {
   final String email;
   final String nome;
@@ -16,7 +18,7 @@ class MembroTurmaModel {
       email: (json['email'] ?? '').toString(),
       nome: (json['nome'] ?? '').toString(),
       sobrenome: (json['sobrenome'] ?? '').toString(),
-      fotoBase64: json['foto']?.toString(),
+      fotoBase64: semPrefixoDataUri(json['foto']),
     );
   }
 

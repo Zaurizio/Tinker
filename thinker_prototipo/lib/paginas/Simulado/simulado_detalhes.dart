@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tinker/Models/questao_model.dart';
 import 'package:tinker/Models/simulado_model.dart';
+import 'package:tinker/Models/resultado_simulado_model.dart';
 import 'package:tinker/paginas/Questoes/card_questao.dart';
 import 'package:tinker/Services/simulado_service.dart';
 import 'package:tinker/Services/questoes_service.dart';
@@ -20,6 +21,8 @@ class _SimuladoDetalheState extends State<SimuladoDetalhe> {
   String? erro;
   SimuladoDetalheDTO? detalhe;
   List<Questao> questoes = [];
+  bool concluindo = false;
+  ConclusaoSimulado? resultadoFinal;
 
   @override
   void initState() {
@@ -67,6 +70,34 @@ class _SimuladoDetalheState extends State<SimuladoDetalhe> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Erro ao corrigir a questão.')));
+    }
+  }
+
+  bool get _todasRespondidas =>
+      questoes.isNotEmpty && questoes.every((q) => q.respondida);
+
+  Future<void> _concluirSimulado() async {
+    setState(() => concluindo = true);
+
+    try {
+      final resultado = await concluirSimulado(
+        simuladoId: widget.simuladoId,
+        respostas: questoes
+            .map((q) => {
+                  'questaoId': q.id,
+                  'alternativa': q.alternativaSelecionadaId,
+                })
+            .toList(),
+      );
+      setState(() {
+        resultadoFinal = resultado;
+        concluindo = false;
+      });
+    } catch (e) {
+      setState(() => concluindo = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Erro ao finalizar o simulado.')));
     }
   }
 
@@ -367,6 +398,49 @@ class _SimuladoDetalheState extends State<SimuladoDetalhe> {
                             ],
                           ),
                         ),
+                      if (questoes.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        if (resultadoFinal != null)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0F2744),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFF1E3D5C), width: 1),
+                            ),
+                            child: Text(
+                              'Simulado finalizado: ${resultadoFinal!.acertos} acertos e '
+                              '${resultadoFinal!.erros} erros de ${resultadoFinal!.quantidadeQuestoes}.',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                            ),
+                          ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: (_todasRespondidas && !concluindo) ? _concluirSimulado : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1A4A8A),
+                              disabledBackgroundColor: const Color(0xFF14335A),
+                              foregroundColor: Colors.white,
+                              disabledForegroundColor: const Color(0xFF8AABCC),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              concluindo
+                                  ? 'Finalizando...'
+                                  : _todasRespondidas
+                                      ? 'Finalizar simulado'
+                                      : 'Responda todas as questões pra finalizar',
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
       ),
