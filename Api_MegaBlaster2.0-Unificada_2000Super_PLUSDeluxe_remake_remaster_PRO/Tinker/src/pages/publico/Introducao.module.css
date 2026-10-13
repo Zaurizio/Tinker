@@ -1,0 +1,134 @@
+.pagina {
+  width: 100%;
+  min-height: 100vh; /*tamanho da tela*/
+  background: linear-gradient(to bottom, #f4f6f9 50%, #c7d8ea 100%);
+  display: flex;
+  flex-direction: column; /*elementos em coluna*/
+}
+
+.conteudo {
+  flex: 1; /*do tamanho da página*/
+  display: flex;
+  flex-direction: column;
+  padding: 36px 48px;
+  box-sizing: border-box; /*padding não aumenta largura*/
+  max-width: 1100px;
+  margin: 0 auto; /*centralizado horizontal*/
+  width: 100%;
+}
+
+.topo {
+  display: flex;
+  align-items: center; /*itens centralizados (vertical)*/
+  margin-bottom: 80px; /*espaço embaixo*/
+}
+
+.logoContainer {
+  display: flex; /* Para que a imagem e o texto fiquem lado a lado */
+  align-items: center; /* Alinha verticalmente a imagem e o texto */
+  gap: 10px; /* Espaço entre a imagem e o texto */
+  margin-bottom: 0; /* Espaço abaixo do logo */
+}
+
+.logoImage {
+  width: 20%; 
+  height: 20%;
+  object-fit: cover; /* Para garantir que a imagem preencha o círculo */
+}
+
+.logotipo {
+  font-family: "Playfair Display SC", serif;
+  font-size: 3.8rem; /*3.8 vezes tamanho base*/
+  font-weight: 500;
+  color: #142033;
+  /*display: block; ?*/
+  margin-bottom: 4px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 560px;
+  margin-top: 80px; /*manda hero pra baixo*/
+}
+
+.titulo {
+  margin: 0; /*remove margem do h1*/
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #142033;
+  line-height: 1.25; /*tamanho da linha 1.25 o tamanho da fonte*/
+}
+
+.descricao {
+  margin: 0; /*parágrafo sem margem*/
+  font-size: 1.05rem;
+  color: #5e6b7a;
+  line-height: 1.6;
+}
+
+.acoes {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  flex-wrap: wrap; /*se não couber na linha cai pra baixo*/
+}
+
+.botaoPrimario,
+.botaoSecundario {
+  height: 50px;
+  padding: 0 28px; /*sem espaço interno em cima e em baixo*/
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoPrimario {
+  border: none;
+  background: #2f5d8a;
+  color: #ffffff;
+}
+
+.botaoPrimario:hover {
+  background: #244a70;
+}
+
+.botaoSecundario {
+  border: 1px solid #c7d2df;
+  background: #ffffff;
+  color: #142033;
+}
+
+.botaoSecundario:hover {
+  background: #eef2f6;
+}
+
+.rodape {
+  width: 100%; /*toda largura*/
+  height: 80px;
+  background: #2f5d8a;
+  border-radius: 40px 40px 0 0; /*só em cima*/
+  flex-shrink: 0; /*não encolhe*/
+}
+
+@media (max-width: 600px) {
+  .conteudo {
+    padding: 24px 20px;
+  }
+
+  .titulo {
+    font-size: 2rem;
+  }
+
+  .acoes {
+    flex-direction: column;
+  }
+
+  .botaoPrimario,
+  .botaoSecundario {
+    width: 100%;
+  }
+}

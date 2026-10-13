@@ -1,0 +1,24 @@
+.container {
+  min-height: 100vh;
+  background: var(--cor-fundo-pagina);
+}
+
+.conteudo {
+  margin-left: 240px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 760px) {
+  .conteudo {
+    margin-left: 76px;
+  }
+}
+
+@media (max-width: 480px) {
+  .conteudo {
+    margin-left: 68px;
+  }
+}

@@ -1,0 +1,93 @@
+{
+    "activeFile": "level_01.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "LabTileSet.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "TileSetTinker.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "TinkerGame.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "TrapmoorTileset_v03.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "bolas.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level_01.tmx": {
+            "expandedObjectLayers": [
+                5,
+                6
+            ],
+            "scale": 1.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 327.6666666666667,
+                "y": 189.33333333333334
+            }
+        },
+        "level_02.tmx": {
+            "expandedObjectLayers": [
+                2,
+                3
+            ],
+            "scale": 1.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 709.6666666666665,
+                "y": 244
+            }
+        },
+        "peacefulnight.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tileset.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        }
+    },
+    "last.externalTilesetPath": "C:/Users/Windows/Desktop/tinker_game/assets/tiles",
+    "last.imagePath": "C:/Users/Windows/Desktop/tinker_game/assets/images/Terrain",
+    "map.height": 23,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+        "TinkerGame.tsx",
+        "level_01.tmx",
+        "TileSetTinker.tsx",
+        "level_02.tmx",
+        "LabTileSet.tsx"
+    ],
+    "project": "sem título.tiled-project",
+    "property.type": "string",
+    "recentFiles": [
+        "TinkerGame.tsx",
+        "LabTileSet.tsx",
+        "level_02.tmx",
+        "TileSetTinker.tsx",
+        "level_01.tmx",
+        "tileset.tsx",
+        "TrapmoorTileset_v03.tsx",
+        "bolas.tsx",
+        "peacefulnight.tsx"
+    ],
+    "tileset.lastUsedFilter": "Ficheiros de conjunto de tiles Tiled (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

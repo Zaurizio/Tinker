@@ -1,0 +1,41 @@
+.campoBusca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  padding: 0 16px;
+  height: 52px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campoBusca:focus-within {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px var(--cor-foco-primario);
+}
+
+.icone {
+  font-size: 18px;
+  color: var(--cor-texto-placeholder);
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: var(--cor-texto-principal);
+}
+
+.input::placeholder {
+  color: var(--cor-texto-placeholder);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  color: var(--cor-texto-desabilitado);
+}

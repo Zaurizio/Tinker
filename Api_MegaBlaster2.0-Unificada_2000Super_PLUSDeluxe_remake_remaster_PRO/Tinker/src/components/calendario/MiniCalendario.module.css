@@ -1,0 +1,99 @@
+.mini {
+  position: fixed;
+  background-color: var(--cor-fundo-card);
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 20px var(--cor-sombra-preta-hover);
+  z-index: 200;
+  width: 260px;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.nomeMes {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto-principal);
+  text-transform: capitalize;
+}
+
+.setas {
+  display: flex;
+  gap: 4px;
+}
+
+.setas button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--cor-texto-secundario);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.setas button:hover {
+  background-color: var(--cor-fundo-hover-calendario);
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.labelSemana {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cor-texto-secundario);
+  padding: 4px 0;
+}
+
+.dia {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--cor-texto-principal);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.dia:hover {
+  background-color: var(--cor-fundo-hover-calendario);
+}
+
+.diaForaMes {
+  color: var(--cor-texto-desabilitado);
+  cursor: default;
+}
+
+.diaForaMes:hover {
+  background: none;
+}
+
+.hoje {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+}
+
+.hoje:hover {
+  background-color: var(--cor-botao-primario-hover);
+}
+
+.selecionado {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-claro);
+}

@@ -1,0 +1,151 @@
+.cardSimulado {
+  --cor-concluido: #2e7d32;
+  --cor-fundo-concluido: #edf7ee;
+  min-width: 0;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 12px;
+  background: var(--cor-fundo-input-suave);
+  color: var(--cor-texto-principal);
+  transition: background 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.cardSimulado:hover {
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+  box-shadow: 0 5px 14px var(--cor-sombra-card-suave);
+  transform: translateY(-1px);
+}
+
+.cardConcluido {
+  border-color: var(--cor-concluido);
+}
+
+.cardConcluido:hover {
+  border-color: var(--cor-concluido);
+  background: var(--cor-fundo-input-suave);
+  box-shadow: none;
+  transform: none;
+}
+
+:global(.dark-mode) .cardSimulado {
+  --cor-concluido: #7edc87;
+  --cor-fundo-concluido: rgba(62, 143, 73, 0.2);
+}
+
+.conteudo {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.conteudo:focus-visible {
+  border-radius: 8px;
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 4px;
+}
+
+.conteudoDesabilitado {
+  cursor: default;
+}
+
+.seloConcluido {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--cor-fundo-concluido);
+  color: var(--cor-concluido);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--cor-texto-principal);
+  font-size: 1.05rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.descricao {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.metadados {
+  margin: 0;
+  color: var(--cor-texto-placeholder);
+  font-size: 0.82rem;
+}
+
+.acoes {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.botaoRenomear,
+.botaoExcluir,
+.botaoRecomecar {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-borda-controle);
+  border-radius: 9px;
+  background: var(--cor-fundo-card);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.botaoRenomear {
+  color: var(--cor-primaria-destaque);
+}
+
+.botaoExcluir {
+  color: var(--cor-alerta);
+}
+
+.botaoRecomecar {
+  color: var(--cor-concluido);
+  border-color: var(--cor-concluido);
+}
+
+.botaoRenomear:hover,
+.botaoExcluir:hover,
+.botaoRecomecar:hover {
+  border-color: var(--cor-borda-hover);
+  background: var(--cor-fundo-hover);
+}
+
+.botaoRenomear:focus-visible,
+.botaoExcluir:focus-visible,
+.botaoRecomecar:focus-visible {
+  outline: 3px solid var(--cor-foco-primario);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .cardSimulado {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .acoes {
+    justify-content: flex-end;
+  }
+}

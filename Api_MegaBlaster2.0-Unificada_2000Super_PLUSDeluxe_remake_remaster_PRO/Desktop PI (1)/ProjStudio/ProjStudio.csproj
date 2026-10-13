@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EDF5202A-78E3-450F-9A77-7C899213134A}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ProjStudio</RootNamespace>
+    <AssemblyName>ProjStudio</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Guna.UI2, Version=2.0.4.7, Culture=neutral, PublicKeyToken=8b9d14aa5142e261, processorArchitecture=MSIL">
+      <HintPath>packages\Guna.UI2.WinForms.2.0.4.7\lib\net472\Guna.UI2.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=8.0.17.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\v4.5.2\v4.5.2\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Administrador.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Administrador.Designer.cs">
+      <DependentUpon>Administrador.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Aluno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Aluno.Designer.cs">
+      <DependentUpon>Aluno.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AlunoProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlunoProf.Designer.cs">
+      <DependentUpon>AlunoProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AtualizaAluno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AtualizaAluno.Designer.cs">
+      <DependentUpon>AtualizaAluno.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AtualizaAlunoProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AtualizaAlunoProf.Designer.cs">
+      <DependentUpon>AtualizaAlunoProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AtualizaProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AtualizaProf.Designer.cs">
+      <DependentUpon>AtualizaProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AtualizaQuest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AtualizaQuest.Designer.cs">
+      <DependentUpon>AtualizaQuest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AtualizaQuestDis.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AtualizaQuestDis.Designer.cs">
+      <DependentUpon>AtualizaQuestDis.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroAdm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroAdm.Designer.cs">
+      <DependentUpon>CadastroAdm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroAluno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroAluno.Designer.cs">
+      <DependentUpon>CadastroAluno.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroAlunoProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroAlunoProf.Designer.cs">
+      <DependentUpon>CadastroAlunoProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroProf.Designer.cs">
+      <DependentUpon>CadastroProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroQuest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroQuest.Designer.cs">
+      <DependentUpon>CadastroQuest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroQuestDis.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroQuestDis.Designer.cs">
+      <DependentUpon>CadastroQuestDis.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CadastroQuestIA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CadastroQuestIA.Designer.cs">
+      <DependentUpon>CadastroQuestIA.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ClasseAluno.cs" />
+    <Compile Include="ClasseAlunoTurma.cs" />
+    <Compile Include="ClasseEducador.cs" />
+    <Compile Include="ClasseLogin.cs" />
+    <Compile Include="ClasseQuestao.cs" />
+    <Compile Include="ClasseTurma.cs" />
+    <Compile Include="Conexao.cs" />
+    <Compile Include="ConsultaAluno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConsultaAluno.Designer.cs">
+      <DependentUpon>ConsultaAluno.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConsultaProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConsultaProf.Designer.cs">
+      <DependentUpon>ConsultaProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConsultaTurma.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConsultaTurma.Designer.cs">
+      <DependentUpon>ConsultaTurma.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CriarTurma.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CriarTurma.Designer.cs">
+      <DependentUpon>CriarTurma.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExcluirAdm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExcluirAdm.Designer.cs">
+      <DependentUpon>ExcluirAdm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExcluirAluno.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExcluirAluno.Designer.cs">
+      <DependentUpon>ExcluirAluno.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExcluirAlunoProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExcluirAlunoProf.Designer.cs">
+      <DependentUpon>ExcluirAlunoProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExcluirProf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExcluirProf.Designer.cs">
+      <DependentUpon>ExcluirProf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExcluirQuest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExcluirQuest.Designer.cs">
+      <DependentUpon>ExcluirQuest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExcluirTurma.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExcluirTurma.Designer.cs">
+      <DependentUpon>ExcluirTurma.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Home.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Home.Designer.cs">
+      <DependentUpon>Home.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Professor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Professor.Designer.cs">
+      <DependentUpon>Professor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Questoes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Questoes.Designer.cs">
+      <DependentUpon>Questoes.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Administrador.resx">
+      <DependentUpon>Administrador.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Aluno.resx">
+      <DependentUpon>Aluno.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AlunoProf.resx">
+      <DependentUpon>AlunoProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AtualizaAluno.resx">
+      <DependentUpon>AtualizaAluno.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AtualizaAlunoProf.resx">
+      <DependentUpon>AtualizaAlunoProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AtualizaProf.resx">
+      <DependentUpon>AtualizaProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AtualizaQuest.resx">
+      <DependentUpon>AtualizaQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AtualizaQuestDis.resx">
+      <DependentUpon>AtualizaQuestDis.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CadastroAdm.resx">
+      <DependentUpon>CadastroAdm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CadastroAluno.resx">
+      <DependentUpon>CadastroAluno.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CadastroAlunoProf.resx">
+      <DependentUpon>CadastroAlunoProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CadastroProf.resx">
+      <DependentUpon>CadastroProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CadastroQuest.resx">
+      <DependentUpon>CadastroQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CadastroQuestDis.resx">
+      <DependentUpon>CadastroQuestDis.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CadastroQuestIA.resx">
+      <DependentUpon>CadastroQuestIA.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConsultaAluno.resx">
+      <DependentUpon>ConsultaAluno.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConsultaProf.resx">
+      <DependentUpon>ConsultaProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConsultaTurma.resx">
+      <DependentUpon>ConsultaTurma.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CriarTurma.resx">
+      <DependentUpon>CriarTurma.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExcluirAdm.resx">
+      <DependentUpon>ExcluirAdm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExcluirAluno.resx">
+      <DependentUpon>ExcluirAluno.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExcluirAlunoProf.resx">
+      <DependentUpon>ExcluirAlunoProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExcluirProf.resx">
+      <DependentUpon>ExcluirProf.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExcluirQuest.resx">
+      <DependentUpon>ExcluirQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExcluirTurma.resx">
+      <DependentUpon>ExcluirTurma.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Home.resx">
+      <DependentUpon>Home.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Professor.resx">
+      <DependentUpon>Professor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Questoes.resx">
+      <DependentUpon>Questoes.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rodape_tinker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\imgRazor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alunos.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\professor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\questoes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sistema.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

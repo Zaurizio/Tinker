@@ -1,0 +1,98 @@
+name: tinker
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5   
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  http: ^1.2.0
+  shared_preferences: ^2.3.2
+  
+  table_calendar: ^3.0.9
+  email_validator: ^3.0.0
+  cupertino_icons: ^1.0.8
+  image_picker: ^1.1.2
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+
+  
+  flame: ^1.37.0
+  flame_tiled: ^3.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    
+    - assets/images/tinker_images/
+    - assets/images/tinker_images/constelacao.png
+    - assets/images/tinker_images/logo.png
+    - assets/images/tinker_images/ave.png
+    - assets/images/tinker_images/calendario.png
+    - assets/images/tinker_images/desempenho.png
+    - assets/images/tinker_images/questoes.png
+    - assets/images/tinker_images/simulado.png
+    - assets/images/tinker_images/turma.png
+    - assets/images/tinker_images/user.png
+    - assets/images/tinker_images/Pgratuito.png
+    - assets/images/tinker_images/Pmensal.png
+    - assets/images/tinker_images/Pestudantil.png
+    - assets/images/tinker_images/estrela.gif
+    - assets/images/tinker_images/galaxia.png
+    - assets/images/tinker_images/faseE.png
+    - assets/images/tinker_images/galaxia2.png
+    - assets/images/tinker_images/heitor.jpeg
+    - assets/images/tinker_images/rafael.jpeg
+    - assets/images/tinker_images/zaurizio.jpeg
+    - assets/images/tinker_images/lucas.jpeg
+    - assets/images/tinker_images/logo2.png
+
+    
+    - assets/tiles/
+    - assets/images/Terrain/
+    - assets/images/Background/
+    - assets/images/Items/Fruits/
+    - assets/images/Items/Checkpoints/Checkpoint/
+    - assets/images/hud/
+    - assets/images/Traps/Saw/
+    - assets/images/UI/
+    - assets/images/UI/PlayButton.png
+    - assets/images/UI/Tela.png
+    - assets/images/UI/Moldura.png
+    - assets/images/UI/Lock.png
+    - assets/images/UI/Esquerda.png
+    - assets/images/UI/Direita.png
+    - assets/images/Traps/Portal/
+    - assets/images/Traps/GasBomb/
+    - assets/images/Traps/Laser/
+    - assets/images/Main Characters/
+    - assets/images/Main Characters/Mask Dude/
+    - assets/images/Main Characters/Ninja Frog/
+    - assets/images/Main Characters/Pink Man/
+    - assets/images/Main Characters/Virtual Guy/
+    - assets/images/Main Characters/Razor Bill/
+
+  fonts:
+    
+    - family: Stardom
+      fonts:
+        - asset: assets/fonts/Stardom-Regular.ttf
+    - family: Pixelada
+      fonts:
+        - asset: assets/fonts/PixelifySans-Regular.ttf
+
+    - family: Pixel
+      fonts:
+        - asset: assets/fonts/PixelifySans-VariableFont_wght.ttf

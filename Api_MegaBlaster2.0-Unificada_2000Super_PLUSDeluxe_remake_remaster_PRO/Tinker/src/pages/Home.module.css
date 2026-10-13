@@ -1,0 +1,228 @@
+.paginaHome {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(
+    to bottom right,
+    var(--cor-fundo-pagina) 50%,
+    var(--cor-fundo-gradiente) 100%
+  );
+  display: flex;
+  flex-direction: column;
+}
+
+.homeContainer {
+  width: 100%;
+  max-width: 1200px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: 56px clamp(20px, 4vw, 48px) 48px;
+  box-sizing: border-box;
+}
+
+.contentWrapper {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.cardsRow {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 24px;
+  margin-bottom: 32px;
+}
+
+.bottomRow {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 16px;
+  padding: 24px clamp(0px, 3vw, 40px) 0;
+}
+
+.cardHoje {
+  flex: 1.8;
+  min-width: 0;
+  min-height: 150px;
+  background: var(--cor-fundo-card);
+  border-radius: 18px;
+  box-shadow: 0 4px 15px var(--cor-sombra-preta-suave);
+  padding: 20px 22px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHojeTitulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cor-texto-principal);
+  margin: 0 0 12px 0;
+}
+
+.cardHojeEmpty {
+  font-size: 0.95rem;
+  color: var(--cor-texto-placeholder);
+}
+
+.listaEventosSemana {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eventoSemana {
+  min-height: 86px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 14px;
+  background: var(--cor-fundo-input-suave);
+  box-sizing: border-box;
+}
+
+.dataEventoSemana {
+  width: 62px;
+  min-height: 62px;
+  flex-shrink: 0;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid var(--cor-borda-padrao);
+  border-radius: 11px;
+  background: var(--cor-fundo-card);
+  line-height: 1;
+}
+
+.mesEventoSemana,
+.diaEventoSemana {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.dataEventoSemana strong {
+  margin: 4px 0;
+  color: var(--cor-texto-principal);
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+
+.informacoesEventoSemana {
+  min-width: 0;
+}
+
+.informacoesEventoSemana h3 {
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+  color: var(--cor-texto-principal);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.informacoesEventoSemana p {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.85rem;
+}
+
+.cardResumo {
+  flex: 1.2;
+  min-width: 260px;
+  background: var(--cor-fundo-card);
+  border-radius: 18px;
+  box-shadow: 0 4px 15px var(--cor-sombra-preta-suave);
+  padding: 16px 18px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardResumoTitulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cor-texto-principal);
+  margin: 0 0 10px 0;
+}
+
+.cardResumoInner {
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px dashed var(--cor-borda-resumo);
+  background: var(--cor-fundo-resumo);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cardResumoInner:hover {
+  background: var(--cor-fundo-hover-home);
+  border-color: var(--cor-borda-resumo-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px var(--cor-sombra-preta-suave);
+}
+
+.cardResumoTaxa {
+  font-size: 0.95rem;
+  color: var(--cor-texto-principal);
+}
+
+.cardResumoTaxa span {
+  font-weight: 600;
+  color: var(--cor-primaria-hover);
+}
+
+.cardResumoTexto {
+  font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
+}
+
+@media (max-width: 900px) {
+  .homeContainer {
+    padding-top: 36px;
+  }
+
+  .bottomRow {
+    flex-direction: column;
+    padding-inline: 0;
+  }
+
+  .cardHoje,
+  .cardResumo {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .homeContainer {
+    padding: 28px 16px 32px;
+  }
+
+  .cardsRow {
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .bottomRow {
+    margin-top: 8px;
+    gap: 14px;
+  }
+}
