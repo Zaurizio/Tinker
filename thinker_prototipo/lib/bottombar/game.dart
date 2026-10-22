@@ -13,8 +13,7 @@ class _GameTabState extends State<GameTab> {
   @override
   void initState() {
     super.initState();
-    // trava em paisagem assim que entra na secao do jogo
-    // (vale pra Title, LevelSelect e Game, ja que todas ficam "dentro" dessa tela)
+    
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -23,7 +22,7 @@ class _GameTabState extends State<GameTab> {
 
   @override
   void dispose() {
-    // ao sair da secao do jogo por completo (voltar pra Home/Perfil), volta pro retrato
+   
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

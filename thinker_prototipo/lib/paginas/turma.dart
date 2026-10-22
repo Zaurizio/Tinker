@@ -368,6 +368,7 @@ class _TurmaState extends State<Turma> {
                     ),
                   ),
                 )
+                
               else
                 ...turmasFiltradas.map(
                   (t) => GestureDetector(

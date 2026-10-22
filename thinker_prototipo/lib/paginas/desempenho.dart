@@ -64,10 +64,10 @@ class _DesempenhoState extends State<Desempenho> {
                     ),
                   ),
                   const SizedBox(width: 20),
-                  const CircleAvatar(
+                   CircleAvatar(
                     radius: 24,
-                    backgroundColor: Color(0xFF1A4A7A),
-                    child: Icon(Icons.school, color: Colors.white),
+                    backgroundColor: const Color(0xFF1A4A7A),
+                    child: Image.asset('assets/images/tinker_images/logo2.png'),
                   ),
                   const SizedBox(width: 8),
                   const Text('TINKER',

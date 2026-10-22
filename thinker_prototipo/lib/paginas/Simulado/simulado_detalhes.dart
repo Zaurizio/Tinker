@@ -385,13 +385,13 @@ class _SimuladoDetalheState extends State<SimuladoDetalhe> {
                                 onEnviarResposta: () => _enviarResposta(q),
                               ),
                               Positioned(
-                                top: 0,
-                                right: 30,
+                                top: 14,
+                                right: 40,
                                 child: GestureDetector(
                                   onTap: () => _removerQuestao(q),
                                   child: const Padding(
                                     padding: EdgeInsets.all(4),
-                                    child: Icon(Icons.delete_outline, color: Color(0xFFE05C6A), size: 18),
+                                    child: Icon(Icons.delete_outline, color: Color(0xFFE05C6A), size: 20),
                                   ),
                                 ),
                               ),

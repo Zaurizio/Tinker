@@ -12,6 +12,7 @@ import 'package:tinker/components/level.dart';
 import 'package:tinker/components/lever.dart';
 import 'package:tinker/components/player.dart';
 import 'package:tinker/components/portal.dart';
+import 'package:tinker/data/level_theme.dart';
 import 'package:tinker/data/question.dart';
 
 class TinkerGame extends FlameGame
@@ -40,6 +41,10 @@ class TinkerGame extends FlameGame
 
   @override
   FutureOr<void> onLoad() async {
+    // começa na fase escolhida no menu (se o nome não existir, usa a primeira)
+    final indiceInicial = levelNames.indexOf(startingLevelName);
+    currentLevelIndex = indiceInicial == -1 ? 0 : indiceInicial;
+
 
     await images.loadAllImages();
 
@@ -101,6 +106,9 @@ class TinkerGame extends FlameGame
   }
 
   void loadNextLevel() {
+    // libera no menu a fase seguinte à que acabou de ser concluída
+    unlockNextTheme(levelNames[currentLevelIndex]);
+
     removeWhere((component) => component is Level);
 
     if (currentLevelIndex < levelNames.length - 1) {
