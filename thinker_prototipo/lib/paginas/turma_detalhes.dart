@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tinker/Models/turma_model.dart';
 import 'package:tinker/Models/membro_turma_model.dart';
 import 'package:tinker/Models/publicacao_simulado_model.dart';
@@ -10,7 +11,6 @@ import 'package:tinker/Services/turma_simulado_service.dart';
 import 'package:tinker/Services/simulado_service.dart';
 import 'package:tinker/Services/sessao_atual.dart';
 import 'package:tinker/paginas/Simulado/publicacao_simulado_detalhe.dart';
-import 'package:tinker/paginas/Simulado/simulado_detalhes.dart';
 
 const List<List<Color>> gradientesTurma = [
   [Color(0xFF1C4E80), Color(0xFF2C9AE6)],
@@ -234,9 +234,11 @@ class _Header extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Prof. ${turma.criadorNome} • código ${turma.codigo}',
+                      'Prof. ${turma.criadorNome}',
                       style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 12),
                     ),
+                    const SizedBox(height: 8),
+                    _ChipCodigoTurma(codigo: turma.codigo),
                   ],
                 ),
               ),
@@ -316,6 +318,8 @@ class _AbaSimuladosState extends State<_AbaSimulados> {
   bool carregando = true;
   String? erro;
   List<PublicacaoSimulado> publicacoes = [];
+  // acertos do aluno em cada simulado já concluído (idPublicacao -> acertos)
+  final Map<String, int> acertosPorPublicacao = {};
 
   @override
   void initState() {
@@ -327,8 +331,26 @@ class _AbaSimuladosState extends State<_AbaSimulados> {
     setState(() => carregando = true);
     try {
       final lista = await listarSimuladosDaTurma(widget.codTurma);
+
+      // Para os simulados que o aluno já concluiu, busca quantos acertos ele fez
+      // (a lista da API só diz se concluiu ou não).
+      final acertos = <String, int>{};
+      if (!SessaoAtual.ehProfessor) {
+        await Future.wait(lista.where((p) => p.concluido).map((p) async {
+          try {
+            final r = await consultarResultadoPublicacao(widget.codTurma, p.idPublicacao);
+            if (r.acertos != null) acertos[p.idPublicacao] = r.acertos!;
+          } catch (_) {
+            // sem os acertos o card mostra só "Concluído"
+          }
+        }));
+      }
+
       setState(() {
         publicacoes = lista;
+        acertosPorPublicacao
+          ..clear()
+          ..addAll(acertos);
         carregando = false;
       });
     } catch (e) {
@@ -466,6 +488,130 @@ class _AbaSimuladosState extends State<_AbaSimulados> {
     );
   }
 
+  void _abrirPublicacao(PublicacaoSimulado p, {bool recomecando = false}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PublicacaoSimuladoDetalhe(
+          codTurma: widget.codTurma,
+          idPublicacao: p.idPublicacao,
+          titulo: p.titulo,
+          // professor só visualiza; quem resolve são os alunos
+          somenteLeitura: SessaoAtual.ehProfessor,
+          abrirRecomecando: recomecando,
+        ),
+      ),
+    ).then((_) => _carregar());
+  }
+
+  String _dataCurta(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+
+  Widget _cardPublicacao(PublicacaoSimulado p) {
+    final ehProfessor = SessaoAtual.ehProfessor;
+    final concluido = !ehProfessor && p.concluido;
+    final acertos = acertosPorPublicacao[p.idPublicacao];
+    final descricao = (p.descricao ?? '').trim();
+
+    return GestureDetector(
+      // simulado concluído só reabre pelo botão "Recomeçar" (igual ao web)
+      onTap: concluido ? null : () => _abrirPublicacao(p),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F2744),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: concluido ? const Color(0xFF4ABA8A) : const Color(0xFF1E3D5C),
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A3A6A),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.quiz_outlined, color: Color(0xFF4A9EFF), size: 18),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(p.titulo,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
+                      if (descricao.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(descricao,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 12.5)),
+                      ],
+                      const SizedBox(height: 4),
+                      Text(
+                        '${p.quantidadeQuestoes} questões • Publicado em ${_dataCurta(p.dataPublicacao)}',
+                        style: const TextStyle(color: Color(0xFF4A6A8A), fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                if (ehProfessor)
+                  GestureDetector(
+                    onTap: () => _despublicar(p),
+                    child: const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
+                    ),
+                  ),
+              ],
+            ),
+            if (concluido) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F3A2A),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      acertos != null ? 'Concluído · $acertos acertos' : 'Concluído',
+                      style: const TextStyle(
+                          color: Color(0xFF4ABA8A), fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const Spacer(),
+                  OutlinedButton.icon(
+                    onPressed: () => _abrirPublicacao(p, recomecando: true),
+                    icon: const Icon(Icons.replay_rounded, size: 16),
+                    label: const Text('Recomeçar'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF4ABA8A),
+                      side: const BorderSide(color: Color(0xFF4ABA8A), width: 1.5),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (carregando) {
@@ -486,70 +632,7 @@ class _AbaSimuladosState extends State<_AbaSimulados> {
               )
             : ListView(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                children: publicacoes.map((p) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SessaoAtual.ehProfessor
-                              ? SimuladoDetalhe(simuladoId: p.simuladoId)
-                              : PublicacaoSimuladoDetalhe(
-                                  codTurma: widget.codTurma,
-                                  idPublicacao: p.idPublicacao,
-                                  titulo: p.titulo,
-                                ),
-                        ),
-                      ).then((_) => _carregar());
-                    },
-                    child: Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0F2744),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFF1E3D5C), width: 0.5),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1A3A6A),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.quiz_outlined,
-                              color: Color(0xFF4A9EFF), size: 18),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(p.titulo,
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500)),
-                              const SizedBox(height: 3),
-                              Text(
-                                  'Publicado em ${p.dataPublicacao.day.toString().padLeft(2, '0')}/${p.dataPublicacao.month.toString().padLeft(2, '0')}/${p.dataPublicacao.year}',
-                                  style: const TextStyle(
-                                      color: Color(0xFF8AABCC), fontSize: 12)),
-                            ],
-                          ),
-                        ),
-                        if (SessaoAtual.ehProfessor)
-                          GestureDetector(
-                            onTap: () => _despublicar(p),
-                            child: const Icon(Icons.close, color: Color(0xFF4A6A8A), size: 18),
-                          ),
-                      ],
-                    ),
-                    ),
-                  );
-                }).toList(),
+                children: publicacoes.map(_cardPublicacao).toList(),
               ),
         if (SessaoAtual.ehProfessor)
           Positioned(
@@ -654,6 +737,51 @@ class _AbaMembros extends StatelessWidget {
           );
         }),
       ],
+    );
+  }
+}
+
+/// Mostra o código da turma e copia para a área de transferência ao tocar.
+class _ChipCodigoTurma extends StatelessWidget {
+  final String codigo;
+  const _ChipCodigoTurma({required this.codigo});
+
+  Future<void> _copiar(BuildContext context) async {
+    await Clipboard.setData(ClipboardData(text: codigo));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(const SnackBar(
+        content: Text('Código da turma copiado!'),
+        duration: Duration(seconds: 2),
+      ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _copiar(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.18),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withOpacity(0.35), width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Código: $codigo',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1)),
+            const SizedBox(width: 8),
+            const Icon(Icons.copy_rounded, color: Colors.white, size: 14),
+          ],
+        ),
+      ),
     );
   }
 }

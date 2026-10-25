@@ -31,7 +31,10 @@ class _SimuladoDetalheState extends State<SimuladoDetalhe> {
   }
 
   Future<void> _carregarDados() async {
-    setState(() => carregando = true);
+    setState(() {
+      carregando = true;
+      resultadoFinal = null;
+    });
 
     try {
       final det = await detalharSimulado(widget.simuladoId);
@@ -407,20 +410,45 @@ class _SimuladoDetalheState extends State<SimuladoDetalhe> {
                             decoration: BoxDecoration(
                               color: const Color(0xFF0F2744),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFF1E3D5C), width: 1),
+                              border: Border.all(color: const Color(0xFF4ABA8A), width: 1.5),
                             ),
-                            child: Text(
-                              'Simulado finalizado: ${resultadoFinal!.acertos} acertos e '
-                              '${resultadoFinal!.erros} erros de ${resultadoFinal!.quantidadeQuestoes}.',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.white, fontSize: 14),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Simulado concluído: ${resultadoFinal!.acertos} acertos e '
+                                  '${resultadoFinal!.erros} erros de ${resultadoFinal!.quantidadeQuestoes}.',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                                ),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: OutlinedButton.icon(
+                                    // recarrega as questões sem resposta para refazer;
+                                    // ao concluir de novo a API sobrescreve o resultado
+                                    onPressed: _carregarDados,
+                                    icon: const Icon(Icons.replay_rounded, size: 18),
+                                    label: const Text('Recomeçar'),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: const Color(0xFF4ABA8A),
+                                      side: const BorderSide(
+                                          color: Color(0xFF4ABA8A), width: 1.5),
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         const SizedBox(height: 8),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: (_todasRespondidas && !concluindo) ? _concluirSimulado : null,
+                            onPressed: (_todasRespondidas && !concluindo && resultadoFinal == null)
+                                ? _concluirSimulado
+                                : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1A4A8A),
                               disabledBackgroundColor: const Color(0xFF14335A),
@@ -434,7 +462,9 @@ class _SimuladoDetalheState extends State<SimuladoDetalhe> {
                             child: Text(
                               concluindo
                                   ? 'Finalizando...'
-                                  : _todasRespondidas
+                                  : resultadoFinal != null
+                                      ? 'Simulado concluído'
+                                      : _todasRespondidas
                                       ? 'Finalizar simulado'
                                       : 'Responda todas as questões pra finalizar',
                             ),

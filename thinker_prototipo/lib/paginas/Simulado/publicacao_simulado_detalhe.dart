@@ -2,19 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:tinker/Models/questao_model.dart';
 import 'package:tinker/paginas/Questoes/card_questao.dart';
 import 'package:tinker/Services/turma_simulado_service.dart';
-//import 'package:tinker/Models/resultado_simulado_model.dart';
-
 
 class PublicacaoSimuladoDetalhe extends StatefulWidget {
   final String codTurma;
   final String idPublicacao;
   final String titulo;
 
+  /// true quando quem abriu é o professor dono da turma: ele só visualiza as
+  /// questões, quem resolve o simulado são os alunos.
+  final bool somenteLeitura;
+
+  /// true quando o aluno tocou em "Recomeçar" na lista: pula a tela de
+  /// resultado e já abre as questões para refazer.
+  final bool abrirRecomecando;
+
   const PublicacaoSimuladoDetalhe({
     super.key,
     required this.codTurma,
     required this.idPublicacao,
     required this.titulo,
+    this.somenteLeitura = false,
+    this.abrirRecomecando = false,
   });
 
   @override
@@ -38,20 +46,28 @@ class _PublicacaoSimuladoDetalheState extends State<PublicacaoSimuladoDetalhe> {
   }
 
   Future<void> _carregar() async {
-    setState(() => carregando = true);
+    setState(() {
+      carregando = true;
+      erro = null;
+    });
 
     try {
-      final resultado =
-          await consultarResultadoPublicacao(widget.codTurma, widget.idPublicacao);
+      // Aluno: primeiro pergunta à API se já concluiu. Se sim, mostra o
+      // resultado (a não ser que ele tenha pedido para recomeçar).
+      // Professor: não consulta resultado, só lista as questões.
+      if (!widget.somenteLeitura && !widget.abrirRecomecando) {
+        final resultado =
+            await consultarResultadoPublicacao(widget.codTurma, widget.idPublicacao);
 
-      if (resultado.completo) {
-        setState(() {
-          concluido = true;
-          acertosFinal = resultado.acertos;
-          errosFinal = resultado.erros;
-          carregando = false;
-        });
-        return;
+        if (resultado.completo) {
+          setState(() {
+            concluido = true;
+            acertosFinal = resultado.acertos;
+            errosFinal = resultado.erros;
+            carregando = false;
+          });
+          return;
+        }
       }
 
       final lista = await listarQuestoesDaPublicacao(widget.codTurma, widget.idPublicacao);
@@ -64,6 +80,29 @@ class _PublicacaoSimuladoDetalheState extends State<PublicacaoSimuladoDetalhe> {
         erro = 'Não foi possível carregar este simulado.';
         carregando = false;
       });
+    }
+  }
+
+  /// Recarrega as questões "zeradas" (sem resposta marcada) para o aluno
+  /// refazer. O resultado antigo continua valendo até ele concluir de novo:
+  /// a API sobrescreve o resultado quando o simulado é concluído outra vez.
+  Future<void> _recomecar() async {
+    setState(() => carregando = true);
+
+    try {
+      final lista = await listarQuestoesDaPublicacao(widget.codTurma, widget.idPublicacao);
+      setState(() {
+        questoes = lista;
+        concluido = false;
+        acertosFinal = null;
+        errosFinal = null;
+        carregando = false;
+      });
+    } catch (e) {
+      setState(() => carregando = false);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Erro ao recomeçar o simulado.')));
     }
   }
 
@@ -172,46 +211,84 @@ class _PublicacaoSimuladoDetalheState extends State<PublicacaoSimuladoDetalhe> {
                       Text(widget.titulo,
                           style: const TextStyle(
                               color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
+                      if (widget.somenteLeitura) _avisoProfessor(),
                       if (concluido)
                         _cardResultado()
                       else ...[
+                        if (questoes.isEmpty)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 40),
+                              child: Text('Este simulado ainda não tem questões.',
+                                  style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14)),
+                            ),
+                          ),
                         ...questoes.map(
                           (q) => QuestaoCard(
                             questao: q,
+                            somenteLeitura: widget.somenteLeitura,
                             onSalvar: () => _toggleSalvar(q),
                             onSelecionarAlternativa: (alt) => _selecionarAlternativa(q, alt),
                             onEliminarAlternativa: (alt) => _toggleEliminar(q, alt),
                             onEnviarResposta: () => _enviarResposta(q),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: (_todasRespondidas && !concluindo) ? _concluirSimulado : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF1A4A8A),
-                              disabledBackgroundColor: const Color(0xFF14335A),
-                              foregroundColor: Colors.white,
-                              disabledForegroundColor: const Color(0xFF8AABCC),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              concluindo
-                                  ? 'Concluindo...'
-                                  : _todasRespondidas
-                                      ? 'Concluir simulado'
-                                      : 'Responda todas as questões pra concluir',
+                        if (!widget.somenteLeitura) ...[
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed:
+                                  (_todasRespondidas && !concluindo) ? _concluirSimulado : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1A4A8A),
+                                disabledBackgroundColor: const Color(0xFF14335A),
+                                foregroundColor: Colors.white,
+                                disabledForegroundColor: const Color(0xFF8AABCC),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                concluindo
+                                    ? 'Concluindo...'
+                                    : _todasRespondidas
+                                        ? 'Concluir simulado'
+                                        : 'Responda todas as questões pra concluir',
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ],
                     ],
                   ),
+      ),
+    );
+  }
+
+  Widget _avisoProfessor() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F2744),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF1E3D5C), width: 1.5),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.visibility_outlined, color: Color(0xFF4A9EFF), size: 18),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Visualização do professor. Este simulado é resolvido pelos alunos da turma.',
+              style: TextStyle(color: Color(0xFF8AABCC), fontSize: 12.5, height: 1.4),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -227,7 +304,7 @@ class _PublicacaoSimuladoDetalheState extends State<PublicacaoSimuladoDetalhe> {
       decoration: BoxDecoration(
         color: const Color(0xFF0F2744),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF1E3D5C), width: 0.5),
+        border: Border.all(color: const Color(0xFF4ABA8A), width: 1.5),
       ),
       child: Column(
         children: [
@@ -243,6 +320,21 @@ class _PublicacaoSimuladoDetalheState extends State<PublicacaoSimuladoDetalhe> {
               _numero('$erros', 'Erros', const Color(0xFFE05C6A)),
               _numero('$percentual%', 'Aproveitamento', const Color(0xFF4A9EFF)),
             ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: _recomecar,
+              icon: const Icon(Icons.replay_rounded, size: 18),
+              label: const Text('Recomeçar'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF4ABA8A),
+                side: const BorderSide(color: Color(0xFF4ABA8A), width: 1.5),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
           ),
         ],
       ),

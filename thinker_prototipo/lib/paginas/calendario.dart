@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tinker/Models/evento_calendario_model.dart';
 import 'package:tinker/Services/calendario_service.dart';
@@ -147,8 +148,9 @@ class _CalendarioState extends State<Calendario> {
                       fillColor: const Color(0xFF0D1B2A),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
+ enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
+ focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF4A9EFF), width: 2)),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -195,8 +197,9 @@ class _CalendarioState extends State<Calendario> {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: const Color(0xFF0D1B2A),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+ borderRadius: BorderRadius.circular(8),
+ border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
+ ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: recorrenciaSelecionada,
@@ -225,8 +228,9 @@ class _CalendarioState extends State<Calendario> {
                         fillColor: const Color(0xFF0D1B2A),
                         contentPadding:
                             const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
+ enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
+ focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF4A9EFF), width: 2)),
                       ),
                     ),
                   ],
@@ -355,8 +359,9 @@ class _CalendarioState extends State<Calendario> {
             filled: true,
             fillColor: const Color(0xFF0D1B2A),
             contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
+ enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF1E3D5C), width: 2)),
+ focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Color(0xFF4A9EFF), width: 2)),
           ),
         ),
       ],
@@ -373,8 +378,9 @@ class _CalendarioState extends State<Calendario> {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFF0D1B2A),
-            borderRadius: BorderRadius.circular(8),
-          ),
+ borderRadius: BorderRadius.circular(8),
+ border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
+ ),
           child: Text(valor, style: const TextStyle(color: Colors.white, fontSize: 13)),
         ),
       ],
@@ -404,10 +410,151 @@ class _CalendarioState extends State<Calendario> {
     return lista;
   }
 
-  String _formatarDataExibicao(DateTime data) {
-    final dia = data.day.toString().padLeft(2, '0');
-    final mes = data.month.toString().padLeft(2, '0');
-    return '$dia/$mes/${data.year}';
+  Widget _chipInfo(IconData icone, String texto, {Color? cor}) {
+    final destaque = cor ?? const Color(0xFF4A9EFF);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: cor != null ? cor.withOpacity(0.14) : const Color(0xFF0D1B2A),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: cor != null ? cor.withOpacity(0.45) : const Color(0xFF1E3D5C),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icone, size: 13, color: destaque),
+          const SizedBox(width: 5),
+          Flexible(
+            child: Text(
+              texto,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: cor ?? const Color(0xFF8AABCC),
+                fontSize: 11.5,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cardEvento(EventoCalendario item) {
+    final cor = corDoEvento(item.cor);
+    final disciplina = (item.disciplina ?? '').trim();
+    final conteudo = (item.conteudo ?? '').trim();
+    final descricao = (item.descricao ?? '').trim();
+
+    final horario = item.diaInteiro
+        ? 'Dia inteiro'
+        : '${item.horarioInicio ?? ''}${item.horarioFim != null ? ' – ${item.horarioFim}' : ''}';
+
+    final dia = item.data.day.toString().padLeft(2, '0');
+    final mes = DateFormat('MMM', 'pt_BR').format(item.data).replaceAll('.', '').toUpperCase();
+    final semana =
+        DateFormat('EEE', 'pt_BR').format(item.data).replaceAll('.', '').toLowerCase();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F2744),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF1E3D5C), width: 1.5),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // faixa colorida com a cor escolhida para o evento
+            Container(width: 5, color: cor),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // bloco da data
+                    Container(
+                      width: 52,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: cor.withOpacity(0.14),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: cor.withOpacity(0.4), width: 1),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(mes,
+                              style: TextStyle(
+                                  color: cor,
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.8)),
+                          Text(dia,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.15)),
+                          Text(semana,
+                              style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 10.5)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.titulo,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: [
+                              _chipInfo(Icons.schedule_rounded, horario, cor: cor),
+                              if (disciplina.isNotEmpty)
+                                _chipInfo(Icons.menu_book_outlined, disciplina),
+                              if (conteudo.isNotEmpty)
+                                _chipInfo(Icons.bookmark_border_rounded, conteudo),
+                            ],
+                          ),
+                          if (descricao.isNotEmpty) ...[
+                            const SizedBox(height: 10),
+                            Text(descricao,
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    color: Color(0xFF8AABCC), fontSize: 12.5, height: 1.4)),
+                          ],
+                        ],
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _removerEvento(item),
+                      child: const Padding(
+                        padding: EdgeInsets.all(6),
+                        child: Icon(Icons.delete_outline_rounded,
+                            color: Color(0xFF4A6A8A), size: 20),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -514,8 +661,12 @@ class _CalendarioState extends State<Calendario> {
                 ),
               ),
               const SizedBox(height: 14),
-              const Text('PRAZOS DO MÊS',
-                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 11, letterSpacing: 1.2)),
+              Text(
+                  eventosDoMes().isEmpty
+                      ? 'PRAZOS DO MÊS'
+                      : 'PRAZOS DO MÊS • ${eventosDoMes().length}',
+                  style: const TextStyle(
+                      color: Color(0xFF8AABCC), fontSize: 11, letterSpacing: 1.2)),
               const SizedBox(height: 10),
               Expanded(
                 child: carregando
@@ -537,57 +688,8 @@ class _CalendarioState extends State<Calendario> {
                                 ),
                               )
                             : ListView(
-                                children: eventosDoMes().map((item) {
-                                  final cor = corDoEvento(item.cor);
-                                  return Container(
-                                    margin: const EdgeInsets.only(bottom: 10),
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF0F2744),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: const Color(0xFF1E3D5C), width: 1),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 38,
-                                          height: 38,
-                                          decoration: BoxDecoration(
-                                            color: cor.withOpacity(0.2),
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Icon(Icons.event, color: cor, size: 18),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(item.titulo,
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w500)),
-                                              const SizedBox(height: 3),
-                                              Text(
-                                                item.diaInteiro
-                                                    ? _formatarDataExibicao(item.data)
-                                                    : '${_formatarDataExibicao(item.data)} • ${item.horarioInicio ?? ''}${item.horarioFim != null ? ' - ${item.horarioFim}' : ''}',
-                                                style: const TextStyle(
-                                                    color: Color(0xFF8AABCC), fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () => _removerEvento(item),
-                                          child: const Icon(Icons.close,
-                                              color: Color(0xFF4A6A8A), size: 18),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
+                                padding: const EdgeInsets.only(bottom: 80),
+                                children: eventosDoMes().map(_cardEvento).toList(),
                               ),
               ),
             ],

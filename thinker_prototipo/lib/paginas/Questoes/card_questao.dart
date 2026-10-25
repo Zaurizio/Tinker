@@ -5,6 +5,7 @@ class QuestaoCard extends StatelessWidget {
   final Questao questao;
   final bool mostrarSalvar;
   final bool mostrarEliminar;
+  final bool somenteLeitura;
   final VoidCallback? onSalvar;
   final void Function(Alternativa alternativa)? onSelecionarAlternativa;
   final void Function(Alternativa alternativa)? onEliminarAlternativa;
@@ -15,6 +16,7 @@ class QuestaoCard extends StatelessWidget {
     required this.questao,
     this.mostrarSalvar = true,
     this.mostrarEliminar = true,
+    this.somenteLeitura = false,
     this.onSalvar,
     this.onSelecionarAlternativa,
     this.onEliminarAlternativa,
@@ -47,7 +49,7 @@ class QuestaoCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (mostrarSalvar)
+              if (mostrarSalvar && !somenteLeitura)
                 GestureDetector(
                   onTap: onSalvar,
                   child: Icon(
@@ -66,7 +68,9 @@ class QuestaoCard extends StatelessWidget {
           const SizedBox(height: 14),
           ...questao.alternativas.map((alt) => _linhaAlternativa(alt)),
           const SizedBox(height: 4),
-          if (onEnviarResposta != null)
+          if (somenteLeitura)
+            const SizedBox.shrink()
+          else if (onEnviarResposta != null)
             _botaoResposta()
           else
             Container(
@@ -151,7 +155,7 @@ class QuestaoCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: GestureDetector(
         onTap: () {
-          if (alt.eliminada || questao.respondida) return;
+          if (somenteLeitura || alt.eliminada || questao.respondida) return;
           onSelecionarAlternativa?.call(alt);
         },
         child: Container(
@@ -183,7 +187,7 @@ class QuestaoCard extends StatelessWidget {
                   ),
                 ),
               ),
-              if (mostrarEliminar && !questao.respondida)
+              if (mostrarEliminar && !questao.respondida && !somenteLeitura)
                 GestureDetector(
                   onTap: () => onEliminarAlternativa?.call(alt),
                   child: const Padding(

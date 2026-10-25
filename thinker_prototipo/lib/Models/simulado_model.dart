@@ -1,21 +1,34 @@
 class SimuladoResumo {
   final int id;
   final String titulo;
+  final String? descricao;
   final int quantidadeQuestoes;
+  final bool concluido;
+  final int? acertos;
 
   SimuladoResumo({
     required this.id,
     required this.titulo,
+    this.descricao,
     required this.quantidadeQuestoes,
+    this.concluido = false,
+    this.acertos,
   });
 
   factory SimuladoResumo.fromApi(Map<String, dynamic> json) {
     return SimuladoResumo(
       id: json['id'] is int ? json['id'] : int.parse(json['id'].toString()),
       titulo: (json['titulo'] ?? '').toString(),
+      descricao: json['descricao']?.toString(),
       quantidadeQuestoes: json['quantidadeQuestoes'] is int
           ? json['quantidadeQuestoes']
           : int.parse((json['quantidadeQuestoes'] ?? 0).toString()),
+      concluido: json['concluido'] == true,
+      acertos: json['acertos'] == null
+          ? null
+          : (json['acertos'] is int
+              ? json['acertos']
+              : int.tryParse(json['acertos'].toString())),
     );
   }
 }

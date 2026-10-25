@@ -146,6 +146,105 @@ class _SimuladoState extends State<Simulado> {
     );
   }
 
+  void _abrirSimulado(SimuladoResumo s) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => SimuladoDetalhe(simuladoId: s.id)),
+    ).then((_) => _carregar());
+  }
+
+  Widget _cardSimulado(SimuladoResumo s) {
+    final descricao = (s.descricao ?? '').trim();
+
+    return GestureDetector(
+      // simulado concluído só reabre pelo botão "Recomeçar" (igual ao web)
+      onTap: s.concluido ? null : () => _abrirSimulado(s),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F2744),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: s.concluido ? const Color(0xFF4ABA8A) : const Color(0xFF1E3D5C),
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A3A6A),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.quiz_outlined, color: Color(0xFF4A9EFF), size: 18),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(s.titulo,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
+                      if (descricao.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(descricao,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 12.5)),
+                      ],
+                      const SizedBox(height: 4),
+                      Text('${s.quantidadeQuestoes} questões',
+                          style: const TextStyle(color: Color(0xFF4A6A8A), fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (s.concluido) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F3A2A),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      s.acertos != null ? 'Concluído · ${s.acertos} acertos' : 'Concluído',
+                      style: const TextStyle(
+                          color: Color(0xFF4ABA8A), fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  const Spacer(),
+                  OutlinedButton.icon(
+                    onPressed: () => _abrirSimulado(s),
+                    icon: const Icon(Icons.replay_rounded, size: 16),
+                    label: const Text('Recomeçar'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF4ABA8A),
+                      side: const BorderSide(color: Color(0xFF4ABA8A), width: 1.5),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -245,52 +344,7 @@ class _SimuladoState extends State<Simulado> {
                   ),
                 )
               else
-                ...filtrados.map(
-                  (s) => GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => SimuladoDetalhe(simuladoId: s.id)),
-                      ).then((_) => _carregar());
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0F2744),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF1A3A6A),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(Icons.quiz_outlined, color: Color(0xFF4A9EFF), size: 18),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(s.titulo,
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500)),
-                                const SizedBox(height: 3),
-                                Text('${s.quantidadeQuestoes} questões',
-                                    style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                ...filtrados.map(_cardSimulado),
               const SizedBox(height: 24),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tinker/Models/turma_model.dart';
 import 'package:tinker/Services/turma_service.dart';
 import 'package:tinker/Services/api_client.dart';
@@ -125,11 +126,50 @@ class _TurmaState extends State<Turma> {
                                 borderRadius: BorderRadius.circular(14)),
                             title: const Text('Turma criada!',
                                 style: TextStyle(color: Colors.white, fontSize: 16)),
-                            content: Text(
-                              'Compartilhe esse código com os alunos:\n\n${criada.codigo}',
-                              style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 14),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Compartilhe esse código com os alunos:',
+                                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 14),
+                                ),
+                                const SizedBox(height: 14),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0D1B2A),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: const Color(0xFF1E3D5C), width: 2),
+                                  ),
+                                  child: Text(
+                                    criada.codigo,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 4),
+                                  ),
+                                ),
+                              ],
                             ),
                             actions: [
+                              TextButton.icon(
+                                onPressed: () async {
+                                  await Clipboard.setData(ClipboardData(text: criada.codigo));
+                                  if (!ctx2.mounted) return;
+                                  ScaffoldMessenger.of(ctx2).showSnackBar(
+                                    const SnackBar(content: Text('Código copiado!')),
+                                  );
+                                },
+                                icon: const Icon(Icons.copy_rounded,
+                                    size: 16, color: Color(0xFF4A9EFF)),
+                                label: const Text('Copiar código',
+                                    style: TextStyle(color: Color(0xFF4A9EFF))),
+                              ),
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx2),
                                 child: const Text('Fechar',
