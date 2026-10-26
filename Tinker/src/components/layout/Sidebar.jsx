@@ -16,6 +16,7 @@ import { TbTargetArrow } from "react-icons/tb";
 import { FaRegNoteSticky } from "react-icons/fa6";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { FaRegCircleCheck } from "react-icons/fa6";
+import { IoGameControllerOutline } from "react-icons/io5";
 
 import ModalConfirmarAcaoTurma from "../turma/ModalConfirmarAcaoTurma";
 import { encerrarSessao } from "../../services/autenticacaoService";
@@ -134,6 +135,21 @@ function Sidebar() {
                 <span className={estiloSidebar.texto}>Turma</span>
                 </NavLink>
 
+
+                {/*JOGO*/}
+                <NavLink
+                to="/jogo"
+                className={({ isActive }) =>
+                    isActive
+                    ? `${estiloSidebar.link} ${estiloSidebar.ativo}`
+                    : estiloSidebar.link
+                }
+                >
+                <span className={estiloSidebar.icone}>
+                    <IoGameControllerOutline />
+                </span>
+                <span className={estiloSidebar.texto}>Jogo</span>
+                </NavLink>
                 {/*CONTA*/}
                 <NavLink
                 to="/conta"

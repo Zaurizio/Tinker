@@ -6,6 +6,9 @@ import LayoutPublico from "./components/layout/LayoutPublico";
 import LayoutPrivado from "./components/layout/LayoutPrivado";
 import RotaProtegida from "./components/rotas/RotaProtegida";
 
+//Página do Jogo
+import Jogo from "./pages/jogo";
+
 // Páginas públicas
 import Introducao from "./pages/publico/Introducao";
 import Login from "./pages/publico/Login";
@@ -22,6 +25,8 @@ import Turma from "./pages/Turma";
 import DetalhesTurma from "./pages/DetalhesTurma";
 import ExecutarSimuladoTurma from "./pages/ExecutarSimuladoTurma";
 import Conta from "./pages/Conta";
+
+
 
 function App() {
   useEffect(() => {
@@ -64,6 +69,7 @@ function App() {
             />
             <Route path="/turma/:codigo/membros" element={<DetalhesTurma />} />
             <Route path="/conta" element={<Conta />} />
+            <Route path="/jogo" element={<Jogo />} />
           </Route>
         </Route>
 

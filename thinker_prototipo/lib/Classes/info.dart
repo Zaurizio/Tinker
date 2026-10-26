@@ -3,19 +3,19 @@ class Mensagem {
   String _emailU;
   int _numC;
   String msg;
- String get nomeF => this._nomeF;
+ String get nomeF => _nomeF;
 
- set nomeF(String value) => this._nomeF = value;
+ set nomeF(String value) => _nomeF = value;
 
-  get emailU => this._emailU;
+  String get emailU => _emailU;
 
- set emailU( value) => this._emailU = value;
+ set emailU( value) => _emailU = value;
 
-  get numC => this._numC;
+  int get numC => _numC;
 
- set numC( value) => this._numC = value;
+ set numC( value) => _numC = value;
 
-  get getMsg => this.msg;
+  String get getMsg => msg;
 
  set setMsg( msg) => this.msg = msg;
 

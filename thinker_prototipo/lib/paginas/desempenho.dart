@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thinker_prototipo/_comum/colors.dart';
-
+import 'package:tinker/Models/desempenho_model.dart';
+import 'package:tinker/Services/desempenho_service.dart';
 
 class Desempenho extends StatefulWidget {
   const Desempenho({super.key});
@@ -10,340 +10,266 @@ class Desempenho extends StatefulWidget {
 }
 
 class _DesempenhoState extends State<Desempenho> {
+  bool carregando = true;
+  String? erro;
+  DesempenhoResumo? resumo;
 
-List <String> Fsemana= [
-"12 questoes de matematica",
+  @override
+  void initState() {
+    super.initState();
+    _carregar();
+  }
 
+  Future<void> _carregar() async {
+    setState(() => carregando = true);
 
-"4 questões de história",
+    try {
+      final dados = await buscarDesempenho();
+      setState(() {
+        resumo = dados;
+        carregando = false;
+      });
+    } catch (e) {
+      setState(() {
+        erro = 'Não foi possível carregar seu desempenho.';
+        carregando = false;
+      });
+    }
+  }
 
-
-"1 simulado concluido"
-];
-
-List <String> erros = [
-  "poligonos",
-  "Quimica organica",
-  "Biologia",
-];
-
-List <String> acertos = [
-  "Geopolitica",
-  "Termodinamica",
-  "Cartografia",
-];
-
-List <String> aprim = [
-  "Voce deve melhorar em Português",
-  "Você deve melhorar em semelhança de triangulos",
-  "Voce deve melhorar em quimica",
-];
-
-  final text = TextStyle(color: Colors.white,);
-final tituloContornado = Stack(
-  alignment: Alignment.center,
-  children: [
-   
-    Text(
-      'Tinker',
-      style: TextStyle(
-        fontFamily: 'Stardom',
-        fontSize: 45,
-        foreground: Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 4
-          ..color = Colors.black,
-      ),
-    ),
-
-  
-    Text(
-      'Tinker',
-      style: TextStyle(
-        fontFamily: 'Stardom',
-        fontSize: 45,
-        color: Colors.white,
-      ),
-    ),
-  ],
-);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-          body:  Stack 
-      (
-       fit: StackFit.expand,
-children:[
-     
-         
-      Image.asset('assets/images/constelacao.png', fit: BoxFit.cover),
-Stack(children: [
-
-    Positioned(
- top: 50,
- left: 16,
-  child:Container(
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color:minhasCores.azul2C,
-    ),
-  child: IconButton(onPressed: (){
-Navigator.pop(context);
-  }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
-  ),
-),
-  Positioned(
-    top: -50,
-    left: 60,
-    child:IgnorePointer(
-    child: Image.asset('assets/images/logo.png',width: 300,)
-    )
-    ),
- 
-],
-
-),
-
-        SafeArea(child: Padding(padding:const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-        children:[
-          SizedBox(height: 30,),
-        Center(child: tituloContornado,
-        
-      
-                 ),
-    SizedBox(height: 60,),
-Column(
-  
-  children: [
-
-  
-    Center(child: Stack(
-      clipBehavior: Clip.none,
-      children: [
-Container(
-  
-          width:360 ,
-          height:50 ,
-          decoration: BoxDecoration(
-            color:  minhasCores.azulC,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color:Colors.white, width: 1.5),
-            
-          ),
-
-
-
-         child: Center(
-        child: 
-        Text("Desempenho",style: TextStyle(color: Colors.white,fontSize: 35,fontWeight: FontWeight(30)),), 
-        
-        ),
-         ),
-         Positioned(
-          top:-25,
-          left: 0,
-          right: 0,
-          child:Center(
-          child: Icon(Icons.star, color:Colors.white,size:50))
-         ),
-      ], 
-    ),
- ),
- 
-
-  ]
-    ),       
-     
-
-    
-            SizedBox(height: 30,),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                  InkWell(
-            borderRadius: BorderRadius.circular(16),
-             onTap: () {
-              
-             },
-        child: Container(
-          width:360 ,
-          height: 160,
-          decoration: BoxDecoration(
-            color:  minhasCores.azulC,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color.fromARGB(255, 28, 154, 230), width: 6),
-          ),
-          child:SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(child: 
-                Text("Feitos da Semana", 
-                
-                style: 
-                TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25)),
-                  ),
-                  SizedBox(height: 8),
-                  ...Fsemana.map((item) => Padding(
-                    
-                  padding: EdgeInsets.symmetric(vertical:8),
-                  child:Row(
-                    children: [
-                        Icon(Icons.check_circle,
-                        color:Colors.white,
-                        size: 18,
-                         ),
-                         SizedBox(width: 8,),
-                         Expanded(
-                          child:Text(item, style:TextStyle(color: Colors.white)) )
-                  
-                    ],
-                  ),
-                ),
-              )
-            ],
-            
-            ))
-          
-          ),
-
-
-                  )
-            ]
-            ),
-
-
-            SizedBox(height: 30,),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                  InkWell(
-            borderRadius: BorderRadius.circular(16),
-             onTap: () {
-
-             },
-        child: Container(
-          width: 160,
-          height: 160,
-          decoration: BoxDecoration(
-            color:  const Color.fromARGB(255, 47, 128, 177),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color.fromARGB(255, 28, 154, 230), width: 6),
-          ),
-          child:SingleChildScrollView(
+      backgroundColor: const Color(0xFF0D1B2A),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: 
-                Text("Erros",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20)),
-              ),
-                SizedBox(height: 6,),
-                ...erros.map((item) => Padding(
-                  padding:EdgeInsets.symmetric(vertical: 8),
-                  child:Row(children: [
-                    Icon(Icons.cancel,color:Colors.white,size:18),
-                    SizedBox(width: 8),
-                    Expanded(child: Text(item,style: TextStyle(color: Colors.white),),)
-                  ],)
-                   )
-                
-                
-                )
-
-            ],
-            
-            ))
-        ),
-          ),
-
-
-               InkWell(
-            borderRadius: BorderRadius.circular(16),
-             onTap: () {
-
-             },
-        child: Container(
-          width: 160,
-          height: 160,
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 47, 128, 177),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color.fromARGB(255, 28, 154, 230), width: 6),
-          ),
-          child:SingleChildScrollView(
-          child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(child: 
-                Text("Acertos",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize:20)),
-              ),
-                SizedBox(height: 6,),
-                ...acertos.map((item) => Padding(
-                  padding:EdgeInsets.symmetric(vertical: 8),
-                  child:Row(children: [
-                    Icon(Icons.check,color:Colors.white,size:18),
-                    SizedBox(width: 8),
-                    Expanded(child: Text(item,style: TextStyle(color: Colors.white),),)
-                  
-            ],)
-                   )
-            
-           )])
-          
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFF0F2744),
+                        border: Border.all(color: const Color(0xFF1E3D5C), width: 1),
+                      ),
+                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                    ),
                   ),
-                 ),
-               ),
-            ]
-            ),
-            SizedBox(height: 30,),
-            Center(child: 
-             InkWell(
-            borderRadius: BorderRadius.circular(16),
-             onTap: () {
-             
-             },
-        child: Container(
-          width: 360,
-          height: 160,
-          decoration: BoxDecoration(
-            color:  const Color.fromARGB(255, 47, 128, 177),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color.fromARGB(255, 28, 154, 230), width: 6),
-          ),
-          child:SingleChildScrollView(
-          child: Column(
-
-              crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(child: 
-                Text("Aprimoramento",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 25)),
-              ),
-                SizedBox(height: 6,),
-                ...aprim.map((item) => Padding(
-                  padding:EdgeInsets.symmetric(vertical: 8),
-                  child:Row(children: [
-                    Icon(Icons.arrow_right,color:Colors.white,size:18),
-                    SizedBox(width: 8),
-                    Expanded(child: Text(item,style: TextStyle(color: Colors.white),),)
-                  ],)
-                   )
-           )])
-          
-          )
-
-          
-            ),
-            )
-            )
+                  const SizedBox(width: 20),
+                   CircleAvatar(
+                    radius: 24,
+                    backgroundColor: const Color(0xFF1A4A7A),
+                    child: Image.asset('assets/images/tinker_images/logo2.png'),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('TINKER',
+                      style: TextStyle(
+                          fontFamily: 'Stardom',
+                          color: Colors.white,
+                          fontSize: 25,
+                          letterSpacing: 3)),
                 ],
               ),
-            ),
-            
+              const SizedBox(height: 20),
+              const Text('Desempenho',
+                  style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              const Text('Acompanhe sua evolução nos estudos',
+                  style: TextStyle(color: Color(0xFF8AABCC), fontSize: 13)),
+              const SizedBox(height: 24),
+              if (carregando)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 60),
+                  child: Center(child: CircularProgressIndicator(color: Color(0xFF4A9EFF))),
+                )
+              else if (erro != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 60),
+                  child: Center(
+                      child: Text(erro!, style: const TextStyle(color: Color(0xFFE05C6A), fontSize: 13))),
+                )
+              else if (resumo == null || resumo!.questoesRespondidas == 0)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 60),
+                    child: Column(
+                      children: [
+                        Icon(Icons.bar_chart, color: Color(0xFF4A6A8A), size: 40),
+                        SizedBox(height: 12),
+                        Text('Você ainda não respondeu nenhuma questão.',
+                            style: TextStyle(color: Color(0xFF4A6A8A), fontSize: 14)),
+                      ],
+                    ),
+                  ),
+                )
+              else ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: _cardResumo(
+                        icone: Icons.check_circle_outline,
+                        corIcone: const Color(0xFF4A9EFF),
+                        valor: '${resumo!.questoesRespondidas}',
+                        legenda: 'questões feitas',
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _cardResumo(
+                        icone: Icons.trending_up_rounded,
+                        corIcone: const Color(0xFF4A9EFF),
+                        valor: '${resumo!.percentualGeral}%',
+                        legenda: 'acerto geral',
+                      ),
+                    ),
+                  ],
+                ),
+                if (resumo!.maiorDesempenho != null || resumo!.menorDesempenho != null) ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      if (resumo!.maiorDesempenho != null)
+                        Expanded(
+                          child: _cardDestaque(
+                            titulo: 'Melhor disciplina',
+                            icone: Icons.emoji_events_outlined,
+                            cor: const Color(0xFF4A9EFF),
+                            disciplina: resumo!.maiorDesempenho!,
+                          ),
+                        ),
+                      if (resumo!.maiorDesempenho != null && resumo!.menorDesempenho != null)
+                        const SizedBox(width: 10),
+                      if (resumo!.menorDesempenho != null)
+                        Expanded(
+                          child: _cardDestaque(
+                            titulo: 'Precisa melhorar',
+                            icone: Icons.trending_down_rounded,
+                            cor: const Color(0xFF4A9EFF),
+                            disciplina: resumo!.menorDesempenho!,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 20),
+                const Text('POR DISCIPLINA',
+                    style: TextStyle(color: Color(0xFF8AABCC), fontSize: 11, letterSpacing: 1.2)),
+                const SizedBox(height: 10),
+                ...resumo!.disciplinas.map((d) => _cardDisciplina(d)),
+              ],
+              const SizedBox(height: 24),
+            ],
           ),
-       
-       
-       ]
-
+        ),
       ),
- );
+    );
+  }
+
+  Widget _cardResumo({
+    required IconData icone,
+    required Color corIcone,
+    required String valor,
+    required String legenda,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F2744),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
+      ),
+      child: Column(
+        children: [
+          Icon(icone, color: corIcone, size: 26),
+          const SizedBox(height: 8),
+          Text(valor,
+              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 2),
+          Text(legenda, style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+        ],
+      ),
+    );
+  }
+
+  Widget _cardDestaque({
+    required String titulo,
+    required IconData icone,
+    required Color cor,
+    required DesempenhoDisciplina disciplina,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F2744),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icone, color: cor, size: 16),
+              const SizedBox(width: 6),
+              Text(titulo, style: TextStyle(color: cor, fontSize: 11)),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(disciplina.disciplina,
+              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 2),
+          Text('${disciplina.percentualAcertos}% de acerto',
+              style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+        ],
+      ),
+    );
+  }
+
+  Widget _cardDisciplina(DesempenhoDisciplina d) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F2744),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF1E3D5C), width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(d.disciplina,
+                  style: const TextStyle(
+                      color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+              Text('${d.percentualAcertos}%',
+                  style: const TextStyle(color: Color(0xFF4A9EFF), fontSize: 13, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: d.percentualAcertos / 100,
+              minHeight: 6,
+              backgroundColor: const Color(0xFF0D1B2A),
+              valueColor: const AlwaysStoppedAnimation(Color(0xFF4A9EFF)),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text('${d.numeroAcertos} de ${d.questoesFeitas} questões',
+              style: const TextStyle(color: Color(0xFF8AABCC), fontSize: 12)),
+        ],
+      ),
+    );
   }
 }

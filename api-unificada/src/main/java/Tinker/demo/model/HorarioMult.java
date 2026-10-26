@@ -1,0 +1,83 @@
+package Tinker.demo.model;
+
+import java.time.LocalDate;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+@Entity
+@IdClass(HorarioMultid.class)
+@Table(name = "HorarioMult")
+public class HorarioMult {
+
+    @Id
+    @Column(name = "email")
+    private String email;
+
+    @Id
+    @Column(name = "data")
+    private LocalDate data;
+
+    @Id
+    @Column(name = "horario_inicio")
+    private Float horarioInicio;
+
+    @Column(name = "horario_fim")
+    private String horarioFim;
+
+    @Column(name = "disciplina")
+    private String disciplina;
+
+    @Column(name = "conteudo")
+    private String conteudo;
+
+    @Column(name = "descricao")
+    private String descricao;
+
+    @Column(name = "titulo", length = 45, nullable = false)
+    private String titulo;
+
+    @Column(name = "dia_inteiro")
+    @JdbcTypeCode(SqlTypes.TINYINT)
+    private Boolean diaInteiro;
+
+    @Column(name = "cor", length = 45)
+    private String cor;
+
+    public HorarioMult() {
+    }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public LocalDate getData() { return data; }
+    public void setData(LocalDate data) { this.data = data; }
+
+    public Float getHorarioInicio() { return horarioInicio; }
+    public void setHorarioInicio(Float horarioInicio) { this.horarioInicio = horarioInicio; }
+
+    public String getHorarioFim() { return horarioFim; }
+    public void setHorarioFim(String horarioFim) { this.horarioFim = horarioFim; }
+
+    public String getDisciplina() { return disciplina; }
+    public void setDisciplina(String disciplina) { this.disciplina = disciplina; }
+
+    public String getConteudo() { return conteudo; }
+    public void setConteudo(String conteudo) { this.conteudo = conteudo; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+
+    public Boolean getDiaInteiro() { return diaInteiro; }
+    public void setDiaInteiro(Boolean diaInteiro) { this.diaInteiro = diaInteiro; }
+
+    public String getCor() { return cor; }
+    public void setCor(String cor) { this.cor = cor; }
+}

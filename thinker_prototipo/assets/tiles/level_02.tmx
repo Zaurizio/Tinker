@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="75">
+ <tileset firstgid="1" source="TinkerGame.tsx"/>
+ <tileset firstgid="243" source="LabTileSet.tsx"/>
+ <tileset firstgid="307" source="TileSetTinker.tsx"/>
+ <layer id="1" name="Background" width="40" height="23">
+  <properties>
+   <property name="BackgroundColor" value="LaboratorioBackground"/>
+  </properties>
+  <data encoding="csv">
+24,3221225499,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,46,1610612763,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,259,260,0,0,0,0,0,0,262,264,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,247,249,267,268,247,249,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,243,244,244,244,244,245,0,0,262,263,264,0,0,0,0,0,262,264,266,266,0,0,0,0,270,271,271,272,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,262,263,264,0,0,0,0,0,0,0,0,0,0,0,270,271,271,271,271,272,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,302,302,302,302,302,302,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,288,289,290,288,289,290,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,262,263,264,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,296,297,298,296,297,298,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,259,260,0,0,0,0,0,0,0,0,0,0,0,262,264,0,304,305,306,304,305,306,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,247,249,267,268,247,248,249,0,262,264,0,0,0,0,0,0,0,0,270,271,271,271,271,272,262,263,264,0,0,0,0,0,0,0,0,0,23,24,
+24,25,243,244,245,244,244,244,244,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,262,263,264,0,0,0,0,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,259,260,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,267,268,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,0,270,271,271,271,271,271,271,271,271,271,271,271,271,271,271,271,271,271,271,271,272,262,263,264,23,24,
+24,25,0,0,0,0,0,0,0,0,0,0,0,243,336,337,336,337,336,337,336,337,336,337,336,337,336,337,336,337,336,337,336,337,330,0,0,0,23,24,
+24,25,247,249,0,0,247,248,248,248,248,249,243,294,344,345,344,345,344,345,344,345,344,345,344,345,344,345,344,345,344,345,344,345,338,0,0,0,23,24,
+24,25,243,244,244,244,244,244,244,244,244,245,301,294,327,328,328,328,328,328,328,328,328,328,328,328,328,328,328,328,328,328,328,329,346,247,248,249,23,24,
+24,2684354587,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,27,24
+</data>
+ </layer>
+ <objectgroup id="2" name="Spawnpoints">
+  <object id="1" name="Player" type="Player" x="64" y="304" width="31.3333" height="32">
+   <properties>
+    <property name="BackgroundColor" value="laboratorio"/>
+   </properties>
+  </object>
+  <object id="2" name="Kiwi" type="Fruit" x="160" y="176" width="32" height="32"/>
+  <object id="3" name="Bananas" type="Fruit" x="272" y="160" width="32" height="32"/>
+  <object id="4" name="Bananas" type="Fruit" x="416" y="64" width="32" height="32"/>
+  <object id="5" name="Cherries" type="Fruit" x="256" y="256" width="32" height="32"/>
+  <object id="6" name="Strawberry" type="Fruit" x="96" y="96" width="32" height="32"/>
+  <object id="10" name="Cherries" type="Fruit" x="480" y="256" width="32" height="32"/>
+  <object id="11" name="Orange" type="Fruit" x="320" y="32" width="32" height="32"/>
+  <object id="12" type="Checkpoint" x="544" y="32" width="64" height="64"/>
+  <object id="13" type="GasBomb" x="208" y="176" width="48" height="48"/>
+  <object id="14" type="GasBomb" x="368" y="80" width="48" height="48"/>
+  <object id="16" type="Laser" x="320" y="229" width="16" height="64">
+   <properties>
+    <property name="isOn" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="22" type="Laser" x="352" y="229" width="16" height="64">
+   <properties>
+    <property name="isOn" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="23" type="Laser" x="336" y="229" width="16" height="64">
+   <properties>
+    <property name="isOn" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="24" type="Laser" x="384" y="229" width="16" height="64">
+   <properties>
+    <property name="isOn" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="25" type="Laser" x="368" y="229" width="16" height="64">
+   <properties>
+    <property name="isOn" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="26" type="Laser" x="400" y="229" width="16" height="64">
+   <properties>
+    <property name="isOn" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="27" name="Kiwi" type="Fruit" x="416" y="176" width="32" height="32"/>
+  <object id="28" type="Lever" x="32" y="240" width="32" height="32">
+   <properties>
+    <property name="isOn" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="30" name="Bananas" type="Fruit" x="32" y="144" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="3" name="Collisions">
+  <object id="44" x="16" y="16" width="16" height="336"/>
+  <object id="45" x="608" y="16" width="16" height="336"/>
+  <object id="46" x="16" y="352" width="608" height="16"/>
+  <object id="47" x="16" y="0" width="608" height="16"/>
+  <object id="48" x="32" y="336" width="192" height="16"/>
+  <object id="49" x="224" y="288" width="336" height="64"/>
+  <object id="50" x="320" y="208" width="96" height="16"/>
+  <object id="51" x="320" y="128" width="96" height="16"/>
+  <object id="52" x="544" y="96" width="64" height="16"/>
+  <object id="53" x="32" y="224" width="112" height="16"/>
+  <object id="54" x="160" y="96" width="96" height="16"/>
+  <object id="55" x="208" y="320" width="16" height="16"/>
+  <object id="63" type="Platform" x="96" y="128" width="48" height="16"/>
+  <object id="64" type="Platform" x="32" y="176" width="48" height="16"/>
+  <object id="65" type="Platform" x="160" y="208" width="32" height="16"/>
+  <object id="66" type="Platform" x="272" y="192" width="32" height="16"/>
+  <object id="67" type="Platform" x="288" y="96" width="48" height="16"/>
+  <object id="68" type="Platform" x="416" y="96" width="32" height="16"/>
+  <object id="69" type="Platform" x="416" y="208" width="48" height="16"/>
+  <object id="70" type="Platform" x="496" y="240" width="48" height="16"/>
+  <object id="71" type="Platform" x="560" y="288" width="48" height="16"/>
+  <object id="72" type="Platform" x="320" y="64" width="32" height="16"/>
+  <object id="73" x="208" y="304" width="16" height="16"/>
+  <object id="74" x="192" y="320" width="16" height="16"/>
+ </objectgroup>
+</map>
